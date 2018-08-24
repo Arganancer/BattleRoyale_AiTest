@@ -38,7 +38,13 @@ namespace Playmode.Ennemy.BodyParts
         public void AimTowards(GameObject target)
         {
             //TODO : Utilisez ce que vous savez des vecteurs pour implémenter cette méthode
-            throw new NotImplementedException();
+            //produit scalaire : 
+            //positif = droite
+            //négatif = gauche;
+
+            float direction = Vector3.Dot(mover.transform.position, target.transform.position);
+            
+            mover.Rotate(direction);
         }
 
         public void Use()
