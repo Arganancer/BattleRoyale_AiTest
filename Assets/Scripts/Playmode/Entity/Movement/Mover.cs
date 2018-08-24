@@ -5,7 +5,7 @@ namespace Playmode.Entity.Movement
 {
 	public abstract class Mover : MonoBehaviour
 	{
-		public static readonly Vector3 Foward = Vector3.up;
+		public static readonly Vector3 Forward = Vector3.up;
 		public const float Clockwise = 1f;
 
 		[SerializeField] protected float Speed = 2f;
