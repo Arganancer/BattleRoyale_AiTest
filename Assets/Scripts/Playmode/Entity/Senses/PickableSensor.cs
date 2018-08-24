@@ -9,5 +9,10 @@ namespace Playmode.Entity.Senses
 		{
 			// TODO: The stuff
 		}
+
+		public void pickPickable()
+		{
+			
+		}
 	}
 }
