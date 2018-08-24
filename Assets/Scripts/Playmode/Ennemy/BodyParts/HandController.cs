@@ -37,13 +37,30 @@ namespace Playmode.Ennemy.BodyParts
 
         public void AimTowards(GameObject target)
         {
-            //TODO : Utilisez ce que vous savez des vecteurs pour implémenter cette méthode
-            throw new NotImplementedException();
+            Vector2 direction = GetDirectionTowardTheEnemy(target);
+            float angle = (float)GetAngleOfTheEnemyDirection(direction);
+            SetActorDirection(angle);
         }
 
         public void Use()
         {
             if (weapon != null) weapon.Shoot();
+        }
+
+        private Vector2 GetDirectionTowardTheEnemy(GameObject target)
+        {
+            return target.transform.position - mover.transform.position;
+        }
+        
+        public void SetActorDirection(float angle)
+        {
+            mover.Rotate(-angle);
+        }
+
+        private double GetAngleOfTheEnemyDirection(Vector2 direction)
+        {
+            double angleInRadian = Math.Atan2(direction.y, direction.x);
+            return (angleInRadian / Math.PI) * 180;
         }
     }
 }

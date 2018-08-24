@@ -71,6 +71,7 @@ namespace Playmode.Ennemy
             handController = hand.GetComponent<HandController>();
 
             strategy = new TurnAndShootStragegy(mover, handController);
+            strategy = new NormalBehaviour(mover,handController);
         }
 
         private void CreateStartingWeapon()
@@ -121,6 +122,7 @@ namespace Playmode.Ennemy
                     break;
                 default:
                     typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
+                    
                     break;
             }
         }

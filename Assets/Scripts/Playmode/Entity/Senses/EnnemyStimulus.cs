@@ -1,4 +1,5 @@
 ﻿using Playmode.Ennemy;
+using Playmode.Pickable;
 using UnityEngine;
 
 namespace Playmode.Entity.Senses
@@ -6,7 +7,7 @@ namespace Playmode.Entity.Senses
     public class EnnemyStimulus : MonoBehaviour
     {
         private EnnemyController ennemy;
-
+        
         private void Awake()
         {
             InitializeComponent();
