@@ -20,7 +20,7 @@ namespace Playmode.Entity.Senses
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            other.GetComponent<Entity.Senses.HitSensor>()?.Hit(hitPoints);
+            other.GetComponent<HitSensor>()?.Hit(hitPoints);
         }
     }
 }

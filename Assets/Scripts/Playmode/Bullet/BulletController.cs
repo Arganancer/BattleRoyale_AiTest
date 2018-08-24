@@ -1,6 +1,6 @@
 ﻿using System;
 using Playmode.Entity.Destruction;
-using Playmode.Movement;
+using Playmode.Entity.Movement;
 using UnityEngine;
 
 namespace Playmode.Bullet
@@ -50,7 +50,7 @@ namespace Playmode.Bullet
         private void Act()
         {
             if (IsAlive)
-                mover.Move(Mover.Foward);
+                mover.MoveRelativeToSelf(Mover.Foward);
             else
                 destroyer.Destroy();
         }
