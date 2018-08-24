@@ -11,7 +11,8 @@ namespace Playmode.Npc.Strategies
 {
 	public class CowboyBehaviour : BaseNpcBehavior
 	{
-		public CowboyBehaviour(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) 
+		public CowboyBehaviour(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+			NpcSensor npcSensor)
 			: base(mover, handController, hitSensor, health, npcSensor)
 		{
 		}
@@ -19,8 +20,6 @@ namespace Playmode.Npc.Strategies
 		protected override void DoIdle()
 		{
 			throw new NotImplementedException();
-			
-			
 		}
 
 		protected override void DoRoaming()
@@ -31,7 +30,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
-			Mover.Rotate(HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+			Mover.Rotate(
+				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
 			HandController.Use();
 			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
 			                          Mover.transform.parent.position);
@@ -53,7 +53,7 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Attacking;
 			}
-			
+
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
