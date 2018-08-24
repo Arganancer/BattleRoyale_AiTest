@@ -22,7 +22,7 @@ namespace Playmode.Entity.Movement
 		{
 			rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.Self);
 		}
-		
+
 		public override void MoveRelativeToWorld(Vector3 direction)
 		{
 			rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.World);

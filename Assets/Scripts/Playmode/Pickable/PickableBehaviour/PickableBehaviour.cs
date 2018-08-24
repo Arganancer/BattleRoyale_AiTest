@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Playmode.Pickable
+﻿namespace Playmode.Pickable.PickableBehaviour
 {
-
 	public enum PickableBehaviour
 	{
 		Medicalkit,
@@ -12,4 +7,3 @@ namespace Playmode.Pickable
 		Uzi
 	}
 }
-

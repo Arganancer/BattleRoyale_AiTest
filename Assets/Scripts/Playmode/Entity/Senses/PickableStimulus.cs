@@ -1,20 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PickableStimulus : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-	private void OnCollisionEnter2D(Collision2D other)
+namespace Playmode.Entity.Senses
+{
+	public class PickableStimulus : MonoBehaviour
 	{
-		throw new System.NotImplementedException();
+		private void OnCollisionEnter2D(Collision2D other)
+		{
+			// TODO:
+			throw new System.NotImplementedException();
+		}
 	}
 }

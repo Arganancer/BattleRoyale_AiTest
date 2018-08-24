@@ -1,9 +1,8 @@
-﻿using System;
-using Playmode.Entity.Movement;
+﻿using Playmode.Entity.Movement;
 using Playmode.Weapon;
 using UnityEngine;
 
-namespace Playmode.Ennemy.BodyParts
+namespace Playmode.Npc.BodyParts
 {
 	public class HandController : MonoBehaviour
 	{
@@ -20,14 +19,14 @@ namespace Playmode.Ennemy.BodyParts
 			mover = GetComponent<AnchoredMover>();
 		}
 
-		public void Hold(GameObject gameObject)
+		public void Hold(GameObject heldGameObject)
 		{
-			if (gameObject != null)
+			if (heldGameObject != null)
 			{
-				gameObject.transform.parent = transform;
-				gameObject.transform.localPosition = Vector3.zero;
+				heldGameObject.transform.parent = transform;
+				heldGameObject.transform.localPosition = Vector3.zero;
 
-				weapon = gameObject.GetComponentInChildren<WeaponController>();
+				weapon = heldGameObject.GetComponentInChildren<WeaponController>();
 			}
 			else
 			{

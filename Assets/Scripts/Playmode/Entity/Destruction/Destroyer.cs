@@ -2,8 +2,8 @@
 
 namespace Playmode.Entity.Destruction
 {
-    public abstract class Destroyer : MonoBehaviour
-    {
-        public abstract void Destroy();
-    }
+	public abstract class Destroyer : MonoBehaviour
+	{
+		public abstract void Destroy();
+	}
 }

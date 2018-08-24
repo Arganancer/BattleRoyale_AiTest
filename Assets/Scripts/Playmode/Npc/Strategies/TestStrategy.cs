@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Linq;
-using Playmode.Ennemy.BodyParts;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
+using Playmode.Npc.BodyParts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Playmode.Ennemy.Strategies
+namespace Playmode.Npc.Strategies
 {
-	public class TestStrategy : BaseEnemyBehavior
+	public class TestStrategy : BaseNpcBehavior
 	{
 		public TestStrategy(
 			Mover mover,
 			HandController handController,
 			HitSensor hitSensor,
 			Health health,
-			EnnemySensor enemySensor) : base(mover, handController, hitSensor, health, enemySensor)
+			NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
 		{
 		}
 
-		protected override void UpdateNPCLogic()
+		protected override void UpdateNpcLogic()
 		{
 			switch (CurrentState)
 			{
@@ -31,9 +31,9 @@ namespace Playmode.Ennemy.Strategies
 					Mover.MoveRelativeToWorld(MovementDirection);
 					break;
 				case State.Engaging:
-					Mover.Rotate(HandController.AimTowardsPoint(GetClosestEnnemy(EnnemySensor.EnnemiesInSight).transform.parent.position));
+					Mover.Rotate(HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
 					HandController.Use();
-					Mover.MoveRelativeToWorld(GetClosestEnnemy(EnnemySensor.EnnemiesInSight).transform.parent.position -
+					Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
 					           Mover.transform.parent.position
 					);
 					break;
@@ -48,7 +48,7 @@ namespace Playmode.Ennemy.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			if (EnnemySensor.EnnemiesInSight.Any())
+			if (NpcSensor.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
@@ -66,7 +66,7 @@ namespace Playmode.Ennemy.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			if (EnnemySensor.EnnemiesInSight.Any())
+			if (NpcSensor.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
@@ -83,7 +83,7 @@ namespace Playmode.Ennemy.Strategies
 
 		protected override State EvaluateEngaging()
 		{
-			if (!EnnemySensor.EnnemiesInSight.Any())
+			if (!NpcSensor.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}

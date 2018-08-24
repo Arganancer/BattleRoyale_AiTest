@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Playmode.Ennemy.BodyParts;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
+using Playmode.Npc.BodyParts;
 using UnityEngine;
 
-namespace Playmode.Ennemy.Strategies
+namespace Playmode.Npc.Strategies
 {
 	/// <summary>
 	/// An NPC will change their current state depending on their behavior as well as current situation:
@@ -41,26 +41,26 @@ namespace Playmode.Ennemy.Strategies
 	/// 	CurrentHealth
 	/// 
 	/// </summary>
-	public abstract class BaseEnemyBehavior : IEnnemyStrategy
+	public abstract class BaseNpcBehavior : INpcStrategy
 	{
 		protected readonly Mover Mover;
 		protected readonly HandController HandController;
-		protected readonly EnnemySensor EnnemySensor;
+		protected readonly NpcSensor NpcSensor;
 		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
 		protected State CurrentState;
 		protected float TimeUntilStateSwitch;
 		protected Vector3 MovementDirection;
 
-		protected BaseEnemyBehavior(Mover mover, HandController handController,
-			HitSensor hitSensor, Health health, EnnemySensor ennemySensor)
+		protected BaseNpcBehavior(Mover mover, HandController handController,
+			HitSensor hitSensor, Health health, NpcSensor npcSensor)
 		{
 			CurrentState = State.Idle;
 			Mover = mover;
 			HandController = handController;
 			HitSensor = hitSensor;
 			Health = health;
-			EnnemySensor = ennemySensor;
+			NpcSensor = npcSensor;
 			TimeUntilStateSwitch = 0;
 			MovementDirection = new Vector3();
 		}
@@ -71,9 +71,9 @@ namespace Playmode.Ennemy.Strategies
 			Mover.MoveRelativeToSelf(direction);
 		}
 
-		protected void FleeFromObject(GameObject enemy)
+		protected void FleeFromObject(GameObject npc)
 		{
-			var direction = Mover.transform.parent.position - enemy.transform.position;
+			var direction = Mover.transform.parent.position - npc.transform.position;
 			Mover.MoveRelativeToSelf(direction);
 		}
 
@@ -82,31 +82,31 @@ namespace Playmode.Ennemy.Strategies
 			return UnityEngine.Random.insideUnitCircle.normalized;
 		}
 
-		protected EnnemyController GetClosestEnnemy(IEnumerable<EnnemyController> ennemiesInSight)
+		protected NpcController GetClosestNpc(IEnumerable<NpcController> npcsInSight)
 		{
-			EnnemyController closestEnnemy = null;
+			NpcController closestNpc = null;
 			var distance = float.MaxValue;
-			foreach (var ennemy in ennemiesInSight)
+			foreach (var npc in npcsInSight)
 			{
-				if (closestEnnemy == null)
+				if (closestNpc == null)
 				{
-					closestEnnemy = ennemy;
-					distance = Vector3.Distance(closestEnnemy.transform.position,
+					closestNpc = npc;
+					distance = Vector3.Distance(closestNpc.transform.position,
 						Mover.transform.parent.position);
 				}
 				else
 				{
-					var currentEnnemyDistance =
-						Vector3.Distance(closestEnnemy.transform.position, ennemy.transform.position);
-					if (distance > currentEnnemyDistance)
+					var currentNpcDistance =
+						Vector3.Distance(closestNpc.transform.position, npc.transform.position);
+					if (distance > currentNpcDistance)
 					{
-						distance = currentEnnemyDistance;
-						closestEnnemy = ennemy;
+						distance = currentNpcDistance;
+						closestNpc = npc;
 					}
 				}
 			}
 
-			return closestEnnemy;
+			return closestNpc;
 		}
 
 		public void Act()
@@ -132,10 +132,10 @@ namespace Playmode.Ennemy.Strategies
 					throw new ArgumentOutOfRangeException();
 			}
 
-			UpdateNPCLogic();
+			UpdateNpcLogic();
 		}
 
-		protected abstract void UpdateNPCLogic();
+		protected abstract void UpdateNpcLogic();
 
 		protected abstract State EvaluateIdle();
 

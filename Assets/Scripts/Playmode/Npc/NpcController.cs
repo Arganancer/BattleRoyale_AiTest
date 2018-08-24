@@ -1,39 +1,40 @@
 ﻿using System;
-using Playmode.Ennemy.BodyParts;
-using Playmode.Ennemy.Strategies;
 using Playmode.Entity.Destruction;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
+using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies;
 using UnityEngine;
 
-namespace Playmode.Ennemy
+namespace Playmode.Npc
 {
-	public class EnnemyController : MonoBehaviour
+	public class NpcController : MonoBehaviour
 	{
-		[Header("Body Parts")] 
-		[SerializeField] private GameObject body;
+		[Header("Body Parts")] [SerializeField]
+		private GameObject body;
+
 		[SerializeField] private GameObject hand;
 		[SerializeField] private GameObject sight;
 		[SerializeField] private GameObject typeSign;
 
-		[Header("Type Images")] 
-		[SerializeField] private Sprite normalSprite;
+		[Header("Type Images")] [SerializeField]
+		private Sprite normalSprite;
+
 		[SerializeField] private Sprite carefulSprite;
 		[SerializeField] private Sprite cowboySprite;
 		[SerializeField] private Sprite camperSprite;
 
-		[Header("Behaviour")] 
-		[SerializeField] private GameObject startingWeaponPrefab;
+		[Header("Behaviour")] [SerializeField] private GameObject startingWeaponPrefab;
 
 		private Health health;
 		private Mover mover;
 		private Destroyer destroyer;
-		private EnnemySensor ennemySensor;
+		private NpcSensor npcSensor;
 		private HitSensor hitSensor;
 		private HandController handController;
 
-		private IEnnemyStrategy strategy;
+		private INpcStrategy strategy;
 
 		private void Awake()
 		{
@@ -71,11 +72,11 @@ namespace Playmode.Ennemy
 			destroyer = GetComponent<RootDestroyer>();
 
 			var rootTransform = transform.root;
-			ennemySensor = rootTransform.GetComponentInChildren<EnnemySensor>();
+			npcSensor = rootTransform.GetComponentInChildren<NpcSensor>();
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
 
-			strategy = new TestStrategy(mover, handController, hitSensor, health, ennemySensor);
+			strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensor);
 		}
 
 		private void CreateStartingWeapon()
@@ -89,40 +90,40 @@ namespace Playmode.Ennemy
 
 		private void OnEnable()
 		{
-			ennemySensor.OnEnnemySeen += OnEnnemySeen;
-			ennemySensor.OnEnnemySightLost += OnEnnemySightLost;
+			npcSensor.OnNpcSeen += OnNpcSeen;
+			npcSensor.OnNpcSightLost += OnNpcSightLost;
 			hitSensor.OnHit += OnHit;
 			health.OnDeath += OnDeath;
 		}
 
 		private void Update()
 		{
-			ennemySensor.RemoveNullEnnemies();
+			npcSensor.RemoveNullNpc();
 			strategy.Act();
 		}
 
 		private void OnDisable()
 		{
-			ennemySensor.OnEnnemySeen -= OnEnnemySeen;
-			ennemySensor.OnEnnemySightLost -= OnEnnemySightLost;
+			npcSensor.OnNpcSeen -= OnNpcSeen;
+			npcSensor.OnNpcSightLost -= OnNpcSightLost;
 			hitSensor.OnHit -= OnHit;
 			health.OnDeath -= OnDeath;
 		}
 
-		public void Configure(EnnemyStrategy strategy, Color color)
+		public void Configure(NpcStrategy strategy, Color color)
 		{
 			body.GetComponent<SpriteRenderer>().color = color;
 			sight.GetComponent<SpriteRenderer>().color = color;
 
 			switch (strategy)
 			{
-				case EnnemyStrategy.Careful:
+				case NpcStrategy.Careful:
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
 					break;
-				case EnnemyStrategy.Cowboy:
+				case NpcStrategy.Cowboy:
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
 					break;
-				case EnnemyStrategy.Camper:
+				case NpcStrategy.Camper:
 					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
 					break;
 				default:
@@ -145,12 +146,12 @@ namespace Playmode.Ennemy
 			destroyer.Destroy();
 		}
 
-		private void OnEnnemySeen(EnnemyController ennemy)
+		private void OnNpcSeen(NpcController npc)
 		{
 			Debug.Log("I've seen an ennemy!! Ya so dead noob!!!");
 		}
 
-		private void OnEnnemySightLost(EnnemyController ennemy)
+		private void OnNpcSightLost(NpcController npc)
 		{
 			Debug.Log("I've lost sight of an ennemy...Yikes!!!");
 		}

@@ -1,12 +1,11 @@
-﻿using Playmode.Ennemy;
-using Playmode.Pickable;
+﻿using Playmode.Npc;
 using UnityEngine;
 
 namespace Playmode.Entity.Senses
 {
-    public class EnnemyStimulus : MonoBehaviour
+    public class NpcStimulus : MonoBehaviour
     {
-        private EnnemyController ennemy;
+        private NpcController npc;
         
         private void Awake()
         {
@@ -15,17 +14,17 @@ namespace Playmode.Entity.Senses
 
         private void InitializeComponent()
         {
-            ennemy = transform.root.GetComponentInChildren<EnnemyController>();
+            npc = transform.root.GetComponentInChildren<NpcController>();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            other.GetComponent<EnnemySensor>()?.See(ennemy);
+            other.GetComponent<NpcSensor>()?.See(npc);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            other.GetComponent<EnnemySensor>()?.LooseSightOf(ennemy);
+            other.GetComponent<NpcSensor>()?.LooseSightOf(npc);
         }
     }
 }

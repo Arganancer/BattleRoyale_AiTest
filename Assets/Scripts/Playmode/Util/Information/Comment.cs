@@ -7,33 +7,33 @@ using UnityEngine;
 
 namespace Playmode.Util.Information
 {
-    public class Comment : MonoBehaviour
-    {
+	public class Comment : MonoBehaviour
+	{
 #if UNITY_EDITOR
-        [SerializeField] private string text;
+		[SerializeField] private string text;
 #endif
-    }
+	}
 
 #if UNITY_EDITOR
 
-    [CanEditMultipleObjects]
-    [CustomEditor(typeof(Comment))]
-    public class CommentEditor : Editor
-    {
-        private SerializedProperty text;
+	[CanEditMultipleObjects]
+	[CustomEditor(typeof(Comment))]
+	public class CommentEditor : Editor
+	{
+		private SerializedProperty text;
 
-        private void OnEnable()
-        {
-            text = serializedObject.FindProperty("text");
-        }
+		private void OnEnable()
+		{
+			text = serializedObject.FindProperty("text");
+		}
 
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-            text.stringValue = EditorGUILayout.TextArea(text.stringValue, GUILayout.MaxHeight(75));
-            serializedObject.ApplyModifiedProperties();
-        }
-    }
+		public override void OnInspectorGUI()
+		{
+			serializedObject.Update();
+			text.stringValue = EditorGUILayout.TextArea(text.stringValue, GUILayout.MaxHeight(75));
+			serializedObject.ApplyModifiedProperties();
+		}
+	}
 
 #endif
 }

@@ -2,13 +2,8 @@
 
 namespace Playmode.Weapon
 {
-    public class MedicalKit : MonoBehaviour
-    {
-        private GameObject gameObject;
-        
-        private void Awake()
-        {
-            
-        }
-    }
+	public class MedicalKit : MonoBehaviour
+	{
+		// TODO: the whole class.
+	}
 }

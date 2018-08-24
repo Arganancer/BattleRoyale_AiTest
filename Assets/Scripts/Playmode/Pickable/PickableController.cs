@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Playmode.Pickable;
 using UnityEngine;
 
 namespace Playmode.Pickable
 {
 	public class PickableController : MonoBehaviour
 	{
-
 		private SpriteRenderer visualComponent;
 
 		[SerializeField] private Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
-	
+
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
@@ -31,7 +27,6 @@ namespace Playmode.Pickable
 
 			if (shotgun == null)
 			{
-			
 				throw new ArgumentException("Type sprites must be provided. Shotgun is missing.");
 			}
 
@@ -40,19 +35,22 @@ namespace Playmode.Pickable
 				throw new ArgumentException("Type sprites must be provided. Uzi is missing.");
 			}
 		}
-		public void Configure(PickableBehaviour pickableBehaviour)
+
+		public void Configure(PickableBehaviour.PickableBehaviour pickableBehaviour)
 		{
 			switch (pickableBehaviour)
 			{
-				case PickableBehaviour.Medicalkit:
+				case PickableBehaviour.PickableBehaviour.Medicalkit:
 					visualComponent.sprite = medicalKit;
 					break;
-				case PickableBehaviour.Shotgun:
+				case PickableBehaviour.PickableBehaviour.Shotgun:
 					visualComponent.sprite = shotgun;
 					break;
-				case PickableBehaviour.Uzi:
+				case PickableBehaviour.PickableBehaviour.Uzi:
 					visualComponent.sprite = uzi;
 					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(pickableBehaviour), pickableBehaviour, null);
 			}
 		}
 
@@ -62,4 +60,3 @@ namespace Playmode.Pickable
 		}
 	}
 }
-

@@ -1,9 +1,9 @@
-﻿using Playmode.Ennemy.BodyParts;
-using Playmode.Entity.Movement;
+﻿using Playmode.Entity.Movement;
+using Playmode.Npc.BodyParts;
 
-namespace Playmode.Ennemy.Strategies
+namespace Playmode.Npc.Strategies
 {
-    public class TurnAndShootStragegy : IEnnemyStrategy
+    public class TurnAndShootStragegy : INpcStrategy
     {
         private readonly Mover mover;
         private readonly HandController handController;
@@ -21,12 +21,12 @@ namespace Playmode.Ennemy.Strategies
             handController.Use();
         }
 
-        public void ReactToEnemyInSight(EnnemyController ennemy)
+        public void ReactToEnemyInSight(NpcController npc)
         {
             
         }
         
-        public void ReactToLooseOfEnemySight(EnnemyController enemy)
+        public void ReactToLooseOfEnemySight(NpcController enemy)
         {
             
         }
