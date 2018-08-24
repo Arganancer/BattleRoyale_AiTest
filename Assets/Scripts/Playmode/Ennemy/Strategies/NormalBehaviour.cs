@@ -16,6 +16,7 @@ namespace Playmode.Ennemy.Strategies
         private readonly HandController handController;
         private EnnemyController ennemyController;
         private EnnemySensor ennemySensor;
+        
         public NormalBehaviour(Mover mover, HandController handController)
         {
             this.mover = mover;
@@ -25,10 +26,16 @@ namespace Playmode.Ennemy.Strategies
 
         public void Act()
         {
-            Vector2 direction = GetDirectionTowardTheEnemy();
-            float angle = (float)GetAngleOfTheEnemyDirection(direction);
-            SetActorDirection(angle);
-            MoveAndShootTowardTheEnemy(direction);
+            if (ennemyController != null)
+            {
+                Vector2 direction = GetDirectionTowardTheEnemy();
+                handController.AimTowards(ennemyController.gameObject);
+                MoveAndShootTowardTheEnemy(direction);
+            }
+            else
+            {
+                mover.Move(Vector2.down);
+            }
         }
 
         public void ReactToEnemyInSight(EnnemyController ennemy)
@@ -38,21 +45,10 @@ namespace Playmode.Ennemy.Strategies
                 ennemyController = ennemy;
             }
         }
-
-        public void SetActorDirection(float angle)
-        {
-            mover.Rotate(-angle);
-        }
         public void MoveAndShootTowardTheEnemy(Vector2 direction)
         {
             mover.MoveRelativeToSelf(direction*Time.deltaTime);
             handController.Use();
-        }
-
-        private double GetAngleOfTheEnemyDirection(Vector2 direction)
-        {
-            double angleInRadian = Math.Atan2(direction.y, direction.x);
-            return (angleInRadian / Math.PI) * 180;
         }
         private Vector2 GetDirectionTowardTheEnemy()
         {
