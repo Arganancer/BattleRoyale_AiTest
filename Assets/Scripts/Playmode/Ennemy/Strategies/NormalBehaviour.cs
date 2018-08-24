@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Playmode.Ennemy.BodyParts;
 using Playmode.Ennemy.Strategies;
+using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
-using Playmode.Movement;
 using UnityEngine;
 
 namespace Playmode.Ennemy.Strategies
@@ -47,7 +47,7 @@ namespace Playmode.Ennemy.Strategies
         }
         public void MoveAndShootTowardTheEnemy(Vector2 direction)
         {
-            mover.Move(direction*Time.deltaTime);
+            mover.MoveRelativeToSelf(direction*Time.deltaTime);
             handController.Use();
         }
         private Vector2 GetDirectionTowardTheEnemy()

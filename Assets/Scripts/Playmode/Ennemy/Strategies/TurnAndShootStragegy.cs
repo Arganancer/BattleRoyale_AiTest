@@ -1,5 +1,5 @@
 ﻿using Playmode.Ennemy.BodyParts;
-using Playmode.Movement;
+using Playmode.Entity.Movement;
 
 namespace Playmode.Ennemy.Strategies
 {
