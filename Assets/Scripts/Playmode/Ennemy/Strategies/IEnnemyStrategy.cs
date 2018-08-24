@@ -1,17 +1,15 @@
 ﻿namespace Playmode.Ennemy.Strategies
 {
-    public interface IEnnemyStrategy
-    {
-        void Act();
-        void ReactToEnemyInSight(EnnemyController enemy);
-        void ReactToLooseOfEnemySight(EnnemyController enemy);
-    }
+	public interface IEnnemyStrategy
+	{
+		void Act();
+	}
 
-    public enum EnnemyStrategy
-    {
-        Normal,
-        Careful,
-        Cowboy,
-        Camper
-    }
+	public enum EnnemyStrategy
+	{
+		Normal,
+		Careful,
+		Cowboy,
+		Camper
+	}
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Playmode.Movement
+namespace Playmode.Entity.Movement
 {
     public class AnchoredMover : Mover
     {
@@ -18,9 +18,14 @@ namespace Playmode.Movement
             rootTransform = transform.root;
         }
 
-        public override void Move(Vector3 direction)
+        public override void MoveRelativeToSelf(Vector3 direction)
         {
-            transform.Translate(direction.normalized * speed * Time.deltaTime);
+            transform.Translate(direction.normalized * Speed * Time.deltaTime);
+        }
+        
+        public override void MoveRelativeToWorld(Vector3 direction)
+        {
+            rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.World);
         }
 
         public override void Rotate(float direction)
@@ -28,7 +33,7 @@ namespace Playmode.Movement
             transform.RotateAround(
                 rootTransform.position,
                 Vector3.forward,
-                (direction < 0 ? rotateSpeed : -rotateSpeed) * Time.deltaTime
+                (direction < 0 ? RotateSpeed : -RotateSpeed) * Time.deltaTime
             );
         }
     }
