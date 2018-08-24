@@ -1,68 +1,52 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
-	public class TestStrategy : BaseNpcBehavior
+	public class CarefulBehavior : BaseNpcBehavior
 	{
-		public TestStrategy(
-			Mover mover,
-			HandController handController,
-			HitSensor hitSensor,
-			Health health,
-			NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
+		[SerializeField] private int healthPointsToLose = 50;
+		
+		public CarefulBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
 		{
 		}
 
-		#region DoTheStuff
-
 		protected override void DoIdle()
 		{
+			throw new System.NotImplementedException();
 		}
 
 		protected override void DoRoaming()
 		{
-			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
-			Mover.MoveRelativeToWorld(MovementDirection);
+			throw new System.NotImplementedException();
 		}
 
 		protected override void DoEngaging()
 		{
-			Mover.Rotate(
-				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
-			HandController.Use();
-			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
-			                          Mover.transform.parent.position
-			);
+			throw new System.NotImplementedException();
 		}
 
 		protected override void DoAttacking()
 		{
-			throw new NotImplementedException();
+			throw new System.NotImplementedException();
 		}
 
 		protected override void DoRetreating()
 		{
-			throw new NotImplementedException();
+			throw new System.NotImplementedException();
 		}
-
-		#endregion
-
-		#region Evaluate
 
 		protected override State EvaluateIdle()
 		{
 			if (NpcSensor.NpcsInSight.Any())
 			{
-				return State.Engaging;
+				return State.Attacking;
 			}
-
+			
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
@@ -78,13 +62,14 @@ namespace Playmode.Npc.Strategies
 		{
 			if (NpcSensor.NpcsInSight.Any())
 			{
-				return State.Engaging;
+				return State.Attacking;
 			}
-
+			
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				TimeUntilStateSwitch = Random.Range(0.5f, 1.5f);
+				MovementDirection = GetRandomDirection();
+				TimeUntilStateSwitch = Random.Range(4f, 6f);
 				return State.Idle;
 			}
 
@@ -103,14 +88,22 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateAttacking()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensor.NpcsInSight.Any())
+			{
+				return State.Idle;
+			}
+
+			return State.Attacking;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			throw new System.NotImplementedException();
-		}
+			if (Health.HealthPoints >= healthPointsToLose)
+			{
+				return State.Attacking;
+			}
 
-		#endregion
+			return State.Retreating;
+		}
 	}
 }

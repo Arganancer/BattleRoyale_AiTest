@@ -135,7 +135,35 @@ namespace Playmode.Npc.Strategies
 			UpdateNpcLogic();
 		}
 
-		protected abstract void UpdateNpcLogic();
+		private void UpdateNpcLogic()
+		{
+			switch (CurrentState)
+			{
+				case State.Idle:
+					DoIdle();
+					break;
+				case State.Roaming:
+					DoRoaming();
+					break;
+				case State.Engaging:
+					DoEngaging();
+					break;
+				case State.Attacking:
+					DoAttacking();
+					break;
+				case State.Retreating:
+					DoRetreating();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		protected abstract void DoIdle();
+		protected abstract void DoRoaming();
+		protected abstract void DoEngaging();
+		protected abstract void DoAttacking();
+		protected abstract void DoRetreating();
 
 		protected abstract State EvaluateIdle();
 

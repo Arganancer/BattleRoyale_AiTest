@@ -50,7 +50,7 @@ namespace Playmode.Bullet
 		private void Act()
 		{
 			if (IsAlive)
-				mover.MoveRelativeToSelf(Mover.Foward);
+				mover.MoveRelativeToSelf(Mover.Forward);
 			else
 				destroyer.Destroy();
 		}
