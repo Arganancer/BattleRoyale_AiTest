@@ -20,32 +20,39 @@ namespace Playmode.Npc.Strategies
 		{
 		}
 
-		protected override void UpdateNpcLogic()
+		#region DoTheStuff
+		protected override void DoIdle()
 		{
-			switch (CurrentState)
-			{
-				case State.Idle:
-					break;
-				case State.Roaming:
-					Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
-					Mover.MoveRelativeToWorld(MovementDirection);
-					break;
-				case State.Engaging:
-					Mover.Rotate(HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
-					HandController.Use();
-					Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
-					           Mover.transform.parent.position
-					);
-					break;
-				case State.Attacking:
-					break;
-				case State.Retreating:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
 		}
 
+		protected override void DoRoaming()
+		{
+			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
+			Mover.MoveRelativeToWorld(MovementDirection);
+		}
+
+		protected override void DoEngaging()
+		{
+			Mover.Rotate(
+				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+			HandController.Use();
+			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
+			                          Mover.transform.parent.position
+			);
+		}
+
+		protected override void DoAttacking()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void DoRetreating()
+		{
+			throw new NotImplementedException();
+		}
+		#endregion
+
+		#region Evaluate
 		protected override State EvaluateIdle()
 		{
 			if (NpcSensor.NpcsInSight.Any())
@@ -100,5 +107,6 @@ namespace Playmode.Npc.Strategies
 		{
 			throw new System.NotImplementedException();
 		}
+		#endregion
 	}
 }
