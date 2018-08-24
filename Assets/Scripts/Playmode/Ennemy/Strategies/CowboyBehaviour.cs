@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Playmode.Ennemy.BodyParts;
+using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
-using Playmode.Movement;
 using UnityEngine;
 
 using Playmode.Entity.Senses;
@@ -35,11 +35,11 @@ namespace Playmode.Ennemy.Strategies
             if (hasEnemyTarget)
             {
                 ennemySensor.See(ennemyController);
-                mover.Move(ennemyController.transform.position - position);
+                mover.MoveRelativeToSelf(ennemyController.transform.position - position);
             }
             else if (hasMunitionTarget)
             {
-                mover.Move(gameObject.transform.position - position);
+                mover.MoveRelativeToSelf(gameObject.transform.position - position);
             }
         }
 
