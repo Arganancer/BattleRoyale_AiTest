@@ -21,6 +21,7 @@ namespace Playmode.Npc.Strategies
 		}
 
 		#region DoTheStuff
+
 		protected override void DoIdle()
 		{
 		}
@@ -50,9 +51,11 @@ namespace Playmode.Npc.Strategies
 		{
 			throw new NotImplementedException();
 		}
+
 		#endregion
 
 		#region Evaluate
+
 		protected override State EvaluateIdle()
 		{
 			if (NpcSensor.NpcsInSight.Any())
@@ -107,6 +110,7 @@ namespace Playmode.Npc.Strategies
 		{
 			throw new System.NotImplementedException();
 		}
+
 		#endregion
 	}
 }
