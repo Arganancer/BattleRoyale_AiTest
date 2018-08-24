@@ -1,40 +1,76 @@
-﻿using Playmode.Entity.Movement;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
+using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
 
 namespace Playmode.Npc.Strategies
 {
-	public class CowboyBehaviour : INpcStrategy
+	public class CowboyBehaviour : BaseNpcBehavior
 	{
-		private readonly Mover mover;
-		private readonly HandController handController;
-		private NpcController npcController;
-		private GameObject gameObject;
-		private NpcSensor npcSensor;
-
-		private bool hasNpcTarget;
-		private bool hasMunitionTarget;
-
-		public CowboyBehaviour(Mover mover, HandController handController)
+		public CowboyBehaviour(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) 
+			: base(mover, handController, hitSensor, health, npcSensor)
 		{
-			this.mover = mover;
-			this.handController = handController;
 		}
 
-		public void Act()
+		protected override void UpdateNpcLogic()
 		{
-			var position = mover.transform.position;
+			switch (CurrentState)
+			{
+				case State.Idle:
+					break;
+				case State.Roaming:
+					Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
+					Mover.MoveRelativeToWorld(MovementDirection);
+					break;
+				case State.Engaging:
+					Mover.Rotate(HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+					HandController.Use();
+					Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
+					                          Mover.transform.parent.position
+					);
+					break;
+				case State.Attacking:
+					break;
+				//if object en vue ->
+				case State.Retreating:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
 
-			if (hasNpcTarget)
+		protected override State EvaluateIdle()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override State EvaluateRoaming()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override State EvaluateEngaging()
+		{
+			throw new System.NotImplementedException();
+			/*if (npcsInSight != null)
 			{
-				npcSensor.See(npcController);
-				mover.MoveRelativeToSelf(npcController.transform.position - position);
-			}
-			else if (hasMunitionTarget)
-			{
-				mover.MoveRelativeToSelf(gameObject.transform.position - position);
-			}
+				MoveTowardsObject(GetClosestNpc());
+			}*/
+		}
+
+		protected override State EvaluateAttacking()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override State EvaluateRetreating()
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
