@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
@@ -17,36 +16,52 @@ namespace Playmode.Npc.Strategies
 		{
 		}
 
-		protected override void UpdateNpcLogic()
+		protected override void DoIdle()
 		{
-			switch (CurrentState)
-			{
-				case State.Idle:
-					break;
-				case State.Roaming:
-					Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
-					Mover.MoveRelativeToWorld(MovementDirection);
-					break;
-				case State.Engaging:
-					Mover.Rotate(HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
-					HandController.Use();
-					Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
-					                          Mover.transform.parent.position
-					);
-					break;
-				case State.Attacking:
-					break;
-				//if object en vue ->
-				case State.Retreating:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+			throw new NotImplementedException();
+			
+			
+		}
+
+		protected override void DoRoaming()
+		{
+			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
+			Mover.MoveRelativeToWorld(MovementDirection);
+		}
+
+		protected override void DoEngaging()
+		{
+			Mover.Rotate(HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+			HandController.Use();
+			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
+			                          Mover.transform.parent.position);
+		}
+
+		protected override void DoAttacking()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void DoRetreating()
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override State EvaluateIdle()
 		{
-			throw new System.NotImplementedException();
+			if (NpcSensor.NpcsInSight.Any())
+			{
+				return State.Roaming;
+			}
+			
+			TimeUntilStateSwitch -= Time.deltaTime;
+			if (TimeUntilStateSwitch <= 0)
+			{
+				TimeUntilStateSwitch = Random.Range(0.2f, 1.0f);
+				return State.Idle;
+			}
+
+			return State.Roaming;
 		}
 
 		protected override State EvaluateRoaming()
@@ -57,10 +72,6 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateEngaging()
 		{
 			throw new System.NotImplementedException();
-			/*if (npcsInSight != null)
-			{
-				MoveTowardsObject(GetClosestNpc());
-			}*/
 		}
 
 		protected override State EvaluateAttacking()
