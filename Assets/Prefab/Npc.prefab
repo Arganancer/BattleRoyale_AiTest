@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 50703390751095472}
   m_Layer: 0
   m_Name: Npc
-  m_TagString: Untagged
+  m_TagString: Npc
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -260,8 +260,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 5, y: 10}
-      - {x: -5, y: 10}
+    - - {x: 10, y: 17}
+      - {x: 9, y: 19}
+      - {x: 4, y: 21}
+      - {x: -4, y: 21}
+      - {x: -9, y: 19}
+      - {x: -10, y: 17}
       - {x: -1, y: 0.5}
       - {x: 1, y: 0.5}
 --- !u!114 &114083873472680612
