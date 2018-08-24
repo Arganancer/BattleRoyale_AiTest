@@ -20,5 +20,15 @@ namespace Playmode.Ennemy.Strategies
 
             handController.Use();
         }
+
+        public void ReactToEnemyInSight(EnnemyController ennemy)
+        {
+            
+        }
+        
+        public void ReactToLooseOfEnemySight(EnnemyController enemy)
+        {
+            
+        }
     }
 }
