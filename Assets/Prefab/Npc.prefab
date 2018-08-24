@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 114785109227199278}
   - component: {fileID: 50703390751095472}
   m_Layer: 0
-  m_Name: Ennemy
+  m_Name: Npc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,8 +297,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddf3221db0a6417bb514b57e3c5c5818, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  rotateSpeed: 90
+  Speed: 2
+  RotateSpeed: 90
 --- !u!114 &114365648383534028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -310,8 +310,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f86b820faf84451fa53dba772fca7f07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  rotateSpeed: 90
+  Speed: 2
+  RotateSpeed: 90
 --- !u!114 &114434491710286188
 MonoBehaviour:
   m_ObjectHideFlags: 1
