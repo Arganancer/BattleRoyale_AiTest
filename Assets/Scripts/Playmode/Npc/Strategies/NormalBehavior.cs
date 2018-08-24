@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Playmode.Npc.Strategies
 {
-	public class NormalBehaviour : BaseNpcBehavior
+	public class NormalBehavior : BaseNpcBehavior
 	{
 		/*private bool hasTarget;
 		private readonly Mover mover;
@@ -39,7 +39,10 @@ namespace Playmode.Npc.Strategies
 				npcController = null;
 			}
 		}*/
-		public NormalBehaviour(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
+
+		[SerializeField] private int healthPointsToLose = 20;
+		
+		public NormalBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
 		{
 		}
 
@@ -125,7 +128,12 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRetreating()
 		{
-			throw new System.NotImplementedException();
+			//if (Health.HealthPoints >= healthPointsToLose)
+			//{
+				return State.Attacking;
+			//}
+			
+			//return State.Retreating;
 		}
 	}
 }

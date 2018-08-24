@@ -9,9 +9,9 @@ using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
-	public class CowboyBehaviour : BaseNpcBehavior
+	public class CowboyBehavior : BaseNpcBehavior
 	{
-		public CowboyBehaviour(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+		public CowboyBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensor npcSensor)
 			: base(mover, handController, hitSensor, health, npcSensor)
 		{
