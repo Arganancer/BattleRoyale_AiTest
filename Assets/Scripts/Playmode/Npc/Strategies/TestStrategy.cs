@@ -13,6 +13,7 @@ namespace Playmode.Npc.Strategies
 		public TestStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
 		{
+			AttackingDistance = 5f;
 		}
 
 		#region DoTheStuff
@@ -30,23 +31,32 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
-			RotateTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
-			MoveTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
+			if(CurrentEnemyTarget == null) 
+				CurrentEnemyTarget = GetClosestNpc(NpcSensor.NpcsInSight);
+			
+			RotateTowardsNpc(CurrentEnemyTarget);
+			MoveTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
 		}
 
 		protected override void DoAttacking()
 		{
-			RotateTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
+			if(CurrentEnemyTarget == null) 
+				CurrentEnemyTarget = GetClosestNpc(NpcSensor.NpcsInSight);
+			
+			RotateTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			RotateTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
-			MoveAwayFromNpc(GetClosestNpc(NpcSensor.NpcsInSight));
+			if(CurrentEnemyTarget == null) 
+				CurrentEnemyTarget = GetClosestNpc(NpcSensor.NpcsInSight);
+			
+			RotateTowardsNpc(CurrentEnemyTarget);
+			MoveAwayFromNpc(CurrentEnemyTarget);
 
 			HandController.Use();
 		}
@@ -108,7 +118,7 @@ namespace Playmode.Npc.Strategies
 				return State.Retreating;
 			}
 
-			return DistanceToCurrentTarget < 5 ? State.Attacking : State.Engaging;
+			return DistanceToCurrentTarget < AttackingDistance ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateAttacking()
@@ -124,7 +134,7 @@ namespace Playmode.Npc.Strategies
 				return State.Retreating;
 			}
 
-			return DistanceToCurrentTarget < 5 ? State.Attacking : State.Engaging;
+			return DistanceToCurrentTarget < AttackingDistance ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()

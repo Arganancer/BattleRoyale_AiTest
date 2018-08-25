@@ -4,6 +4,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
+using Playmode.Pickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -44,6 +45,17 @@ namespace Playmode.Npc.Strategies
 	/// </summary>
 	public abstract class BaseNpcBehavior : INpcStrategy
 	{
+		protected enum SightRoutine
+		{
+			None,
+			LookingLeft,
+			LookingRight,
+			LookingSideToSide
+		}
+		private float currentSightRoutineDelay;
+		private const float SightRoutineDelay = 1.2f;
+		
+		protected SightRoutine CurrentSightRoutine;
 		protected readonly Mover Mover;
 		protected readonly HandController HandController;
 		protected readonly NpcSensor NpcSensor;
@@ -54,6 +66,9 @@ namespace Playmode.Npc.Strategies
 		protected Vector3 MovementDirection;
 		protected float DistanceToCurrentTarget;
 		protected int RotationOrientation;
+		protected NpcController CurrentEnemyTarget;
+		protected PickableController CurrentPickableTarget;
+		protected float AttackingDistance = 5f;
 
 		protected BaseNpcBehavior(Mover mover, HandController handController,
 			HitSensor hitSensor, Health health, NpcSensor npcSensor)
@@ -100,30 +115,18 @@ namespace Playmode.Npc.Strategies
 
 		protected void RotateTowardsDirection(Vector3 direction)
 		{
-			Mover.Rotate(HandController.AimTowardsDirection(Mover, direction));
+			Mover.RotateTowards(direction);
 		}
 
 		protected void RotateTowardsNpc(NpcController npcController)
 		{
-			Mover.Rotate(HandController.AimTowardsPoint(npcController.transform.parent.position));
+			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
 		}
 
 		protected static Vector3 GetRandomDirection()
 		{
-			return Random.insideUnitCircle.normalized;
+			return Random.insideUnitCircle;
 		}
-
-		protected enum SightRoutine
-		{
-			None,
-			LookingLeft,
-			LookingRight,
-			LookingSideToSide
-		}
-
-		protected SightRoutine CurrentSightRoutine;
-		private float currentSightRoutineDelay;
-		private const float SightRoutineDelay = 1.2f;
 
 		protected void UpdateSightRoutine()
 		{
@@ -227,6 +230,15 @@ namespace Playmode.Npc.Strategies
 			return closestNpc;
 		}
 
+		protected void UpdateCurrentEnemyTarget()
+		{
+			if (CurrentEnemyTarget != null)
+			{
+				DistanceToCurrentTarget = Vector3.Distance(CurrentEnemyTarget.transform.position,
+					Mover.transform.parent.position);
+			}
+		}
+
 		public void Act()
 		{
 			switch (CurrentState)
@@ -255,6 +267,7 @@ namespace Playmode.Npc.Strategies
 
 		private void UpdateNpcLogic()
 		{
+			UpdateCurrentEnemyTarget();
 			switch (CurrentState)
 			{
 				case State.Idle:

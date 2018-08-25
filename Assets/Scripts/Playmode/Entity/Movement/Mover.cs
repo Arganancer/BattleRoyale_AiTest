@@ -29,5 +29,7 @@ namespace Playmode.Entity.Movement
 		public abstract void MoveRelativeToWorld(Vector3 direction);
 
 		public abstract void Rotate(float direction);
+
+		public abstract void RotateTowards(Vector3 target);
 	}
 }

@@ -35,5 +35,11 @@ namespace Playmode.Entity.Movement
 				(direction < 0 ? RotateSpeed : -RotateSpeed) * Time.deltaTime
 			);
 		}
+
+		public override void RotateTowards(Vector3 target)
+		{
+			var desiredOrientation = Quaternion.LookRotation(Vector3.forward, target);
+			rootTransform.rotation = Quaternion.RotateTowards(rootTransform.rotation, desiredOrientation, RotateSpeed * Time.deltaTime);
+		}
 	}
 }
