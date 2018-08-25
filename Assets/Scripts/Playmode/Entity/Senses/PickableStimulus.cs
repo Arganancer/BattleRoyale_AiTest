@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Playmode.Pickable;
+using UnityEngine;
 
 namespace Playmode.Entity.Senses
 {
@@ -6,8 +7,7 @@ namespace Playmode.Entity.Senses
 	{
 		private void OnCollisionEnter2D(Collision2D other)
 		{
-			// TODO:
-			throw new System.NotImplementedException();
+			other.gameObject.GetComponent<NpcSensor>()?.pickPickable(transform.gameObject.GetComponent<PickableController>());
 		}
 	}
 }

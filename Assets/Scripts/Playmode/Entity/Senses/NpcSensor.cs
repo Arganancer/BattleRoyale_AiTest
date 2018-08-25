@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using Playmode.Npc;
+using Playmode.Pickable;
 using UnityEngine;
 
 namespace Playmode.Entity.Senses
 {
 	public delegate void NpcSensorEventHandler(NpcController npc);
 
+	public delegate void PickableNcpSensorEventHandler(PickableController pickableController);
 	public class NpcSensor : MonoBehaviour
 	{
 		private ICollection<NpcController> npcsInSight;
 
 		public event NpcSensorEventHandler OnNpcSeen;
 		public event NpcSensorEventHandler OnNpcSightLost;
+		public event PickableNcpSensorEventHandler pickablePickedEventHandler;
 
 		public IEnumerable<NpcController> NpcsInSight => npcsInSight;
 
@@ -63,6 +66,14 @@ namespace Playmode.Entity.Senses
 			foreach (var npc in npcsInSightToRemove)
 			{
 				npcsInSight.Remove(npc);
+			}
+		}
+
+		public void pickPickable(PickableController pickableController)
+		{
+			if (pickablePickedEventHandler != null)
+			{
+				pickablePickedEventHandler(pickableController);
 			}
 		}
 	}

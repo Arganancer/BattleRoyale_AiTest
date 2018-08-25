@@ -1,4 +1,5 @@
 ﻿using System;
+using Playmode.Entity.Senses;
 using UnityEngine;
 
 namespace Playmode.Pickable
@@ -10,10 +11,12 @@ namespace Playmode.Pickable
 		[SerializeField] private Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
-
+		private PickableNcpSensorEventHandler pickableNcpSensorEventHandler;
+		private TypePickable.TypePickable typePickable;
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
+			pickableNcpSensorEventHandler += OnPickablePicked;
 			ValidateSerialisedFields();
 		}
 
@@ -36,27 +39,39 @@ namespace Playmode.Pickable
 			}
 		}
 
-		public void Configure(PickableBehaviour.PickableBehaviour pickableBehaviour)
+		public void Configure(TypePickable.TypePickable typePickable)
 		{
-			switch (pickableBehaviour)
+			switch (typePickable)
 			{
-				case PickableBehaviour.PickableBehaviour.Medicalkit:
+				case TypePickable.TypePickable.Medicalkit:
 					visualComponent.sprite = medicalKit;
 					break;
-				case PickableBehaviour.PickableBehaviour.Shotgun:
+				case TypePickable.TypePickable.Shotgun:
 					visualComponent.sprite = shotgun;
 					break;
-				case PickableBehaviour.PickableBehaviour.Uzi:
+				case TypePickable.TypePickable.Uzi:
 					visualComponent.sprite = uzi;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(pickableBehaviour), pickableBehaviour, null);
+					throw new ArgumentOutOfRangeException(nameof(typePickable), typePickable, null);
+			}
+			this.typePickable = typePickable;
+		}
+
+		public void OnPickablePicked(PickableController pickableController)
+		{
+			if (pickableController == this)
+			{
+				AppliedRelatedPickableEffect();
 			}
 		}
 
-		public void OnPickablePicked()
+		private void AppliedRelatedPickableEffect()
 		{
-			//call the behaviour corresponding to the type of pickable
+			switch (typePickable)
+			{
+				
+			}
 		}
 	}
 }

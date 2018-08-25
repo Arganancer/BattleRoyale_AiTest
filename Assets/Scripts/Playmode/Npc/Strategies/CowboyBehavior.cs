@@ -9,9 +9,9 @@ using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
-	public class CowboyBehaviour : BaseNpcBehavior
+	public class CowboyBehavior : BaseNpcBehavior
 	{
-		public CowboyBehaviour(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+		public CowboyBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensor npcSensor)
 			: base(mover, handController, hitSensor, health, npcSensor)
 		{
@@ -51,37 +51,64 @@ namespace Playmode.Npc.Strategies
 		{
 			if (NpcSensor.NpcsInSight.Any())
 			{
-				return State.Roaming;
+				return State.Attacking;
 			}
 
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				TimeUntilStateSwitch = Random.Range(0.2f, 1.0f);
+				TimeUntilStateSwitch = Random.Range(4f, 6f);
+				return State.Roaming;
+			}
+
+			return State.Idle;
+		}
+
+		protected override State EvaluateRoaming()
+		{
+			if (NpcSensor.NpcsInSight.Any())
+			{
+				return State.Attacking;
+			}
+			
+			TimeUntilStateSwitch -= Time.deltaTime;
+			if (TimeUntilStateSwitch <= 0)
+			{
+				TimeUntilStateSwitch = Random.Range(0.5f, 1.5f);
 				return State.Idle;
 			}
 
 			return State.Roaming;
 		}
 
-		protected override State EvaluateRoaming()
-		{
-			throw new System.NotImplementedException();
-		}
-
 		protected override State EvaluateEngaging()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensor.NpcsInSight.Any())
+			{
+				return State.Idle;
+			}
+			
+			return State.Engaging;
 		}
 
 		protected override State EvaluateAttacking()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensor.NpcsInSight.Any())
+			{
+				return State.Idle;
+			}
+			
+			return State.Attacking;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensor.NpcsInSight.Any())
+			{
+				return State.Idle;
+			}
+			
+			return State.Attacking;
 		}
 	}
 }

@@ -11,23 +11,19 @@ namespace Playmode.Pickable
 		private float camViewWidth;
 		private float camViewHeight;
 
-		private static readonly PickableBehaviour.PickableBehaviour[] DefaultPickableBehaviours =
+		private static readonly TypePickable.TypePickable[] DefaultTypePickable =
 		{
-			PickableBehaviour.PickableBehaviour.Medicalkit,
-			PickableBehaviour.PickableBehaviour.Shotgun,
-			PickableBehaviour.PickableBehaviour.Uzi
+			TypePickable.TypePickable.Medicalkit,
+			TypePickable.TypePickable.Shotgun,
+			TypePickable.TypePickable.Uzi
 		};
 
 		[SerializeField] private GameObject pickablePrefab;
 		[SerializeField] private int numberOfPickable = 4;
 
-		public PickableSpawner(Camera cam)
-		{
-			this.cam = cam;
-		}
-
 		private void Awake()
 		{
+			cam = Camera.main;
 			camViewHeight = cam.orthographicSize * 2f;
 			camViewWidth = camViewHeight * cam.aspect;
 			ValidateSerialisedFields();
@@ -46,7 +42,7 @@ namespace Playmode.Pickable
 
 		private void SpawnPickables()
 		{
-			var pickableStragegyProvider = new LoopingEnumerator<PickableBehaviour.PickableBehaviour>(DefaultPickableBehaviours);
+			var pickableStragegyProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
 			for (int i = 0; i < numberOfPickable; ++i)
 			{
 				SpawnPickable(
@@ -62,7 +58,7 @@ namespace Playmode.Pickable
 				UnityEngine.Random.Range(0, camViewHeight));
 		}
 
-		private void SpawnPickable(Vector3 position, PickableBehaviour.PickableBehaviour strategy)
+		private void SpawnPickable(Vector3 position, TypePickable.TypePickable strategy)
 		{
 			Instantiate(pickablePrefab, position, Quaternion.identity)
 				.GetComponentInChildren<PickableController>()
