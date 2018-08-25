@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
-using UnityEngine.Assertions.Comparers;
 using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
@@ -21,40 +19,35 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoIdle()
 		{
-			Mover.Rotate(RotationOrientation);
+			RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
 			UpdateSightRoutine();
-			Mover.MoveRelativeToWorld(MovementDirection);
+			MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
-			Mover.Rotate(
-				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+			RotateTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
+			MoveTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
 
 			HandController.Use();
-			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
-			                          Mover.transform.parent.position);
 		}
 
 		protected override void DoAttacking()
 		{
-			Mover.Rotate(
-				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+			RotateTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
 
 			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			Vector3 DirectionAwayFromEnemy = Mover.transform.parent.position -
-			                                 GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position;
-			Mover.Rotate(
-				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
-			Mover.MoveRelativeToWorld(DirectionAwayFromEnemy.normalized + Vector3.right);
+			RotateTowardsNpc(GetClosestNpc(NpcSensor.NpcsInSight));
+			MoveAwayFromNpc(GetClosestNpc(NpcSensor.NpcsInSight));
+
 			HandController.Use();
 		}
 
@@ -73,7 +66,7 @@ namespace Playmode.Npc.Strategies
 			if (TimeUntilStateSwitch <= 0)
 			{
 				MovementDirection = GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(6f, 8f);
+				TimeUntilStateSwitch = Random.Range(1.2f, 3.5f);
 				return State.Roaming;
 			}
 
@@ -95,7 +88,7 @@ namespace Playmode.Npc.Strategies
 					RotationOrientation = Random.Range(-1, 1);
 				}
 
-				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
+				TimeUntilStateSwitch = Random.Range(0.2f, 0.6f);
 				return State.Idle;
 			}
 
@@ -125,7 +118,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
-			
+
 			if (Health.HealthPoints < 50)
 			{
 				return State.Retreating;

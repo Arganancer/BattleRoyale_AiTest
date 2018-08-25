@@ -7,6 +7,9 @@ namespace Playmode.Npc
 {
 	public class NpcSpawner : MonoBehaviour
 	{
+		// TODO: Remove (Debug Field)
+		[SerializeField] private int nbOfEnemies;
+
 		private static readonly Color[] DefaultColors =
 		{
 			Color.white, Color.black, Color.blue, Color.cyan, Color.green,
@@ -50,7 +53,11 @@ namespace Playmode.Npc
 			var stragegyProvider = new LoopingEnumerator<NpcStrategy>(DefaultStrategies);
 			var colorProvider = new LoopingEnumerator<Color>(colors);
 
-			for (var i = 0; i < transform.childCount; i++)
+			// TODO: Remove (Debug variable)
+			if (nbOfEnemies > transform.childCount)
+				nbOfEnemies = transform.childCount;
+
+			for (var i = 0; i < nbOfEnemies /* <-- TODO: Change for transform.childCount */; i++)
 				SpawnNpc(
 					transform.GetChild(i).position,
 					stragegyProvider.Next(),

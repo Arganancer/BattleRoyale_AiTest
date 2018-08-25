@@ -68,21 +68,49 @@ namespace Playmode.Npc.Strategies
 			MovementDirection = new Vector3();
 		}
 
-		protected void MoveTowardsPosition(Vector3 position)
+		/// <summary>
+		/// Moves the object in the direction of the given position.
+		///
+		/// This function works by obtaining a directional vector via vector substraction.
+		/// </summary>
+		protected void MoveTowardsNpc(NpcController npcController)
 		{
-			var direction = position - Mover.transform.root.position;
-			Mover.MoveRelativeToSelf(direction);
+			Mover.MoveRelativeToWorld(npcController.transform.parent.position - Mover.transform.parent.position);
 		}
 
-		protected void MoveAwayFromPosition(Vector3 position)
+		protected void MoveTowardsDirection(Vector3 direction)
 		{
-			var direction = Mover.transform.root.position - position;
-			Mover.MoveRelativeToSelf(direction);
+			Mover.MoveRelativeToWorld(direction);
 		}
 
-		protected Vector3 GetRandomDirection()
+		protected void MoveAwayFromNpc(NpcController npcController)
 		{
-			return UnityEngine.Random.insideUnitCircle.normalized;
+			Mover.MoveRelativeToWorld(Mover.transform.parent.position - npcController.transform.parent.position);
+		}
+
+		protected void MoveAwayFromDirection(Vector3 direction)
+		{
+			Mover.MoveRelativeToWorld(-direction);
+		}
+
+		protected void RotateTowardsAngle(int angle)
+		{
+			Mover.Rotate(angle);
+		}
+
+		protected void RotateTowardsDirection(Vector3 direction)
+		{
+			Mover.Rotate(HandController.AimTowardsDirection(Mover, direction));
+		}
+
+		protected void RotateTowardsNpc(NpcController npcController)
+		{
+			Mover.Rotate(HandController.AimTowardsPoint(npcController.transform.parent.position));
+		}
+
+		protected static Vector3 GetRandomDirection()
+		{
+			return Random.insideUnitCircle.normalized;
 		}
 
 		protected enum SightRoutine
@@ -95,12 +123,8 @@ namespace Playmode.Npc.Strategies
 
 		protected SightRoutine CurrentSightRoutine;
 		private float currentSightRoutineDelay;
-		private const float SightRoutineDelay = 1.5f;
+		private const float SightRoutineDelay = 1.2f;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		protected void UpdateSightRoutine()
 		{
 			if (currentSightRoutineDelay > 0f)
@@ -110,15 +134,9 @@ namespace Playmode.Npc.Strategies
 			else if (CurrentSightRoutine == SightRoutine.None)
 			{
 				var chanceOfSightRoutine = Random.Range(1, 100);
-				if (chanceOfSightRoutine <= 3)
+				if (chanceOfSightRoutine <= 2)
 				{
-					currentSightRoutineDelay = SightRoutineDelay;
-					if (chanceOfSightRoutine <= 2)
-					{
-						CurrentSightRoutine = SightRoutine.LookingRight;
-					}
-
-					CurrentSightRoutine = SightRoutine.LookingLeft;
+					CurrentSightRoutine = chanceOfSightRoutine <= 1 ? SightRoutine.LookingRight : SightRoutine.LookingLeft;
 				}
 			}
 
@@ -143,7 +161,7 @@ namespace Playmode.Npc.Strategies
 
 		private void LookForward()
 		{
-			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
+			RotateTowardsDirection(MovementDirection);
 		}
 
 		private void LookToTheRight()
@@ -154,7 +172,7 @@ namespace Playmode.Npc.Strategies
 			}
 			else
 			{
-				CurrentSightRoutine = SightRoutine.None;
+				StartSightRoutineDelay();
 			}
 		}
 
@@ -166,12 +184,19 @@ namespace Playmode.Npc.Strategies
 			}
 			else
 			{
-				CurrentSightRoutine = SightRoutine.None;
+				StartSightRoutineDelay();
 			}
 		}
 
 		private void LookSideToSide()
 		{
+			
+		}
+
+		private void StartSightRoutineDelay()
+		{
+			currentSightRoutineDelay = SightRoutineDelay;
+			CurrentSightRoutine = SightRoutine.None;
 		}
 
 		protected NpcController GetClosestNpc(IEnumerable<NpcController> npcsInSight)
