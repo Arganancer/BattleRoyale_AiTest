@@ -47,6 +47,11 @@ namespace Playmode.Bullet
 			timeSinceSpawnedInSeconds += Time.deltaTime;
 		}
 
+		public void Hit()
+		{
+			timeSinceSpawnedInSeconds = lifeSpanInSeconds;
+		}
+
 		private void Act()
 		{
 			if (IsAlive)

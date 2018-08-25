@@ -36,7 +36,7 @@ namespace Playmode.Npc.BodyParts
 
 		public float AimTowardsPoint(Vector3 point)
 		{
-			return Vector3.Dot(point - mover.transform.parent.position, transform.right);
+			return Vector3.Dot(point - mover.transform.root.position, transform.right);
 		}
 
 		public float AimTowardsDirection(Mover mainMover, Vector3 movementDirection)

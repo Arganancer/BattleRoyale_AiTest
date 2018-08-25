@@ -1,4 +1,5 @@
 ﻿using System;
+using Playmode.Bullet;
 using UnityEngine;
 
 namespace Playmode.Entity.Senses
@@ -20,7 +21,11 @@ namespace Playmode.Entity.Senses
 
 		private void OnTriggerEnter2D(Collider2D other)
 		{
-			other.GetComponent<HitSensor>()?.Hit(hitPoints);
+			if (other.GetComponent<HitSensor>() != null)
+			{
+				other.GetComponent<HitSensor>().Hit(hitPoints);
+				transform.root.GetComponentInChildren<BulletController>().Hit();
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
@@ -51,6 +52,8 @@ namespace Playmode.Npc.Strategies
 		protected State CurrentState;
 		protected float TimeUntilStateSwitch;
 		protected Vector3 MovementDirection;
+		protected float DistanceToCurrentTarget;
+		protected int RotationOrientation;
 
 		protected BaseNpcBehavior(Mover mover, HandController handController,
 			HitSensor hitSensor, Health health, NpcSensor npcSensor)
@@ -65,21 +68,110 @@ namespace Playmode.Npc.Strategies
 			MovementDirection = new Vector3();
 		}
 
-		protected void MoveTowardsObject(GameObject target)
+		protected void MoveTowardsPosition(Vector3 position)
 		{
-			var direction = target.transform.position - Mover.transform.parent.position;
+			var direction = position - Mover.transform.root.position;
 			Mover.MoveRelativeToSelf(direction);
 		}
 
-		protected void FleeFromObject(GameObject npc)
+		protected void MoveAwayFromPosition(Vector3 position)
 		{
-			var direction = Mover.transform.parent.position - npc.transform.position;
+			var direction = Mover.transform.root.position - position;
 			Mover.MoveRelativeToSelf(direction);
 		}
 
 		protected Vector3 GetRandomDirection()
 		{
 			return UnityEngine.Random.insideUnitCircle.normalized;
+		}
+
+		protected enum SightRoutine
+		{
+			None,
+			LookingLeft,
+			LookingRight,
+			LookingSideToSide
+		}
+
+		protected SightRoutine CurrentSightRoutine;
+		private float currentSightRoutineDelay;
+		private const float SightRoutineDelay = 1.5f;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		protected void UpdateSightRoutine()
+		{
+			if (currentSightRoutineDelay > 0f)
+			{
+				currentSightRoutineDelay -= Time.deltaTime;
+			}
+			else if (CurrentSightRoutine == SightRoutine.None)
+			{
+				var chanceOfSightRoutine = Random.Range(1, 100);
+				if (chanceOfSightRoutine <= 2)
+				{
+					currentSightRoutineDelay = SightRoutineDelay;
+					if (chanceOfSightRoutine <= 1)
+					{
+						CurrentSightRoutine = SightRoutine.LookingRight;
+					}
+
+					CurrentSightRoutine = SightRoutine.LookingLeft;
+				}
+			}
+
+			switch (CurrentSightRoutine)
+			{
+				case SightRoutine.LookingLeft:
+					LookToTheLeft();
+					break;
+				case SightRoutine.LookingRight:
+					LookToTheRight();
+					break;
+				case SightRoutine.LookingSideToSide:
+					LookSideToSide();
+					break;
+				case SightRoutine.None:
+					LookForward();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		private void LookForward()
+		{
+			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
+		}
+
+		private void LookToTheRight()
+		{
+			if (Vector3.Angle(Mover.transform.up, MovementDirection) < 70f)
+			{
+				Mover.Rotate(1);
+			}
+			else
+			{
+				CurrentSightRoutine = SightRoutine.None;
+			}
+		}
+
+		private void LookToTheLeft()
+		{
+			if (Vector3.Angle(Mover.transform.up, MovementDirection) < 70f)
+			{
+				Mover.Rotate(-1);
+			}
+			else
+			{
+				CurrentSightRoutine = SightRoutine.None;
+			}
+		}
+
+		private void LookSideToSide()
+		{
 		}
 
 		protected NpcController GetClosestNpc(IEnumerable<NpcController> npcsInSight)
@@ -106,6 +198,7 @@ namespace Playmode.Npc.Strategies
 				}
 			}
 
+			DistanceToCurrentTarget = distance;
 			return closestNpc;
 		}
 
@@ -160,9 +253,13 @@ namespace Playmode.Npc.Strategies
 		}
 
 		protected abstract void DoIdle();
+
 		protected abstract void DoRoaming();
+
 		protected abstract void DoEngaging();
+
 		protected abstract void DoAttacking();
+
 		protected abstract void DoRetreating();
 
 		protected abstract State EvaluateIdle();

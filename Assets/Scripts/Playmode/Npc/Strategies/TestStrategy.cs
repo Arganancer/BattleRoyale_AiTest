@@ -5,17 +5,14 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
+using UnityEngine.Assertions.Comparers;
 using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
 	public class TestStrategy : BaseNpcBehavior
 	{
-		public TestStrategy(
-			Mover mover,
-			HandController handController,
-			HitSensor hitSensor,
-			Health health,
+		public TestStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
 		{
 		}
@@ -24,11 +21,12 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoIdle()
 		{
+			Mover.Rotate(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
-			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
+			UpdateSightRoutine();
 			Mover.MoveRelativeToWorld(MovementDirection);
 		}
 
@@ -36,20 +34,28 @@ namespace Playmode.Npc.Strategies
 		{
 			Mover.Rotate(
 				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+
 			HandController.Use();
 			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
-			                          Mover.transform.parent.position
-			);
+			                          Mover.transform.parent.position);
 		}
 
 		protected override void DoAttacking()
 		{
-			throw new NotImplementedException();
+			Mover.Rotate(
+				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+
+			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			throw new NotImplementedException();
+			Vector3 DirectionAwayFromEnemy = Mover.transform.parent.position -
+			                                 GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position;
+			Mover.Rotate(
+				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+			Mover.MoveRelativeToWorld(DirectionAwayFromEnemy.normalized + Vector3.right);
+			HandController.Use();
 		}
 
 		#endregion
@@ -67,7 +73,7 @@ namespace Playmode.Npc.Strategies
 			if (TimeUntilStateSwitch <= 0)
 			{
 				MovementDirection = GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(4f, 6f);
+				TimeUntilStateSwitch = Random.Range(1.5f, 2.5f);
 				return State.Roaming;
 			}
 
@@ -84,7 +90,12 @@ namespace Playmode.Npc.Strategies
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				TimeUntilStateSwitch = Random.Range(0.5f, 1.5f);
+				while (RotationOrientation != 0)
+				{
+					RotationOrientation = Random.Range(-1, 1);
+				}
+
+				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
 
@@ -95,20 +106,43 @@ namespace Playmode.Npc.Strategies
 		{
 			if (!NpcSensor.NpcsInSight.Any())
 			{
+				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
 
-			return State.Engaging;
+			if (Health.HealthPoints < 50)
+			{
+				return State.Retreating;
+			}
+
+			return DistanceToCurrentTarget < 5 ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateAttacking()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensor.NpcsInSight.Any())
+			{
+				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
+				return State.Idle;
+			}
+			
+			if (Health.HealthPoints < 50)
+			{
+				return State.Retreating;
+			}
+
+			return DistanceToCurrentTarget < 5 ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensor.NpcsInSight.Any())
+			{
+				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
+				return State.Idle;
+			}
+
+			return State.Retreating;
 		}
 
 		#endregion
