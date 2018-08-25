@@ -110,10 +110,10 @@ namespace Playmode.Npc.Strategies
 			else if (CurrentSightRoutine == SightRoutine.None)
 			{
 				var chanceOfSightRoutine = Random.Range(1, 100);
-				if (chanceOfSightRoutine <= 2)
+				if (chanceOfSightRoutine <= 3)
 				{
 					currentSightRoutineDelay = SightRoutineDelay;
-					if (chanceOfSightRoutine <= 1)
+					if (chanceOfSightRoutine <= 2)
 					{
 						CurrentSightRoutine = SightRoutine.LookingRight;
 					}

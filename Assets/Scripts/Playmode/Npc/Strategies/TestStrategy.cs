@@ -73,7 +73,7 @@ namespace Playmode.Npc.Strategies
 			if (TimeUntilStateSwitch <= 0)
 			{
 				MovementDirection = GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(1.5f, 2.5f);
+				TimeUntilStateSwitch = Random.Range(6f, 8f);
 				return State.Roaming;
 			}
 

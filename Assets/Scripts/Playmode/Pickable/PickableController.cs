@@ -62,16 +62,16 @@ namespace Playmode.Pickable
 		{
 			if (pickableController == this)
 			{
-				AppliedRelatedPickableEffect();
+//				AppliedRelatedPickableEffect();
 			}
 		}
 
-		private void AppliedRelatedPickableEffect()
-		{
-			switch (typePickable)
-			{
-				
-			}
-		}
+//		private void AppliedRelatedPickableEffect()
+//		{
+//			switch (typePickable)
+//			{
+//				
+//			}
+//		}
 	}
 }
