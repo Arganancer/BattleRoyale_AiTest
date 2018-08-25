@@ -553,6 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b913f8b7fd07f4e882ba239f1b7648, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nbOfEnemies: 1
   npcPrefab: {fileID: 1815521992430954, guid: 88e89628113b2b04eb2c08e350ffdee9, type: 2}
   colors:
   - {r: 1, g: 1, b: 1, a: 1}
