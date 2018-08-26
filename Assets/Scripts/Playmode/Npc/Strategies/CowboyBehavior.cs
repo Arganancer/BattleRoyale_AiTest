@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
@@ -20,41 +19,52 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoIdle()
 		{
-			throw new NotImplementedException();
+			RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
-			Mover.Rotate(HandController.AimTowardsDirection(Mover, MovementDirection));
-			Mover.MoveRelativeToWorld(MovementDirection);
+			UpdateSightRoutine();
+			MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
-			Mover.Rotate(
-				HandController.AimTowardsPoint(GetClosestNpc(NpcSensorSight.NpcsInSight).transform.parent.position));
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
+			RotateTowardsNpc(CurrentEnemyTarget);
+			MoveTowardsNpc(CurrentEnemyTarget);
+
 			HandController.Use();
-			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensorSight.NpcsInSight).transform.parent.position -
-			                          Mover.transform.parent.position);
 		}
 
 		protected override void DoInvestigating()
 		{
-			throw new NotImplementedException();
+			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			UpdateSightRoutine();
+			MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoAttacking()
 		{
-			throw new NotImplementedException();
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
+			RotateTowardsNpc(CurrentEnemyTarget);
+
+			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			throw new NotImplementedException();
+			//TODO: never retreat
 		}
 
 		protected override State EvaluateIdle()
 		{
+			//TODO: devrait chercher les armes first
+			
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Attacking;
@@ -72,6 +82,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
+			//TODO: vérifier les armes in sight 
+			
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Attacking;
@@ -89,7 +101,17 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateInvestigating()
 		{
-			throw new NotImplementedException();
+			if (NpcSensorSight.NpcsInSight.Any())
+			{
+				return State.Engaging;
+			}
+			
+			if (!NpcSensorSound.SoundsInformations.Any())
+			{
+				return State.Idle;
+			}
+
+			return State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
