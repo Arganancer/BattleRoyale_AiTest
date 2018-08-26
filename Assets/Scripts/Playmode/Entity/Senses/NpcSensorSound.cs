@@ -24,24 +24,31 @@ namespace Playmode.Entity.Senses
 			npcControllers = new List<NpcController>();
 		}
 
-		public void UpdateSoundSensor(Vector3 npcCurrentPosition)
+		public void UpdateSoundSensor(Vector3 npcCurrentPosition, Vector3 npcCurrentRotation)
 		{
-			UpdateSoundInformation(npcCurrentPosition);
+			UpdateSoundInformation(npcCurrentPosition, npcCurrentRotation);
 		}
 
-		private void UpdateSoundInformation(Vector3 npcCurrentPosition)
+		private void UpdateSoundInformation(Vector3 npcCurrentPosition, Vector3 npcCurrentRotation)
 		{
 			var outdatedSoundInformation = new Dictionary<float, Vector3>();
 
 			foreach (var soundInformation in soundsInformations)
 			{
+				// Remove sound information as it is too old.
 				if (soundInformation.Key < Time.time - timeUntilSoundInfoOutdated)
 				{
 					outdatedSoundInformation.Add(soundInformation.Key, soundInformation.Value);
 				}
+				// Remove sound information as it is now too far away.
 				else if (Vector3.Magnitude(soundInformation.Value - npcCurrentPosition) > maxDistanceToSoundPosition)
 				{
-					Debug.Log(Vector3.Magnitude(soundInformation.Value - npcCurrentPosition));
+					outdatedSoundInformation.Add(soundInformation.Key, soundInformation.Value);
+				}
+				// Remove sound information as it has now been investigated
+				else if (Vector3.Angle(npcCurrentRotation, soundInformation.Value - npcCurrentPosition) < 10f &&
+				         Vector3.Magnitude(soundInformation.Value - npcCurrentPosition) < 10f)
+				{
 					outdatedSoundInformation.Add(soundInformation.Key, soundInformation.Value);
 				}
 			}
@@ -80,6 +87,7 @@ namespace Playmode.Entity.Senses
 			{
 				adjustedTime += 0.0001f;
 			}
+
 			soundsInformations.Add(adjustedTime, positionWhenFired);
 		}
 	}

@@ -100,7 +100,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 
 		public void Act()
 		{
-			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position);
+			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position, Mover.transform.up);
 			switch (CurrentState)
 			{
 				case State.Idle:
@@ -377,9 +377,61 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			return closestSoundPosition;
 		}
 
-		private Vector3 GetPredictiveAimDirection(NpcController npc)
+		/// <summary>
+		/// Reference for Predictive Aiming: https://www.gamasutra.com/blogs/KainShin/20090515/83954/Predictive_Aim_Mathematics_for_AI_Targeting.php
+		/// </summary>
+		/// <param name="npc"></param>
+		/// <returns></returns>
+		protected Vector3 GetPredictiveAimDirection(NpcController npc)
 		{
-			return new Vector3();
+			var bulletSpeed = HandController.GetProjectileSpeed();
+			var bulletSpeedSq = bulletSpeed * bulletSpeed;
+			var bulletOrigin = HandController.GetWeaponPosition();
+			var enemyInitialPosition = npc.transform.root.position;
+			var enemyVelocity = npc.GetVelocity();
+			var enemySpeed = enemyVelocity.magnitude;
+			var enemySpeedSq = enemySpeed * enemySpeed;
+			var enemyToBullet = bulletOrigin - enemyInitialPosition;
+			var enemyToBulletDistance = enemyToBullet.magnitude;
+			var enemyToBulletDistanceSq = enemyToBulletDistance * enemyToBulletDistance;
+			var enemyToBulletDirection = enemyToBullet.normalized;
+			var enemyVelocityDirection = enemyVelocity.normalized;
+			
+			//Law of Cosines: A*A + B*B - 2*A*B*cos(theta) = C*C
+			//A is distance from bullet to enemy (known value: enemyToBulletDistance)
+			//B is distance traveled by enemy until impact (enemySpeed * t (time))
+			//C is distance traveled by bullet until impact (bulletSpeed * t (time))
+			var cosTheta = Vector3.Dot(enemyToBulletDirection, enemyVelocityDirection);
+
+			float t;
+			
+			// START VALIDATE PREDICTIVE AIM POSSIBLE
+				var a = bulletSpeedSq - enemySpeedSq;
+				var b = 2.0f * enemyToBulletDistance * enemySpeed * cosTheta;
+				var c = -enemyToBulletDistanceSq;
+				var discriminant = b * b - 4.0f * a * c;
+	
+				var uglyNumber = Mathf.Sqrt(discriminant);
+				var t0 = 0.5f * (-b + uglyNumber) / a;
+				var t1 = 0.5f * (-b - uglyNumber) / a;
+	
+				t = Mathf.Min(t0, t1);
+				if (t < Mathf.Epsilon)
+				{
+					t = Mathf.Max(t0, t1);
+				}
+	
+				if (t < Mathf.Epsilon)
+				{
+					// TODO: Validsolution not found;
+					// t = PredictiveAimWildGuessAtImpactTime();
+				}
+			// END PREDICTIVE AIM VALIDATION
+
+			var bulletVelocity = enemyVelocity + -enemyToBullet / t;
+			
+			
+			return bulletVelocity;
 		}
 
 		protected Vector3 GetNewestSoundPosition()

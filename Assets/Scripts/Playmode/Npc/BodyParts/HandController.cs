@@ -49,11 +49,23 @@ namespace Playmode.Npc.BodyParts
 
 		public void Use()
 		{
-			if (OnWeaponFired != null) OnWeaponFired(mover.transform.root.position);
+			// TODO: Remove this line
+			// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + mover.transform.root.position);
+			if (OnWeaponFired != null) OnWeaponFired(GetWeaponPosition());
 			if (weapon != null)
 			{
 				weapon.Shoot();
 			}
+		}
+
+		public float GetProjectileSpeed()
+		{
+			return weapon.GetComponentInChildren<WeaponController>().GetBulletSpeed();
+		}
+
+		public Vector3 GetWeaponPosition()
+		{
+			return weapon.GetComponentInChildren<WeaponController>().transform.position;
 		}
 	}
 }

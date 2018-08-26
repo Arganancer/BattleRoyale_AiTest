@@ -11,11 +11,16 @@ namespace Playmode.Npc.Strategies
 {
 	public class TestStrategy : BaseNpcBehavior
 	{
+		private const float MinIdleTime = 0.2f;
+		private const float MaxIdleTime = 0.5f;
+		private const float MinRoamingTime = 1.2f;
+		private const float MaxRoamingTime = 2.8f;
+
 		public TestStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
-			AttackingDistance = 5f;
+			AttackingDistance = 10f;
 		}
 
 		#region DoTheStuff
@@ -43,7 +48,7 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsNpc(CurrentEnemyTarget);
+			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			MoveTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
@@ -54,7 +59,7 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsNpc(CurrentEnemyTarget);
+			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
 			HandController.Use();
 		}
@@ -64,7 +69,7 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsNpc(CurrentEnemyTarget);
+			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			UpdateRetreatingRoutine(CurrentEnemyTarget);
 
 			HandController.Use();
@@ -76,6 +81,11 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
+			if (TimeUntilStateSwitch > MaxIdleTime)
+			{
+				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
+			}
+			
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
@@ -83,8 +93,6 @@ namespace Playmode.Npc.Strategies
 			
 			if (NpcSensorSound.SoundsInformations.Any())
 			{
-				// TODO: Remove
-				Debug.Log("Investigating");
 				return State.Investigating;
 			}
 
@@ -92,7 +100,7 @@ namespace Playmode.Npc.Strategies
 			if (TimeUntilStateSwitch <= 0)
 			{
 				MovementDirection = GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(1.2f, 3.5f);
+				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 				return State.Roaming;
 			}
 
@@ -101,6 +109,11 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
+			if (TimeUntilStateSwitch > MaxRoamingTime)
+			{
+				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
+			}
+			
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
@@ -108,8 +121,6 @@ namespace Playmode.Npc.Strategies
 
 			if (NpcSensorSound.SoundsInformations.Any())
 			{
-				// TODO: Remove
-				Debug.Log("Investigating");
 				return State.Investigating;
 			}
 
@@ -121,7 +132,7 @@ namespace Playmode.Npc.Strategies
 					RotationOrientation = Random.Range(-1, 1);
 				}
 
-				TimeUntilStateSwitch = Random.Range(0.2f, 0.6f);
+				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxRoamingTime);
 				return State.Idle;
 			}
 
@@ -137,8 +148,6 @@ namespace Playmode.Npc.Strategies
 			
 			if (!NpcSensorSound.SoundsInformations.Any())
 			{
-				// TODO: Remove
-				Debug.Log("Stopping Investigation");
 				return State.Idle;
 			}
 
@@ -149,7 +158,6 @@ namespace Playmode.Npc.Strategies
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
-				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
 
@@ -165,7 +173,6 @@ namespace Playmode.Npc.Strategies
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
-				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
 
@@ -181,7 +188,6 @@ namespace Playmode.Npc.Strategies
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
-				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
 

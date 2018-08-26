@@ -9,7 +9,16 @@ namespace Playmode.Application
 	{
 		private void Start()
 		{
+			SetTimeScale();
 			LoadGameScene();
+		}
+
+		private static void SetTimeScale()
+		{
+			// TODO: Remove this function.
+			// Used to slow down global game time for testing purposes.
+			// Regular timeScale for normal speed is 1.0f;
+			//Time.timeScale = 0.5f;
 		}
 
 		private void LoadGameScene()

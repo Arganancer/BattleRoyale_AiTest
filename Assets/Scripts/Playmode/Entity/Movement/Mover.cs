@@ -10,6 +10,8 @@ namespace Playmode.Entity.Movement
 
 		[SerializeField] protected float Speed = 2f;
 		[SerializeField] protected float RotateSpeed = 90f;
+		protected Vector3 PositionLastFrame;
+		protected Vector3 PositionThisFrame;
 
 		protected void Awake()
 		{
@@ -31,5 +33,9 @@ namespace Playmode.Entity.Movement
 		public abstract void Rotate(float direction);
 
 		public abstract void RotateTowards(Vector3 target);
+		
+		public abstract void UpdatePosition();
+		
+		public abstract Vector3 GetVelocity();
 	}
 }

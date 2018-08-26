@@ -1,12 +1,14 @@
 ﻿using System;
+using Playmode.Bullet;
+using Playmode.Entity.Movement;
 using UnityEngine;
 
 namespace Playmode.Weapon
 {
 	public class WeaponController : MonoBehaviour
 	{
-		[Header("Behaviour")] [SerializeField] private GameObject bulletPrefab;
-		[SerializeField] private float fireDelayInSeconds = 1f;
+		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
+		[SerializeField] private float fireDelayInSeconds = 0.3f;
 
 		private float lastTimeShotInSeconds;
 
@@ -33,10 +35,17 @@ namespace Playmode.Weapon
 		{
 			if (CanShoot)
 			{
+				// TODO: Remove this line
+				// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + transform.position);
 				Instantiate(bulletPrefab, transform.position, transform.rotation);
 
 				lastTimeShotInSeconds = Time.time;
 			}
+		}
+
+		public float GetBulletSpeed()
+		{
+			return bulletPrefab.GetComponentInChildren<RootMover>().GetSpeed();
 		}
 	}
 }

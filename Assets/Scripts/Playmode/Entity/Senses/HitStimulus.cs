@@ -6,7 +6,7 @@ namespace Playmode.Entity.Senses
 {
 	public class HitStimulus : MonoBehaviour
 	{
-		[Header("Behaviour")] [SerializeField] private int hitPoints = 10;
+		[Header("Behaviour")] [SerializeField] private int hitPoints = 8;
 
 		private void Awake()
 		{

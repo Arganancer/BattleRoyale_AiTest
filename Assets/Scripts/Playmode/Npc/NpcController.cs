@@ -104,6 +104,16 @@ namespace Playmode.Npc
 			strategy.Act();
 		}
 
+		private void LateUpdate()
+		{
+			mover.UpdatePosition();
+		}
+
+		public Vector3 GetVelocity()
+		{
+			return mover.GetVelocity();
+		}
+
 		private void OnDisable()
 		{
 			npcSensorSight.OnNpcSeen -= OnNpcSeen;

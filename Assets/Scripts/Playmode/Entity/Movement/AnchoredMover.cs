@@ -42,5 +42,19 @@ namespace Playmode.Entity.Movement
 			var desiredOrientation = Quaternion.LookRotation(target);
 			Quaternion.RotateTowards(rootTransform.rotation, desiredOrientation, RotateSpeed * Time.deltaTime);
 		}
+
+		public override void UpdatePosition()
+		{
+			PositionLastFrame = rootTransform.position;
+		}
+
+		public override Vector3 GetVelocity()
+		{
+			if(PositionLastFrame == rootTransform.position)
+				return new Vector3(0, 0, 0);
+			var directionalVector = (rootTransform.position - PositionLastFrame).normalized;
+			var velocityVector = directionalVector * Speed;
+			return velocityVector;
+		}
 	}
 }
