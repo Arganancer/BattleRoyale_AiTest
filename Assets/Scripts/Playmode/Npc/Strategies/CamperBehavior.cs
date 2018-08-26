@@ -2,12 +2,15 @@
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies.BaseStrategies;
 
 namespace Playmode.Npc.Strategies
 {
 	public class CamperBehavior : BaseNpcBehavior
 	{
-		public CamperBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
+		public CamperBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+			health, npcSensorSight, npcSensorSound)
 		{
 		}
 
@@ -22,6 +25,11 @@ namespace Playmode.Npc.Strategies
 		}
 
 		protected override void DoEngaging()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override void DoInvestigating()
 		{
 			throw new System.NotImplementedException();
 		}
@@ -42,6 +50,11 @@ namespace Playmode.Npc.Strategies
 		}
 
 		protected override State EvaluateRoaming()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override State EvaluateInvestigating()
 		{
 			throw new System.NotImplementedException();
 		}

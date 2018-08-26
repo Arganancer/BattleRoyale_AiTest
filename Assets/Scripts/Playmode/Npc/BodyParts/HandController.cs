@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace Playmode.Npc.BodyParts
 {
+	public delegate void WeaponFiredEventHandler(Vector3 positionWhenFired);
+	
 	public class HandController : MonoBehaviour
 	{
+		public event WeaponFiredEventHandler OnWeaponFired;
 		private Mover mover;
 		private WeaponController weapon;
 
@@ -46,7 +49,11 @@ namespace Playmode.Npc.BodyParts
 
 		public void Use()
 		{
-			if (weapon != null) weapon.Shoot();
+			if (OnWeaponFired != null) OnWeaponFired(mover.transform.root.position);
+			if (weapon != null)
+			{
+				weapon.Shoot();
+			}
 		}
 	}
 }

@@ -30,7 +30,8 @@ namespace Playmode.Npc
 		private Health health;
 		private Mover mover;
 		private Destroyer destroyer;
-		private NpcSensor npcSensor;
+		private NpcSensorSight npcSensorSight;
+		private NpcSensorSound npcSensorSound;
 		private HitSensor hitSensor;
 		private HandController handController;
 
@@ -72,11 +73,12 @@ namespace Playmode.Npc
 			destroyer = GetComponent<RootDestroyer>();
 
 			var rootTransform = transform.root;
-			npcSensor = rootTransform.GetComponentInChildren<NpcSensor>();
+			npcSensorSight = rootTransform.GetComponentInChildren<NpcSensorSight>();
+			npcSensorSound = rootTransform.GetComponentInChildren<NpcSensorSound>();
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
 
-			strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensor);
+			strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 		}
 
 		private void CreateStartingWeapon()
@@ -90,22 +92,22 @@ namespace Playmode.Npc
 
 		private void OnEnable()
 		{
-			npcSensor.OnNpcSeen += OnNpcSeen;
-			npcSensor.OnNpcSightLost += OnNpcSightLost;
+			npcSensorSight.OnNpcSeen += OnNpcSeen;
+			npcSensorSight.OnNpcSightLost += OnNpcSightLost;
 			hitSensor.OnHit += OnHit;
 			health.OnDeath += OnDeath;
 		}
 
 		private void Update()
 		{
-			npcSensor.RemoveNullNpc();
+			npcSensorSight.RemoveNullNpc();
 			strategy.Act();
 		}
 
 		private void OnDisable()
 		{
-			npcSensor.OnNpcSeen -= OnNpcSeen;
-			npcSensor.OnNpcSightLost -= OnNpcSightLost;
+			npcSensorSight.OnNpcSeen -= OnNpcSeen;
+			npcSensorSight.OnNpcSightLost -= OnNpcSightLost;
 			hitSensor.OnHit -= OnHit;
 			health.OnDeath -= OnDeath;
 		}
@@ -134,26 +136,20 @@ namespace Playmode.Npc
 
 		private void OnHit(int hitPoints)
 		{
-			Debug.Log("OW, I'm hurt! I am super the hurted!!!");
-
 			health.Hit(hitPoints);
 		}
 
 		private void OnDeath()
 		{
-			Debug.Log("Yaaaaarggg....!! I died....GG.");
-
 			destroyer.Destroy();
 		}
 
 		private void OnNpcSeen(NpcController npc)
 		{
-			Debug.Log("I've seen an ennemy!! Ya so dead noob!!!");
 		}
 
 		private void OnNpcSightLost(NpcController npc)
 		{
-			Debug.Log("I've lost sight of an ennemy...Yikes!!!");
 		}
 	}
 }

@@ -45,6 +45,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1669299227426268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4988521329807280}
+  - component: {fileID: 58055078512308626}
+  - component: {fileID: 114001878062316624}
+  m_Layer: 0
+  m_Name: SoundFar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1699645007186046
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,6 +128,7 @@ GameObject:
   - component: {fileID: 58758988853505006}
   - component: {fileID: 114842752972343190}
   - component: {fileID: 114136075856512652}
+  - component: {fileID: 114078432320471034}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -172,6 +190,7 @@ Transform:
   - {fileID: 4162923453424972}
   - {fileID: 4874356916862428}
   - {fileID: 4474749177164500}
+  - {fileID: 4988521329807280}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -201,6 +220,19 @@ Transform:
   m_Father: {fileID: 4400638406319482}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4988521329807280
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1669299227426268}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4400638406319482}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &50703390751095472
 Rigidbody2D:
   serializedVersion: 4
@@ -221,6 +253,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!58 &58055078512308626
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1669299227426268}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 30
 --- !u!58 &58758988853505006
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -260,14 +307,38 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 10, y: 17}
-      - {x: 9, y: 19}
-      - {x: 4, y: 21}
-      - {x: -4, y: 21}
-      - {x: -9, y: 19}
-      - {x: -10, y: 17}
+    - - {x: 11, y: 12}
+      - {x: 9, y: 16}
+      - {x: 4, y: 20}
+      - {x: -4, y: 20}
+      - {x: -9, y: 16}
+      - {x: -11, y: 12}
       - {x: -1, y: 0.5}
       - {x: 1, y: 0.5}
+--- !u!114 &114001878062316624
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1669299227426268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 248332e443614a728fc04081c24ac53c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeUntilSoundInfoOutdated: 5.5
+  maxDistanceToSoundPosition: 40
+--- !u!114 &114078432320471034
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1880469799408478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0a5e21b0375466c98746e6f9b5cc4eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114083873472680612
 MonoBehaviour:
   m_ObjectHideFlags: 1

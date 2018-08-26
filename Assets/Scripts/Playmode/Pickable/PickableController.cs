@@ -11,12 +11,12 @@ namespace Playmode.Pickable
 		[SerializeField] private Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
-		private PickableNcpSensorEventHandler pickableNcpSensorEventHandler;
+		private PickableSensorEventHandler pickableSensorEventHandler;
 		private TypePickable.TypePickable typePickable;
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
-			pickableNcpSensorEventHandler += OnPickablePicked;
+			pickableSensorEventHandler += OnPickablePicked;
 			ValidateSerialisedFields();
 		}
 

@@ -3,6 +3,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies.BaseStrategies;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,7 +12,8 @@ namespace Playmode.Npc.Strategies
 	public class TestStrategy : BaseNpcBehavior
 	{
 		public TestStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
-			NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+			health, npcSensorSight, npcSensorSound)
 		{
 			AttackingDistance = 5f;
 		}
@@ -28,12 +30,19 @@ namespace Playmode.Npc.Strategies
 			UpdateSightRoutine();
 			MoveTowardsDirection(MovementDirection);
 		}
+		
+		protected override void DoInvestigating()
+		{
+			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			UpdateSightRoutine();
+			MoveTowardsDirection(MovementDirection);
+		}
 
 		protected override void DoEngaging()
 		{
-			if(CurrentEnemyTarget == null) 
-				CurrentEnemyTarget = GetClosestNpc(NpcSensor.NpcsInSight);
-			
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
 			RotateTowardsNpc(CurrentEnemyTarget);
 			MoveTowardsNpc(CurrentEnemyTarget);
 
@@ -42,9 +51,9 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoAttacking()
 		{
-			if(CurrentEnemyTarget == null) 
-				CurrentEnemyTarget = GetClosestNpc(NpcSensor.NpcsInSight);
-			
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
 			RotateTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
@@ -52,11 +61,11 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRetreating()
 		{
-			if(CurrentEnemyTarget == null) 
-				CurrentEnemyTarget = GetClosestNpc(NpcSensor.NpcsInSight);
-			
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
 			RotateTowardsNpc(CurrentEnemyTarget);
-			MoveAwayFromNpc(CurrentEnemyTarget);
+			UpdateRetreatingRoutine(CurrentEnemyTarget);
 
 			HandController.Use();
 		}
@@ -67,9 +76,16 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			if (NpcSensor.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
+			}
+			
+			if (NpcSensorSound.SoundsInformations.Any())
+			{
+				// TODO: Remove
+				Debug.Log("Investigating");
+				return State.Investigating;
 			}
 
 			TimeUntilStateSwitch -= Time.deltaTime;
@@ -85,9 +101,16 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			if (NpcSensor.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
+			}
+
+			if (NpcSensorSound.SoundsInformations.Any())
+			{
+				// TODO: Remove
+				Debug.Log("Investigating");
+				return State.Investigating;
 			}
 
 			TimeUntilStateSwitch -= Time.deltaTime;
@@ -105,9 +128,26 @@ namespace Playmode.Npc.Strategies
 			return State.Roaming;
 		}
 
+		protected override State EvaluateInvestigating()
+		{
+			if (NpcSensorSight.NpcsInSight.Any())
+			{
+				return State.Engaging;
+			}
+			
+			if (!NpcSensorSound.SoundsInformations.Any())
+			{
+				// TODO: Remove
+				Debug.Log("Stopping Investigation");
+				return State.Idle;
+			}
+
+			return State.Investigating;
+		}
+
 		protected override State EvaluateEngaging()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
@@ -123,13 +163,13 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateAttacking()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;
 			}
 
-			if (Health.HealthPoints < 50)
+			if (Health.HealthPoints < 80)
 			{
 				return State.Retreating;
 			}
@@ -139,7 +179,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRetreating()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				TimeUntilStateSwitch = Random.Range(0.2f, 0.5f);
 				return State.Idle;

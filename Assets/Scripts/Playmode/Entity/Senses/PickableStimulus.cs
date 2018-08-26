@@ -7,7 +7,7 @@ namespace Playmode.Entity.Senses
 	{
 		private void OnCollisionEnter2D(Collision2D other)
 		{
-			other.gameObject.GetComponent<NpcSensor>()?.pickPickable(transform.gameObject.GetComponent<PickableController>());
+			other.gameObject.GetComponent<NpcSensorSight>()?.PickPickable(transform.gameObject.GetComponent<PickableController>());
 		}
 	}
 }

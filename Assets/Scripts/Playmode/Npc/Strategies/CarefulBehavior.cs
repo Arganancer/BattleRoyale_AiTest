@@ -3,6 +3,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies.BaseStrategies;
 using UnityEngine;
 
 namespace Playmode.Npc.Strategies
@@ -10,8 +11,10 @@ namespace Playmode.Npc.Strategies
 	public class CarefulBehavior : BaseNpcBehavior
 	{
 		[SerializeField] private int healthPointsToLose = 50;
-		
-		public CarefulBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health, NpcSensor npcSensor) : base(mover, handController, hitSensor, health, npcSensor)
+
+		public CarefulBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+			health, npcSensorSight, npcSensorSound)
 		{
 		}
 
@@ -30,6 +33,11 @@ namespace Playmode.Npc.Strategies
 			throw new System.NotImplementedException();
 		}
 
+		protected override void DoInvestigating()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		protected override void DoAttacking()
 		{
 			throw new System.NotImplementedException();
@@ -42,11 +50,11 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			if (NpcSensor.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Attacking;
 			}
-			
+
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
@@ -60,11 +68,11 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			if (NpcSensor.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Attacking;
 			}
-			
+
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
@@ -76,9 +84,14 @@ namespace Playmode.Npc.Strategies
 			return State.Roaming;
 		}
 
+		protected override State EvaluateInvestigating()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		protected override State EvaluateEngaging()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
@@ -88,7 +101,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateAttacking()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}

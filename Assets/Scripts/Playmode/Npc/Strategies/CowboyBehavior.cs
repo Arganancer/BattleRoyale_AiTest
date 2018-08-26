@@ -4,6 +4,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies.BaseStrategies;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,8 +13,8 @@ namespace Playmode.Npc.Strategies
 	public class CowboyBehavior : BaseNpcBehavior
 	{
 		public CowboyBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
-			NpcSensor npcSensor)
-			: base(mover, handController, hitSensor, health, npcSensor)
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
+			: base(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound)
 		{
 		}
 
@@ -31,10 +32,15 @@ namespace Playmode.Npc.Strategies
 		protected override void DoEngaging()
 		{
 			Mover.Rotate(
-				HandController.AimTowardsPoint(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position));
+				HandController.AimTowardsPoint(GetClosestNpc(NpcSensorSight.NpcsInSight).transform.parent.position));
 			HandController.Use();
-			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensor.NpcsInSight).transform.parent.position -
+			Mover.MoveRelativeToWorld(GetClosestNpc(NpcSensorSight.NpcsInSight).transform.parent.position -
 			                          Mover.transform.parent.position);
+		}
+
+		protected override void DoInvestigating()
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override void DoAttacking()
@@ -49,7 +55,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			if (NpcSensor.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Attacking;
 			}
@@ -66,7 +72,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			if (NpcSensor.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Attacking;
 			}
@@ -81,9 +87,14 @@ namespace Playmode.Npc.Strategies
 			return State.Roaming;
 		}
 
+		protected override State EvaluateInvestigating()
+		{
+			throw new NotImplementedException();
+		}
+
 		protected override State EvaluateEngaging()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
@@ -93,7 +104,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateAttacking()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
@@ -103,7 +114,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRetreating()
 		{
-			if (!NpcSensor.NpcsInSight.Any())
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}

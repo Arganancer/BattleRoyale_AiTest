@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Playmode.Entity.Senses
 {
-	public class NpcStimulus : MonoBehaviour
+	public class NpcSoundStimulus : MonoBehaviour
 	{
 		private NpcController npc;
 
@@ -19,12 +19,12 @@ namespace Playmode.Entity.Senses
 
 		private void OnTriggerEnter2D(Collider2D other)
 		{
-			other.GetComponent<NpcSensorSight>()?.See(npc);
+			other.GetComponent<NpcSensorSound>()?.EnterSoundRange(npc);
 		}
 
 		private void OnTriggerExit2D(Collider2D other)
 		{
-			other.GetComponent<NpcSensorSight>()?.LoseSightOf(npc);
+			other.GetComponent<NpcSensorSound>()?.LeaveSoundRange(npc);
 		}
 	}
 }

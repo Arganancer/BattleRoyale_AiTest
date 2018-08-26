@@ -7,14 +7,15 @@ namespace Playmode.Entity.Senses
 {
 	public delegate void NpcSensorEventHandler(NpcController npc);
 
-	public delegate void PickableNcpSensorEventHandler(PickableController pickableController);
-	public class NpcSensor : MonoBehaviour
+	public delegate void PickableSensorEventHandler(PickableController pickableController);
+
+	public class NpcSensorSight : MonoBehaviour
 	{
 		private ICollection<NpcController> npcsInSight;
 
 		public event NpcSensorEventHandler OnNpcSeen;
 		public event NpcSensorEventHandler OnNpcSightLost;
-		public event PickableNcpSensorEventHandler pickablePickedEventHandler;
+		public event PickableSensorEventHandler PickablePickedEventHandler;
 
 		public IEnumerable<NpcController> NpcsInSight => npcsInSight;
 
@@ -35,8 +36,9 @@ namespace Playmode.Entity.Senses
 			NotifyNpcSeen(npc);
 		}
 
-		public void LooseSightOf(NpcController npc)
+		public void LoseSightOf(NpcController npc)
 		{
+			
 			npcsInSight.Remove(npc);
 
 			NotifyNpcSightLost(npc);
@@ -69,11 +71,11 @@ namespace Playmode.Entity.Senses
 			}
 		}
 
-		public void pickPickable(PickableController pickableController)
+		public void PickPickable(PickableController pickableController)
 		{
-			if (pickablePickedEventHandler != null)
+			if (PickablePickedEventHandler != null)
 			{
-				pickablePickedEventHandler(pickableController);
+				PickablePickedEventHandler(pickableController);
 			}
 		}
 	}

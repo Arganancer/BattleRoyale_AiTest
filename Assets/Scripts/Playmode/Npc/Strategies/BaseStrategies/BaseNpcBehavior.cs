@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
@@ -8,7 +9,7 @@ using Playmode.Pickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Playmode.Npc.Strategies
+namespace Playmode.Npc.Strategies.BaseStrategies
 {
 	/// <summary>
 	/// An NPC will change their current state depending on their behavior as well as current situation:
@@ -17,6 +18,7 @@ namespace Playmode.Npc.Strategies
 	{
 		Idle,
 		Roaming,
+		Investigating,
 		Engaging,
 		Attacking,
 		Retreating
@@ -52,13 +54,24 @@ namespace Playmode.Npc.Strategies
 			LookingRight,
 			LookingSideToSide
 		}
+
+		protected enum RetreatingRoutine
+		{
+			RunningBackwards,
+			RotatingRight,
+			RotatingLeft
+		}
+
 		private float currentSightRoutineDelay;
-		private const float SightRoutineDelay = 1.2f;
-		
+		private const float SightRoutineDelay = 0.5f;
+		private float currentRetreatingRoutineDelay;
+
 		protected SightRoutine CurrentSightRoutine;
+		protected RetreatingRoutine CurrentRetreatingRoutine;
+
 		protected readonly Mover Mover;
 		protected readonly HandController HandController;
-		protected readonly NpcSensor NpcSensor;
+		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
 		protected State CurrentState;
@@ -69,18 +82,78 @@ namespace Playmode.Npc.Strategies
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentPickableTarget;
 		protected float AttackingDistance = 5f;
+		protected readonly NpcSensorSound NpcSensorSound;
 
 		protected BaseNpcBehavior(Mover mover, HandController handController,
-			HitSensor hitSensor, Health health, NpcSensor npcSensor)
+			HitSensor hitSensor, Health health, NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 		{
 			CurrentState = State.Idle;
 			Mover = mover;
 			HandController = handController;
 			HitSensor = hitSensor;
 			Health = health;
-			NpcSensor = npcSensor;
+			NpcSensorSight = npcSensorSight;
 			TimeUntilStateSwitch = 0;
 			MovementDirection = new Vector3();
+			NpcSensorSound = npcSensorSound;
+		}
+
+		public void Act()
+		{
+			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position);
+			switch (CurrentState)
+			{
+				case State.Idle:
+					CurrentState = EvaluateIdle();
+					break;
+				case State.Roaming:
+					CurrentState = EvaluateRoaming();
+					break;
+				case State.Investigating:
+					CurrentState = EvaluateInvestigating();
+					break;
+				case State.Engaging:
+					CurrentState = EvaluateEngaging();
+					break;
+				case State.Attacking:
+					CurrentState = EvaluateAttacking();
+					break;
+				case State.Retreating:
+					CurrentState = EvaluateRetreating();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			UpdateNpcLogic();
+		}
+
+		private void UpdateNpcLogic()
+		{
+			UpdateCurrentEnemyTarget();
+			switch (CurrentState)
+			{
+				case State.Idle:
+					DoIdle();
+					break;
+				case State.Roaming:
+					DoRoaming();
+					break;
+				case State.Engaging:
+					DoEngaging();
+					break;
+				case State.Investigating:
+					DoInvestigating();
+					break;
+				case State.Attacking:
+					DoAttacking();
+					break;
+				case State.Retreating:
+					DoRetreating();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		/// <summary>
@@ -103,9 +176,20 @@ namespace Playmode.Npc.Strategies
 			Mover.MoveRelativeToWorld(Mover.transform.parent.position - npcController.transform.parent.position);
 		}
 
-		protected void MoveAwayFromDirection(Vector3 direction)
+		protected void MoveRightAroundEnemy(NpcController npcController)
 		{
-			Mover.MoveRelativeToWorld(-direction);
+			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
+			var perpendicularDirection =
+				new Vector3(directionTowardsEnemy.y, -directionTowardsEnemy.x, directionTowardsEnemy.z);
+			Mover.MoveRelativeToWorld(perpendicularDirection);
+		}
+
+		protected void MoveLeftAroundEnemy(NpcController npcController)
+		{
+			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
+			var perpendicularDirection =
+				new Vector3(-directionTowardsEnemy.y, directionTowardsEnemy.x, directionTowardsEnemy.z);
+			Mover.MoveRelativeToWorld(perpendicularDirection);
 		}
 
 		protected void RotateTowardsAngle(int angle)
@@ -128,6 +212,44 @@ namespace Playmode.Npc.Strategies
 			return Random.insideUnitCircle;
 		}
 
+		protected void UpdateRetreatingRoutine(NpcController npcController)
+		{
+			if (currentRetreatingRoutineDelay > 0f)
+			{
+				currentRetreatingRoutineDelay -= Time.deltaTime;
+			}
+			else
+			{
+				CurrentRetreatingRoutine = RetreatingRoutine.RunningBackwards;
+				var chanceOfRetreatingRoutine = Random.Range(1, 150);
+				if (chanceOfRetreatingRoutine <= 1)
+				{
+					currentRetreatingRoutineDelay = Random.Range(0.8f, 1.2f);
+					CurrentRetreatingRoutine = RetreatingRoutine.RotatingLeft;
+				}
+				else if (chanceOfRetreatingRoutine <= 2)
+				{
+					currentRetreatingRoutineDelay = Random.Range(0.8f, 1.2f);
+					CurrentRetreatingRoutine = RetreatingRoutine.RotatingRight;
+				}
+			}
+
+			switch (CurrentRetreatingRoutine)
+			{
+				case RetreatingRoutine.RunningBackwards:
+					MoveAwayFromNpc(npcController);
+					break;
+				case RetreatingRoutine.RotatingRight:
+					MoveRightAroundEnemy(npcController);
+					break;
+				case RetreatingRoutine.RotatingLeft:
+					MoveLeftAroundEnemy(npcController);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
 		protected void UpdateSightRoutine()
 		{
 			if (currentSightRoutineDelay > 0f)
@@ -139,7 +261,8 @@ namespace Playmode.Npc.Strategies
 				var chanceOfSightRoutine = Random.Range(1, 100);
 				if (chanceOfSightRoutine <= 2)
 				{
-					CurrentSightRoutine = chanceOfSightRoutine <= 1 ? SightRoutine.LookingRight : SightRoutine.LookingLeft;
+					CurrentSightRoutine =
+						chanceOfSightRoutine <= 1 ? SightRoutine.LookingRight : SightRoutine.LookingLeft;
 				}
 			}
 
@@ -193,7 +316,6 @@ namespace Playmode.Npc.Strategies
 
 		private void LookSideToSide()
 		{
-			
 		}
 
 		private void StartSightRoutineDelay()
@@ -230,7 +352,7 @@ namespace Playmode.Npc.Strategies
 			return closestNpc;
 		}
 
-		protected void UpdateCurrentEnemyTarget()
+		private void UpdateCurrentEnemyTarget()
 		{
 			if (CurrentEnemyTarget != null)
 			{
@@ -239,55 +361,30 @@ namespace Playmode.Npc.Strategies
 			}
 		}
 
-		public void Act()
+		public Vector3 GetClosestSoundPosition(Vector3 npcCurrentPosition)
 		{
-			switch (CurrentState)
+			var closestSoundDistance = float.MaxValue;
+			var closestSoundPosition = new Vector3();
+			foreach (var soundValue in NpcSensorSound.SoundsInformations)
 			{
-				case State.Idle:
-					CurrentState = EvaluateIdle();
-					break;
-				case State.Roaming:
-					CurrentState = EvaluateRoaming();
-					break;
-				case State.Engaging:
-					CurrentState = EvaluateEngaging();
-					break;
-				case State.Attacking:
-					CurrentState = EvaluateAttacking();
-					break;
-				case State.Retreating:
-					CurrentState = EvaluateRetreating();
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+				if (Vector3.Magnitude(soundValue.Value - npcCurrentPosition) < closestSoundDistance)
+				{
+					closestSoundDistance = Vector3.Magnitude(soundValue.Value - npcCurrentPosition);
+					closestSoundPosition = soundValue.Value;
+				}
 			}
 
-			UpdateNpcLogic();
+			return closestSoundPosition;
 		}
 
-		private void UpdateNpcLogic()
+		private Vector3 GetPredictiveAimDirection(NpcController npc)
 		{
-			UpdateCurrentEnemyTarget();
-			switch (CurrentState)
-			{
-				case State.Idle:
-					DoIdle();
-					break;
-				case State.Roaming:
-					DoRoaming();
-					break;
-				case State.Engaging:
-					DoEngaging();
-					break;
-				case State.Attacking:
-					DoAttacking();
-					break;
-				case State.Retreating:
-					DoRetreating();
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+			return new Vector3();
+		}
+
+		protected Vector3 GetNewestSoundPosition()
+		{
+			return NpcSensorSound.SoundsInformations.Values.Last();
 		}
 
 		protected abstract void DoIdle();
@@ -296,6 +393,8 @@ namespace Playmode.Npc.Strategies
 
 		protected abstract void DoEngaging();
 
+		protected abstract void DoInvestigating();
+
 		protected abstract void DoAttacking();
 
 		protected abstract void DoRetreating();
@@ -303,6 +402,8 @@ namespace Playmode.Npc.Strategies
 		protected abstract State EvaluateIdle();
 
 		protected abstract State EvaluateRoaming();
+
+		protected abstract State EvaluateInvestigating();
 
 		protected abstract State EvaluateEngaging();
 
