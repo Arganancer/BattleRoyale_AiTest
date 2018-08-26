@@ -13,6 +13,7 @@ namespace Playmode.Pickable
 		[SerializeField] private Sprite uzi;
 		private PickableSensorEventHandler pickableSensorEventHandler;
 		private TypePickable.TypePickable typePickable;
+
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
@@ -55,23 +56,28 @@ namespace Playmode.Pickable
 				default:
 					throw new ArgumentOutOfRangeException(nameof(typePickable), typePickable, null);
 			}
+
 			this.typePickable = typePickable;
+		}
+
+		public TypePickable.TypePickable GetPickableType()
+		{
+			return typePickable;
 		}
 
 		public void OnPickablePicked(PickableController pickableController)
 		{
-			if (pickableController == this)
-			{
+//			if (pickableController == this)
+//			{
 //				AppliedRelatedPickableEffect();
-			}
-		}
-
+//			}
+//		}
+//
 //		private void AppliedRelatedPickableEffect()
 //		{
 //			switch (typePickable)
 //			{
-//				
 //			}
-//		}
+		}
 	}
 }

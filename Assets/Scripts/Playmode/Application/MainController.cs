@@ -7,6 +7,8 @@ namespace Playmode.Application
 {
 	public class MainController : MonoBehaviour
 	{
+		[SerializeField] private static float TimeScale = 1.0f;
+
 		private void Start()
 		{
 			SetTimeScale();
@@ -18,7 +20,7 @@ namespace Playmode.Application
 			// TODO: Remove this function.
 			// Used to slow down global game time for testing purposes.
 			// Regular timeScale for normal speed is 1.0f;
-			//Time.timeScale = 0.5f;
+			Time.timeScale = TimeScale;
 		}
 
 		private void LoadGameScene()

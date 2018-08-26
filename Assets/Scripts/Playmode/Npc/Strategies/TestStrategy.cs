@@ -11,11 +11,6 @@ namespace Playmode.Npc.Strategies
 {
 	public class TestStrategy : BaseNpcBehavior
 	{
-		private const float MinIdleTime = 0.2f;
-		private const float MaxIdleTime = 0.5f;
-		private const float MinRoamingTime = 1.2f;
-		private const float MaxRoamingTime = 2.8f;
-
 		public TestStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
@@ -39,6 +34,7 @@ namespace Playmode.Npc.Strategies
 		protected override void DoInvestigating()
 		{
 			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			
 			UpdateSightRoutine();
 			MoveTowardsDirection(MovementDirection);
 		}
@@ -49,6 +45,7 @@ namespace Playmode.Npc.Strategies
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+
 			MoveTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
@@ -70,7 +67,7 @@ namespace Playmode.Npc.Strategies
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			UpdateRetreatingRoutine(CurrentEnemyTarget);
+			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
 
 			HandController.Use();
 		}
@@ -95,7 +92,7 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Investigating;
 			}
-
+			
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{

@@ -78,7 +78,7 @@ namespace Playmode.Npc
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
 
-			strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+			strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 		}
 
 		private void CreateStartingWeapon()

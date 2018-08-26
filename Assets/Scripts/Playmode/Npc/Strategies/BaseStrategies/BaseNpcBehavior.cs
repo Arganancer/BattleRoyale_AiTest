@@ -83,6 +83,11 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected PickableController CurrentPickableTarget;
 		protected float AttackingDistance = 5f;
 		protected readonly NpcSensorSound NpcSensorSound;
+		
+		protected const float MinIdleTime = 0.2f;
+		protected const float MaxIdleTime = 0.5f;
+		protected const float MinRoamingTime = 1.2f;
+		protected const float MaxRoamingTime = 2.8f;
 
 		protected BaseNpcBehavior(Mover mover, HandController handController,
 			HitSensor hitSensor, Health health, NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)

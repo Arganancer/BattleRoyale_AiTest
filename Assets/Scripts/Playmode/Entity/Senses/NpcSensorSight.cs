@@ -29,7 +29,7 @@ namespace Playmode.Entity.Senses
 		private void InitializeComponent()
 		{
 			npcsInSight = new HashSet<NpcController>();
-			//pickablesInSight = new HashSet<PickableController>();
+			pickablesInSight = new HashSet<PickableController>();
 		}
 
 		public void See(NpcController npc)
