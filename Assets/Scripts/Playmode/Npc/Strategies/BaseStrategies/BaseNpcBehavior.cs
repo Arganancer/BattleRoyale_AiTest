@@ -166,6 +166,11 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			Mover.MoveRelativeToWorld(npcController.transform.parent.position - Mover.transform.parent.position);
 		}
 
+		protected void MoveTowardsPickable(PickableController pickableController)
+		{
+			Mover.MoveRelativeToWorld(pickableController.transform.parent.position - Mover.transform.parent.position);
+		}
+
 		protected void MoveTowardsDirection(Vector3 direction)
 		{
 			Mover.MoveRelativeToWorld(direction);
@@ -205,6 +210,11 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected void RotateTowardsNpc(NpcController npcController)
 		{
 			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
+		}
+
+		protected void RotateTowardsPickable(PickableController pickableController)
+		{
+			Mover.RotateTowards(pickableController.transform.root.position - Mover.transform.root.position);
 		}
 
 		protected static Vector3 GetRandomDirection()
@@ -350,6 +360,34 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 
 			DistanceToCurrentTarget = distance;
 			return closestNpc;
+		}
+
+		protected PickableController GetClosestPickable(IEnumerable<PickableController> pickablesInSight)
+		{
+			PickableController closestPickable = null;
+			var distance = float.MaxValue;
+			foreach (var pickable in pickablesInSight)
+			{
+				if (closestPickable == null)
+				{
+					closestPickable = pickable;
+					distance = Vector3.Distance(closestPickable.transform.position, 
+						Mover.transform.parent.position);
+				}
+				else
+				{
+					var currentPickableDistance =
+						Vector3.Distance(closestPickable.transform.position, pickable.transform.position);
+					if (distance > currentPickableDistance)
+					{
+						distance = currentPickableDistance;
+						closestPickable = pickable;
+					}
+				}
+			}
+
+			DistanceToCurrentTarget = distance;
+			return closestPickable;
 		}
 
 		private void UpdateCurrentEnemyTarget()

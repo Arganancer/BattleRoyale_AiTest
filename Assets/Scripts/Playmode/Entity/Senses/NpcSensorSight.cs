@@ -12,12 +12,14 @@ namespace Playmode.Entity.Senses
 	public class NpcSensorSight : MonoBehaviour
 	{
 		private ICollection<NpcController> npcsInSight;
+		private ICollection<PickableController> pickablesInSight;
 
 		public event NpcSensorEventHandler OnNpcSeen;
 		public event NpcSensorEventHandler OnNpcSightLost;
 		public event PickableSensorEventHandler PickablePickedEventHandler;
 
 		public IEnumerable<NpcController> NpcsInSight => npcsInSight;
+		public IEnumerable<PickableController> PickablesInSight => pickablesInSight;
 
 		private void Awake()
 		{
@@ -27,6 +29,7 @@ namespace Playmode.Entity.Senses
 		private void InitializeComponent()
 		{
 			npcsInSight = new HashSet<NpcController>();
+			//pickablesInSight = new HashSet<PickableController>();
 		}
 
 		public void See(NpcController npc)

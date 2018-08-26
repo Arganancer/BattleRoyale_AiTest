@@ -4,6 +4,8 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategies;
+using Playmode.Pickable;
+using Playmode.Pickable.TypePickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,13 +32,27 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
-			if (CurrentEnemyTarget == null)
+			//TODO: suspicious comparison
+			
+			if (CurrentPickableTarget == null)
+			{
+				PickableController pickableToEvaluate = GetClosestPickable(NpcSensorSight.PickablesInSight);
+				if (!pickableToEvaluate.Equals(TypePickable.Medicalkit))
+					CurrentPickableTarget = pickableToEvaluate;
+				
+				RotateTowardsPickable(CurrentPickableTarget);
+				MoveTowardsPickable(CurrentPickableTarget);
+			}
+
+			if (CurrentPickableTarget == null && CurrentEnemyTarget == null)
+			{
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
-
-			RotateTowardsNpc(CurrentEnemyTarget);
-			MoveTowardsNpc(CurrentEnemyTarget);
-
-			HandController.Use();
+				
+				RotateTowardsNpc(CurrentEnemyTarget);
+				MoveTowardsNpc(CurrentEnemyTarget);
+				
+				HandController.Use();
+			}
 		}
 
 		protected override void DoInvestigating()
@@ -52,6 +68,7 @@ namespace Playmode.Npc.Strategies
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
 			RotateTowardsNpc(CurrentEnemyTarget);
+			MoveTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
 		}
@@ -63,7 +80,12 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			//TODO: devrait chercher les armes first
+			//TODO: ne doit pas evaluer les medical kits
+			if (NpcSensorSight.PickablesInSight.Any())
+			{
+				if(!NpcSensorSight.PickablesInSight.First().Equals(TypePickable.Medicalkit))
+					return State.Engaging;
+			}
 			
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
@@ -82,7 +104,11 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			//TODO: vérifier les armes in sight 
+			//TODO: ne doit pas evaluer les medical kits
+			if (NpcSensorSight.PickablesInSight.Any())
+			{
+				return State.Engaging;
+			}
 			
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
