@@ -16,7 +16,6 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 			: base(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound)
 		{
-			//AttackingDistance = 3f;
 		}
 
 		protected override void DoIdle()
@@ -77,7 +76,8 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsNpc(CurrentEnemyTarget);
+			MoveRightAroundEnemy(CurrentEnemyTarget);
+			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
 			HandController.Use();
 		}
