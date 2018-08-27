@@ -15,7 +15,6 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
-			AttackingDistance = 10f;
 		}
 
 		#region DoTheStuff
@@ -56,6 +55,7 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
+			MoveRightAroundEnemy(CurrentEnemyTarget);
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
 			HandController.Use();
@@ -163,7 +163,7 @@ namespace Playmode.Npc.Strategies
 				return State.Retreating;
 			}
 
-			return DistanceToCurrentTarget < AttackingDistance ? State.Attacking : State.Engaging;
+			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateAttacking()
@@ -173,19 +173,20 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			if (Health.HealthPoints < 80)
+			if (Health.HealthPoints < 50)
 			{
 				return State.Retreating;
 			}
 
-			return DistanceToCurrentTarget < AttackingDistance ? State.Attacking : State.Engaging;
+			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
-				return State.Idle;
+				TimeUntilStateSwitch = MaxRoamingTime;
+				return State.Roaming;
 			}
 
 			return State.Retreating;

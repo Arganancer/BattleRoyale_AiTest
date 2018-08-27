@@ -77,8 +77,6 @@ namespace Playmode.Npc
 			npcSensorSound = rootTransform.GetComponentInChildren<NpcSensorSound>();
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
-
-			strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 		}
 
 		private void CreateStartingWeapon()
@@ -124,19 +122,27 @@ namespace Playmode.Npc
 
 		public void Configure(NpcStrategy strategy, Color color)
 		{
-			body.GetComponent<SpriteRenderer>().color = color;
-			sight.GetComponent<SpriteRenderer>().color = color;
-
+//			body.GetComponent<SpriteRenderer>().color = color;
+//			sight.GetComponent<SpriteRenderer>().color = color;
 			switch (strategy)
 			{
 				case NpcStrategy.Careful:
-					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					break;
+//					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+//					break;
 				case NpcStrategy.Cowboy:
+					body.GetComponent<SpriteRenderer>().color = Color.cyan;
+					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
+					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
-					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
+//					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
+//					break;
+				case NpcStrategy.Normal:
+					body.GetComponent<SpriteRenderer>().color = Color.red;
+					sight.GetComponent<SpriteRenderer>().color = Color.red;
+					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
+					this.strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;

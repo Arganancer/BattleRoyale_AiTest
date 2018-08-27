@@ -63,17 +63,20 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		}
 
 		private float currentSightRoutineDelay;
-		private const float SightRoutineDelay = 0.5f;
+		private const float DefaultSightRoutineDelay = 0.5f;
 		private float currentRetreatingRoutineDelay;
 
 		protected SightRoutine CurrentSightRoutine;
 		protected RetreatingRoutine CurrentRetreatingRoutine;
 
+		protected readonly NpcSensorSound NpcSensorSound;
 		protected readonly Mover Mover;
 		protected readonly HandController HandController;
 		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
+		protected readonly float DistanceSwitchFromEngagingToAttacking = 8f;
+		protected readonly float DistanceSwitchFromAttackingToEngaging = 15f;
 		protected State CurrentState;
 		protected float TimeUntilStateSwitch;
 		protected Vector3 MovementDirection;
@@ -81,9 +84,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected int RotationOrientation;
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentPickableTarget;
-		protected float AttackingDistance = 5f;
-		protected readonly NpcSensorSound NpcSensorSound;
-		
+
 		protected const float MinIdleTime = 0.2f;
 		protected const float MaxIdleTime = 0.5f;
 		protected const float MinRoamingTime = 1.2f;
@@ -106,6 +107,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		public void Act()
 		{
 			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position, Mover.transform.up);
+			
 			switch (CurrentState)
 			{
 				case State.Idle:
@@ -161,70 +163,13 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			}
 		}
 
-		/// <summary>
-		/// Moves the object in the direction of the given position.
-		///
-		/// This function works by obtaining a directional vector via vector substraction.
-		/// </summary>
-		protected void MoveTowardsNpc(NpcController npcController)
+		private void UpdateCurrentEnemyTarget()
 		{
-			Mover.MoveRelativeToWorld(npcController.transform.parent.position - Mover.transform.parent.position);
-		}
-
-		protected void MoveTowardsPickable(PickableController pickableController)
-		{
-			Mover.MoveRelativeToWorld(pickableController.transform.parent.position - Mover.transform.parent.position);
-		}
-
-		protected void MoveTowardsDirection(Vector3 direction)
-		{
-			Mover.MoveRelativeToWorld(direction);
-		}
-
-		protected void MoveAwayFromNpc(NpcController npcController)
-		{
-			Mover.MoveRelativeToWorld(Mover.transform.parent.position - npcController.transform.parent.position);
-		}
-
-		protected void MoveRightAroundEnemy(NpcController npcController)
-		{
-			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
-			var perpendicularDirection =
-				new Vector3(directionTowardsEnemy.y, -directionTowardsEnemy.x, directionTowardsEnemy.z);
-			Mover.MoveRelativeToWorld(perpendicularDirection);
-		}
-
-		protected void MoveLeftAroundEnemy(NpcController npcController)
-		{
-			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
-			var perpendicularDirection =
-				new Vector3(-directionTowardsEnemy.y, directionTowardsEnemy.x, directionTowardsEnemy.z);
-			Mover.MoveRelativeToWorld(perpendicularDirection);
-		}
-
-		protected void RotateTowardsAngle(int angle)
-		{
-			Mover.Rotate(angle);
-		}
-
-		protected void RotateTowardsDirection(Vector3 direction)
-		{
-			Mover.RotateTowards(direction);
-		}
-
-		protected void RotateTowardsNpc(NpcController npcController)
-		{
-			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
-		}
-
-		protected void RotateTowardsPickable(PickableController pickableController)
-		{
-			Mover.RotateTowards(pickableController.transform.root.position - Mover.transform.root.position);
-		}
-
-		protected static Vector3 GetRandomDirection()
-		{
-			return Random.insideUnitCircle;
+			if (CurrentEnemyTarget != null)
+			{
+				DistanceToCurrentTarget = Vector3.Distance(CurrentEnemyTarget.transform.position,
+					Mover.transform.parent.position);
+			}
 		}
 
 		protected void UpdateRetreatingRoutine(NpcController npcController)
@@ -300,6 +245,73 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			}
 		}
 
+		private void StartSightRoutineDelay()
+		{
+			currentSightRoutineDelay = DefaultSightRoutineDelay;
+			CurrentSightRoutine = SightRoutine.None;
+		}
+
+		protected void MoveTowardsNpc(NpcController npcController)
+		{
+			Mover.MoveRelativeToWorld(npcController.transform.parent.position - Mover.transform.parent.position);
+		}
+
+		protected void MoveTowardsPickable(PickableController pickableController)
+		{
+			Mover.MoveRelativeToWorld(pickableController.transform.parent.position - Mover.transform.parent.position);
+		}
+
+		protected void MoveTowardsDirection(Vector3 direction)
+		{
+			Mover.MoveRelativeToWorld(direction);
+		}
+
+		protected void MoveAwayFromNpc(NpcController npcController)
+		{
+			Mover.MoveRelativeToWorld(Mover.transform.parent.position - npcController.transform.parent.position);
+		}
+
+		protected void MoveRightAroundEnemy(NpcController npcController)
+		{
+			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
+			var perpendicularDirection =
+				new Vector3(directionTowardsEnemy.y, -directionTowardsEnemy.x, directionTowardsEnemy.z);
+			Mover.MoveRelativeToWorld(perpendicularDirection);
+		}
+
+		protected void MoveLeftAroundEnemy(NpcController npcController)
+		{
+			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
+			var perpendicularDirection =
+				new Vector3(-directionTowardsEnemy.y, directionTowardsEnemy.x, directionTowardsEnemy.z);
+			Mover.MoveRelativeToWorld(perpendicularDirection);
+		}
+
+		protected static Vector3 GetRandomDirection()
+		{
+			return Random.insideUnitCircle;
+		}
+
+		protected void RotateTowardsAngle(int angle)
+		{
+			Mover.Rotate(angle);
+		}
+
+		protected void RotateTowardsDirection(Vector3 direction)
+		{
+			Mover.RotateTowards(direction);
+		}
+
+		protected void RotateTowardsNpc(NpcController npcController)
+		{
+			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
+		}
+
+		protected void RotateTowardsPickable(PickableController pickableController)
+		{
+			Mover.RotateTowards(pickableController.transform.root.position - Mover.transform.root.position);
+		}
+
 		private void LookForward()
 		{
 			RotateTowardsDirection(MovementDirection);
@@ -331,12 +343,6 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 
 		private void LookSideToSide()
 		{
-		}
-
-		private void StartSightRoutineDelay()
-		{
-			currentSightRoutineDelay = SightRoutineDelay;
-			CurrentSightRoutine = SightRoutine.None;
 		}
 
 		protected NpcController GetClosestNpc(IEnumerable<NpcController> npcsInSight)
@@ -376,7 +382,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 				if (closestPickable == null)
 				{
 					closestPickable = pickable;
-					distance = Vector3.Distance(closestPickable.transform.position, 
+					distance = Vector3.Distance(closestPickable.transform.position,
 						Mover.transform.parent.position);
 				}
 				else
@@ -395,15 +401,6 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			return closestPickable;
 		}
 
-		private void UpdateCurrentEnemyTarget()
-		{
-			if (CurrentEnemyTarget != null)
-			{
-				DistanceToCurrentTarget = Vector3.Distance(CurrentEnemyTarget.transform.position,
-					Mover.transform.parent.position);
-			}
-		}
-
 		public Vector3 GetClosestSoundPosition(Vector3 npcCurrentPosition)
 		{
 			var closestSoundDistance = float.MaxValue;
@@ -419,12 +416,16 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 
 			return closestSoundPosition;
 		}
+		
+		protected Vector3 GetNewestSoundPosition()
+		{
+			return NpcSensorSound.SoundsInformations.Values.Last();
+		}
 
 		/// <summary>
-		/// Reference for Predictive Aiming: https://www.gamasutra.com/blogs/KainShin/20090515/83954/Predictive_Aim_Mathematics_for_AI_Targeting.php
+		/// Reference for Predictive Aiming:
+		/// 	https://www.gamasutra.com/blogs/KainShin/20090515/83954/Predictive_Aim_Mathematics_for_AI_Targeting.php
 		/// </summary>
-		/// <param name="npc"></param>
-		/// <returns></returns>
 		protected Vector3 GetPredictiveAimDirection(NpcController npc)
 		{
 			var bulletSpeed = HandController.GetProjectileSpeed();
@@ -439,7 +440,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			var enemyToBulletDistanceSq = enemyToBulletDistance * enemyToBulletDistance;
 			var enemyToBulletDirection = enemyToBullet.normalized;
 			var enemyVelocityDirection = enemyVelocity.normalized;
-			
+
 			//Law of Cosines: A*A + B*B - 2*A*B*cos(theta) = C*C
 			//A is distance from bullet to enemy (known value: enemyToBulletDistance)
 			//B is distance traveled by enemy until impact (enemySpeed * t (time))
@@ -447,39 +448,34 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			var cosTheta = Vector3.Dot(enemyToBulletDirection, enemyVelocityDirection);
 
 			float t;
-			
+
 			// START VALIDATE PREDICTIVE AIM POSSIBLE
-				var a = bulletSpeedSq - enemySpeedSq;
-				var b = 2.0f * enemyToBulletDistance * enemySpeed * cosTheta;
-				var c = -enemyToBulletDistanceSq;
-				var discriminant = b * b - 4.0f * a * c;
-	
-				var uglyNumber = Mathf.Sqrt(discriminant);
-				var t0 = 0.5f * (-b + uglyNumber) / a;
-				var t1 = 0.5f * (-b - uglyNumber) / a;
-	
-				t = Mathf.Min(t0, t1);
-				if (t < Mathf.Epsilon)
-				{
-					t = Mathf.Max(t0, t1);
-				}
-	
-				if (t < Mathf.Epsilon)
-				{
-					// TODO: Validsolution not found;
-					// t = PredictiveAimWildGuessAtImpactTime();
-				}
+			var a = bulletSpeedSq - enemySpeedSq;
+			var b = 2.0f * enemyToBulletDistance * enemySpeed * cosTheta;
+			var c = -enemyToBulletDistanceSq;
+			var discriminant = b * b - 4.0f * a * c;
+
+			var uglyNumber = Mathf.Sqrt(discriminant);
+			var t0 = 0.5f * (-b + uglyNumber) / a;
+			var t1 = 0.5f * (-b - uglyNumber) / a;
+
+			t = Mathf.Min(t0, t1);
+			if (t < Mathf.Epsilon)
+			{
+				t = Mathf.Max(t0, t1);
+			}
+
+			if (t < Mathf.Epsilon)
+			{
+				// TODO: Validsolution not found;
+				// t = PredictiveAimWildGuessAtImpactTime();
+			}
 			// END PREDICTIVE AIM VALIDATION
 
 			var bulletVelocity = enemyVelocity + -enemyToBullet / t;
-			
-			
-			return bulletVelocity;
-		}
 
-		protected Vector3 GetNewestSoundPosition()
-		{
-			return NpcSensorSound.SoundsInformations.Values.Last();
+
+			return bulletVelocity;
 		}
 
 		protected abstract void DoIdle();
