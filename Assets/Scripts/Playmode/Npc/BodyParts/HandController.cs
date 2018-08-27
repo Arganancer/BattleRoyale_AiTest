@@ -9,7 +9,7 @@ namespace Playmode.Npc.BodyParts
 	public class HandController : MonoBehaviour
 	{
 		public event WeaponFiredEventHandler OnWeaponFired;
-		private Mover mover;
+		private AnchoredMover mover;
 		private WeaponController weapon;
 
 		private void Awake()

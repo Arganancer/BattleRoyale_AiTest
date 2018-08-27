@@ -29,7 +29,7 @@ namespace Playmode.Bullet
 
 		private void InitialzeComponent()
 		{
-			mover = GetComponent<RootMover>();
+			mover = GetComponent<Mover>();
 			destroyer = GetComponent<RootDestroyer>();
 
 			timeSinceSpawnedInSeconds = 0;

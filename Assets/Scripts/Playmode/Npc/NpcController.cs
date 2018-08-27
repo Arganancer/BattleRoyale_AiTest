@@ -69,7 +69,7 @@ namespace Playmode.Npc
 		private void InitializeComponent()
 		{
 			health = GetComponent<Health>();
-			mover = GetComponent<RootMover>();
+			mover = GetComponent<Mover>();
 			destroyer = GetComponent<RootDestroyer>();
 
 			var rootTransform = transform.root;
