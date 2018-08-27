@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Playmode.Entity.Senses;
 using UnityEngine;
 
 namespace Playmode.Pickable.TypePickable
@@ -7,13 +8,13 @@ namespace Playmode.Pickable.TypePickable
 	public class ShotgunBonusEffect : PickableBonusEffect {
 
 		// Use this for initialization
-		public ShotgunBonusEffect(GameObject objectToApplyTheEffect) : base(objectToApplyTheEffect)
+		public ShotgunBonusEffect()
 		{
 		}
 
-		public override void ApplyBonusEffect()
+		public override void ApplyBonusEffect(PickableSensor pickableSensor)
 		{
-			throw new System.NotImplementedException();
+			pickableSensor.PickShotgun();
 		}
 	}
 }

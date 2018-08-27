@@ -3,16 +3,59 @@ using UnityEngine;
 
 namespace Playmode.Entity.Senses
 {
+	public delegate void MidkitPickedEventHandler(int healthPoint);
+
+	public delegate void ShotgunPickedEventHandler();
+
+	public delegate void UziPickedEventHandler();
+	
 	public class PickableSensor : MonoBehaviour
 	{
-		public void PickPickable(PickableController pickableController)
+
+		public event MidkitPickedEventHandler onMedkitPick;
+		public event ShotgunPickedEventHandler onShotgunPick;
+		public event UziPickedEventHandler onUziPick;
+
+		public void Heal(int healPoint)
 		{
-			// TODO: The stuff
+			NotifyHealing(healPoint);
 		}
 
-		public void pickPickable()
+		private void NotifyHealing(int healPoint)
 		{
 			
+			if (onMedkitPick != null)
+			{
+				onMedkitPick(healPoint);
+			}
+		}
+
+		public void PickShotgun()
+		{
+			NotifyPickingShotgun();
+		}
+
+		private void NotifyPickingShotgun()
+		{
+			
+			if (onShotgunPick != null)
+			{
+				onShotgunPick();
+			}
+		}
+
+		public void PickUzi()
+		{
+			NotifyPickingUzi();
+		}
+
+		private void NotifyPickingUzi()
+		{
+			
+			if (onUziPick != null)
+			{
+				onUziPick();
+			}
 		}
 	}
 }

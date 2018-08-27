@@ -160,9 +160,19 @@ namespace Playmode.Npc
 			destroyer.Destroy();
 		}
 
-		private void OnHeal(int healPoint)
+		public void OnHeal(int healPoint)
 		{
 			health.Heal(healPoint);
+		}
+
+		public void OnPickShotgun()
+		{
+			
+		}
+
+		public void OnPickUzi()
+		{
+			
 		}
 		private void OnNpcSeen(NpcController npc)
 		{
