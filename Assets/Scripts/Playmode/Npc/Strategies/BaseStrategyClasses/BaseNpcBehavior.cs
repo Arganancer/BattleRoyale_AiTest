@@ -254,7 +254,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 
 		protected void MoveTowardsNpc(NpcController npcController)
 		{
-			Mover.MoveRelativeToWorld(npcController.transform.parent.position - Mover.transform.parent.position);
+			Mover.MoveRelativeToWorld(npcController.transform.root.position - Mover.transform.root.position);
 		}
 
 		protected void MoveTowardsPickable(PickableController pickableController)
@@ -306,6 +306,11 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected void RotateTowardsNpc(NpcController npcController)
 		{
 			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
+		}
+		
+		protected void RotateTowards(Vector3 target)
+		{
+			Mover.RotateTowards(target - Mover.transform.root.position);
 		}
 
 		protected void RotateTowardsPickable(PickableController pickableController)

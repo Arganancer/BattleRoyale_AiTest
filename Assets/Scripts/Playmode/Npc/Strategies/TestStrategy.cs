@@ -173,7 +173,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			if (Health.HealthPoints < 50)
+			if (Health.HealthPoints < 80)
 			{
 				return State.Retreating;
 			}

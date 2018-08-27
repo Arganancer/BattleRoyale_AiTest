@@ -56,7 +56,7 @@ namespace Playmode.Weapon
 
 		public float GetBulletSpeed()
 		{
-			return bulletPrefab.GetComponentInChildren<RootMover>().GetSpeed();
+			return bulletPrefab.GetComponentInChildren<Mover>().GetSpeed();
 		}
 
 		public void ShootInLine()

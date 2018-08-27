@@ -28,7 +28,7 @@ namespace Playmode.Npc.Strategies
 			UpdateSightRoutine();
 			MoveTowardsDirection(MovementDirection);
 		}
-		
+
 		protected override void DoInvestigating()
 		{
 			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
@@ -38,6 +38,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
+			// Evaluate Surroundings
 			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
 			{
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
@@ -50,6 +51,7 @@ namespace Playmode.Npc.Strategies
 					CurrentPickableTarget = pickableToEvaluate;
 			}
 
+			// Make Decision
 			if (CurrentPickableTarget != null)
 			{
 				if (CurrentEnemyTarget != null)
@@ -61,6 +63,7 @@ namespace Playmode.Npc.Strategies
 				{
 					RotateTowardsPickable(CurrentPickableTarget);
 				}
+
 				MoveTowardsPickable(CurrentPickableTarget);
 			}
 			else
@@ -84,7 +87,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRetreating()
 		{
-			// A cowboy never retreats o_o
+			// A cowboy never retreats ಠ_ಠ
 		}
 
 		protected override State EvaluateIdle()
@@ -140,7 +143,7 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Engaging;
 			}
-			
+
 			if (NpcSensorSound.SoundsInformations.Any())
 			{
 				return State.Investigating;
@@ -177,7 +180,7 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Idle;
 			}
-			
+
 			return DistanceToCurrentTarget > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
 
