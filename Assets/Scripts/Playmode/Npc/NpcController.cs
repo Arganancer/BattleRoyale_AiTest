@@ -127,8 +127,11 @@ namespace Playmode.Npc
 			switch (strategy)
 			{
 				case NpcStrategy.Careful:
-//					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-//					break;
+					body.GetComponent<SpriteRenderer>().color = Color.white;
+					sight.GetComponent<SpriteRenderer>().color = Color.white;
+					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					break;
 				case NpcStrategy.Cowboy:
 					body.GetComponent<SpriteRenderer>().color = Color.cyan;
 					sight.GetComponent<SpriteRenderer>().color = Color.cyan;

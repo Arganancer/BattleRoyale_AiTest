@@ -131,6 +131,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+			Debug.Log(CurrentState.ToString());
 
 			UpdateNpcLogic();
 		}
