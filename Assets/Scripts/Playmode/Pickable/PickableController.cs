@@ -1,5 +1,6 @@
 ﻿using System;
 using Playmode.Entity.Senses;
+using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
 namespace Playmode.Pickable
@@ -14,6 +15,7 @@ namespace Playmode.Pickable
 		private PickableSensorEventHandler pickableSensorEventHandler;
 		private TypePickable.TypePickable typePickable;
 
+		private PickableBonusEffect ActivateBonusEffect;
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
@@ -65,12 +67,8 @@ namespace Playmode.Pickable
 			return typePickable;
 		}
 
-		public void OnPickablePicked(PickableController pickableController)
+		public void OnPickablePicked()
 		{
-//			if (pickableController == this)
-//			{
-//				AppliedRelatedPickableEffect();
-//			}
 //		}
 //
 //		private void AppliedRelatedPickableEffect()

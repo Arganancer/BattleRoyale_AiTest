@@ -16,7 +16,7 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 			: base(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound)
 		{
-			AttackingDistance = 3f;
+			//AttackingDistance = 3f;
 		}
 
 		protected override void DoIdle()

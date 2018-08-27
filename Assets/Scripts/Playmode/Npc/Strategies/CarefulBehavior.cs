@@ -17,7 +17,7 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
-			AttackingDistance = 10f;
+			//AttackingDistance = 10f;
 		}
 
 		protected override void DoIdle()
@@ -183,7 +183,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 			
-			return DistanceToCurrentTarget > AttackingDistance ? State.Engaging : State.Attacking;
+			return DistanceToCurrentTarget > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateAttacking()
@@ -193,7 +193,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			return DistanceToCurrentTarget < AttackingDistance ? State.Attacking : State.Engaging;
+			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()

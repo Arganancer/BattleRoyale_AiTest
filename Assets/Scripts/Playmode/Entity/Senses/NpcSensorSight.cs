@@ -7,7 +7,7 @@ namespace Playmode.Entity.Senses
 {
 	public delegate void NpcSensorEventHandler(NpcController npc);
 
-	public delegate void PickableSensorEventHandler(PickableController pickableController);
+	public delegate void PickableSensorEventHandler();
 
 	public class NpcSensorSight : MonoBehaviour
 	{
@@ -74,11 +74,11 @@ namespace Playmode.Entity.Senses
 			}
 		}
 
-		public void PickPickable(PickableController pickableController)
+		public void PickPickable()
 		{
 			if (PickablePickedEventHandler != null)
 			{
-				PickablePickedEventHandler(pickableController);
+				PickablePickedEventHandler();
 			}
 		}
 	}
