@@ -7,7 +7,7 @@ namespace Playmode.Entity.Senses
 {
 	public delegate void NpcSensorEventHandler(NpcController npc);
 
-	public delegate void PickableSensorEventHandler(PickableController pickableController);
+	public delegate void PickableSensorEventHandler();
 
 	public class NpcSensorSight : MonoBehaviour
 	{
@@ -74,12 +74,27 @@ namespace Playmode.Entity.Senses
 			}
 		}
 
-		public void PickPickable(PickableController pickableController)
+		public void PickPickable(NpcController npcController,PickableSensor pickableSensor,PickableController pickableController)
 		{
 			if (PickablePickedEventHandler != null)
 			{
-				PickablePickedEventHandler(pickableController);
+				PickablePickedEventHandler();
 			}
+			else
+			{
+				SetPickEventAction(npcController,pickableSensor,pickableController);
+				PickablePickedEventHandler();
+			}
+		}
+
+		public void SetPickEventAction(NpcController npcController, 
+			PickableSensor pickableSensor,
+			PickableController pickableController)
+		{
+			PickablePickedEventHandler += pickableController.OnPickablePicked;
+			pickableSensor.onMedkitPick += npcController.OnHeal;
+			pickableSensor.onShotgunPick += npcController.OnPickShotgun;
+			pickableSensor.onUziPick += npcController.OnPickUzi;
 		}
 	}
 }

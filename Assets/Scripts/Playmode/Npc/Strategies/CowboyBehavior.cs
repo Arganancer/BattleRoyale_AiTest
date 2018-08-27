@@ -79,7 +79,8 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsNpc(CurrentEnemyTarget);
+			MoveRightAroundEnemy(CurrentEnemyTarget);
+			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
 			HandController.Use();
 		}

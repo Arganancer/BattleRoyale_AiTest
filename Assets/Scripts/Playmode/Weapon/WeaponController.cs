@@ -8,7 +8,7 @@ namespace Playmode.Weapon
 	public class WeaponController : MonoBehaviour
 	{
 		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
-		[SerializeField] private float fireDelayInSeconds = 0.3f;
+		[SerializeField] private float fireDelayInSeconds = 10f;
 
 		private float lastTimeShotInSeconds;
 
