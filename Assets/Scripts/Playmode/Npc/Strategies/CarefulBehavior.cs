@@ -4,6 +4,7 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategies;
+using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
 namespace Playmode.Npc.Strategies
@@ -16,43 +17,109 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
+			AttackingDistance = 10f;
 		}
 
 		protected override void DoIdle()
 		{
-			throw new System.NotImplementedException();
+			RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
-			throw new System.NotImplementedException();
-		}
-
-		protected override void DoEngaging()
-		{
-			throw new System.NotImplementedException();
+			UpdateSightRoutine();
+			MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoInvestigating()
 		{
-			throw new System.NotImplementedException();
+			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			
+			UpdateSightRoutine();
+			MoveTowardsDirection(MovementDirection);
+		}
+
+		protected override void DoEngaging()
+		{
+			//TODO: changer pour un % de vie
+			if (Health.HealthPoints <= healthPointsToLose)
+			{
+				if (NpcSensorSight.PickablesInSight.Any() && CurrentPickableTarget == null)
+				{
+					var pickableToEvaluate = GetClosestPickable(NpcSensorSight.PickablesInSight);
+					if (pickableToEvaluate.GetPickableType() == TypePickable.Medicalkit)
+					{
+						CurrentPickableTarget = pickableToEvaluate;
+						RotateTowardsPickable(CurrentPickableTarget);
+						MoveTowardsPickable(CurrentPickableTarget);
+					}
+				}
+
+				if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
+				{
+					CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+					MoveAwayFromNpc(CurrentEnemyTarget);
+				}
+			}
+
+			else
+			{
+				if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
+				{
+					CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+					
+					RotateTowardsNpc(CurrentEnemyTarget);
+					MoveTowardsNpc(CurrentEnemyTarget);
+					
+					HandController.Use();
+				}
+
+				if (NpcSensorSight.PickablesInSight.Any() && CurrentPickableTarget == null)
+				{
+					CurrentPickableTarget = GetClosestPickable(NpcSensorSight.PickablesInSight);
+					
+					RotateTowardsDirection(CurrentPickableTarget.transform.position);
+					MoveTowardsPickable(CurrentPickableTarget);
+				}
+			}
 		}
 
 		protected override void DoAttacking()
 		{
-			throw new System.NotImplementedException();
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
+			RotateTowardsNpc(CurrentEnemyTarget);
+
+			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			throw new System.NotImplementedException();
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
+			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
+
+			HandController.Use();
 		}
 
 		protected override State EvaluateIdle()
 		{
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (TimeUntilStateSwitch > MaxIdleTime)
 			{
-				return State.Attacking;
+				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
+			}
+			
+			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
+			{
+				return State.Engaging;
+			}
+			
+			if (NpcSensorSound.SoundsInformations.Any())
+			{
+				return State.Investigating;
 			}
 
 			TimeUntilStateSwitch -= Time.deltaTime;
@@ -68,9 +135,19 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (TimeUntilStateSwitch > MaxRoamingTime)
+			{
+				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
+			}
+			
+			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
 			{
 				return State.Attacking;
+			}
+			
+			if (NpcSensorSound.SoundsInformations.Any())
+			{
+				return State.Investigating;
 			}
 
 			TimeUntilStateSwitch -= Time.deltaTime;
@@ -86,7 +163,17 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateInvestigating()
 		{
-			throw new System.NotImplementedException();
+			if (NpcSensorSight.NpcsInSight.Any())
+			{
+				return State.Engaging;
+			}
+
+			if (!NpcSensorSound.SoundsInformations.Any())
+			{
+				return State.Idle;
+			}
+
+			return State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
@@ -95,8 +182,8 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Idle;
 			}
-
-			return State.Engaging;
+			
+			return DistanceToCurrentTarget > AttackingDistance ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateAttacking()
@@ -106,14 +193,14 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			return State.Attacking;
+			return DistanceToCurrentTarget < AttackingDistance ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			if (Health.HealthPoints >= healthPointsToLose)
+			if (Health.HealthPoints >= healthPointsToLose && !NpcSensorSight.NpcsInSight.Any())
 			{
-				return State.Attacking;
+				return State.Idle;
 			}
 
 			return State.Retreating;

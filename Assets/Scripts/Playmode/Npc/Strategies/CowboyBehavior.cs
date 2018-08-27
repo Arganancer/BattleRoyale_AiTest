@@ -4,7 +4,6 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategies;
-using Playmode.Pickable;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,6 +16,7 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 			: base(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound)
 		{
+			AttackingDistance = 3f;
 		}
 
 		protected override void DoIdle()
@@ -46,9 +46,8 @@ namespace Playmode.Npc.Strategies
 
 			if (NpcSensorSight.PickablesInSight.Any() && CurrentPickableTarget == null)
 			{
-				//TODO: suspicious comparison
 				var pickableToEvaluate = GetClosestPickable(NpcSensorSight.PickablesInSight);
-				if (pickableToEvaluate.GetPickableType() == TypePickable.Medicalkit)
+				if (pickableToEvaluate.GetPickableType() != TypePickable.Medicalkit)
 					CurrentPickableTarget = pickableToEvaluate;
 			}
 
@@ -95,10 +94,9 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			//TODO: ne doit pas evaluer les medical kits
 			if (NpcSensorSight.PickablesInSight.Any())
 			{
-				if (!NpcSensorSight.PickablesInSight.First().Equals(TypePickable.Medicalkit))
+				if (GetClosestPickable(NpcSensorSight.PickablesInSight).GetPickableType() != TypePickable.Medicalkit)
 					return State.Engaging;
 			}
 
@@ -130,10 +128,12 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 			}
 
-			//TODO: ne doit pas evaluer les medical kits
 			if (NpcSensorSight.PickablesInSight.Any())
 			{
-				return State.Engaging;
+				if (GetClosestPickable(NpcSensorSight.PickablesInSight).GetPickableType() != TypePickable.Medicalkit)
+				{
+					return State.Engaging;
+				}
 			}
 
 			if (NpcSensorSight.NpcsInSight.Any())
@@ -198,7 +198,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			return State.Attacking;
+			return State.Retreating;
 		}
 	}
 }
