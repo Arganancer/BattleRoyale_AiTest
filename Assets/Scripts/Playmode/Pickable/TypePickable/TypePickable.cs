@@ -4,6 +4,7 @@
 	{
 		Medicalkit,
 		Shotgun,
-		Uzi
+		Uzi,
+		None
 	}
 }

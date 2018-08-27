@@ -61,6 +61,7 @@ namespace Playmode.Pickable
 		private void SpawnPickable(Vector3 position, TypePickable.TypePickable strategy)
 		{
 			position = transform.position;
+			strategy = TypePickable.TypePickable.Uzi;
 			Instantiate(pickablePrefab, position, Quaternion.identity)
 				.GetComponentInChildren<PickableController>()
 				.Configure(strategy);

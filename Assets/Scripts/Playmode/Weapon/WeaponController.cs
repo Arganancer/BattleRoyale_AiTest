@@ -1,6 +1,7 @@
 ﻿using System;
 using Playmode.Bullet;
 using Playmode.Entity.Movement;
+using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
 namespace Playmode.Weapon
@@ -10,6 +11,8 @@ namespace Playmode.Weapon
 		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
 		[SerializeField] private float fireDelayInSeconds = 10f;
 
+		private TypePickable weaponType = TypePickable.None;
+		
 		private float lastTimeShotInSeconds;
 
 		private bool CanShoot => Time.time - lastTimeShotInSeconds > fireDelayInSeconds;
@@ -37,6 +40,14 @@ namespace Playmode.Weapon
 			{
 				// TODO: Remove this line
 				// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + transform.position);
+				if (weaponType == TypePickable.Shotgun)
+				{
+					ShootInCone();
+				}
+				else
+				{
+					ShootInLine();
+				}
 				Instantiate(bulletPrefab, transform.position, transform.rotation);
 
 				lastTimeShotInSeconds = Time.time;
@@ -46,6 +57,16 @@ namespace Playmode.Weapon
 		public float GetBulletSpeed()
 		{
 			return bulletPrefab.GetComponentInChildren<RootMover>().GetSpeed();
+		}
+
+		public void ShootInLine()
+		{
+			
+			Instantiate(bulletPrefab, transform.position, transform.rotation);
+		}
+
+		public void ShootInCone()
+		{
 		}
 	}
 }

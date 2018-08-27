@@ -67,5 +67,10 @@ namespace Playmode.Npc.BodyParts
 		{
 			return weapon.GetComponentInChildren<WeaponController>().transform.position;
 		}
+
+		public void DropWeapon()
+		{
+			Destroy(weapon.transform.parent.gameObject);
+		}
 	}
 }

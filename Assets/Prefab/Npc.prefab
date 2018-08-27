@@ -408,6 +408,7 @@ MonoBehaviour:
   camperSprite: {fileID: 21300000, guid: 040104bd0166bd249a913acb61cce9b3, type: 3}
   startingWeaponPrefab: {fileID: 1627777849954234, guid: 88870865f059b0541aa68eb83ffb79d2,
     type: 2}
+  uziWeapon: {fileID: 1231232033743716, guid: 19b2a9008c949b54597a9ad018f9fdac, type: 2}
 --- !u!114 &114528511461670924
 MonoBehaviour:
   m_ObjectHideFlags: 1
