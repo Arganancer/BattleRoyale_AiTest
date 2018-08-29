@@ -11,6 +11,7 @@ namespace Playmode.Npc.Strategies
 {
 	public class CarefulBehavior : BaseNpcBehavior
 	{
+		//TODO: change naming
 		[SerializeField] private float healthPercentageToLose = 50f;
 		[SerializeField] private float safeDistance = 100f;
 
@@ -93,11 +94,10 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			//MoveRightAroundEnemy(CurrentEnemyTarget);
 			float distance = Vector3.Distance(CurrentEnemyTarget.transform.position, Mover.transform.position);
 			if (distance >= safeDistance)
 			{
-				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
+				MoveTowardsNpc(CurrentEnemyTarget);
 			}
 			else
 			{
@@ -127,12 +127,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
@@ -160,12 +155,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}

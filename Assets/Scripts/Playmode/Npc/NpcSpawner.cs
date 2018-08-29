@@ -60,8 +60,8 @@ namespace Playmode.Npc
 			for (var i = 0; i < nbOfEnemies /* <-- TODO: Change for transform.childCount */; i++)
 				SpawnNpc(
 					transform.GetChild(i).position,
-					//stragegyProvider.Next(),
-					NpcStrategy.Careful,
+					stragegyProvider.Next(),
+					//NpcStrategy.Careful,
 					colorProvider.Next()
 				);
 		}
