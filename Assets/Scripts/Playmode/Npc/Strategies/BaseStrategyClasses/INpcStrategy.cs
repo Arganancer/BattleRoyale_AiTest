@@ -1,4 +1,4 @@
-﻿namespace Playmode.Npc.Strategies
+﻿namespace Playmode.Npc.Strategies.BaseStrategyClasses
 {
 	public interface INpcStrategy
 	{
