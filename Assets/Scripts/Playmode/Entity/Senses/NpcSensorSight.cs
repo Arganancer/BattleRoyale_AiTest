@@ -74,27 +74,12 @@ namespace Playmode.Entity.Senses
 			}
 		}
 
-		public void PickPickable(NpcController npcController,PickableSensor pickableSensor,PickableController pickableController)
+		public void PickPickable()
 		{
 			if (PickablePickedEventHandler != null)
 			{
 				PickablePickedEventHandler();
 			}
-			else
-			{
-				SetPickEventAction(npcController,pickableSensor,pickableController);
-				PickablePickedEventHandler();
-			}
-		}
-
-		public void SetPickEventAction(NpcController npcController, 
-			PickableSensor pickableSensor,
-			PickableController pickableController)
-		{
-			PickablePickedEventHandler += pickableController.OnPickablePicked;
-			pickableSensor.onMedkitPick += npcController.OnHeal;
-			pickableSensor.onShotgunPick += npcController.OnPickShotgun;
-			pickableSensor.onUziPick += npcController.OnPickUzi;
 		}
 	}
 }

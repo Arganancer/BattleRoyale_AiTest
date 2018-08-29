@@ -1,18 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
-using Playmode.Npc.Strategies.BaseStrategyClasses;
+using Playmode.Npc.Strategies.BaseStrategies;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
 	public class CarefulBehavior : BaseNpcBehavior
 	{
+		//TODO: change naming
 		[SerializeField] private float healthPercentageToLose = 50f;
 		[SerializeField] private float safeDistance = 100f;
 
@@ -39,38 +38,6 @@ namespace Playmode.Npc.Strategies
 			UpdateSightRoutine();
 			MoveTowardsDirection(MovementDirection);
 		}
-
-		// TODO: Remove this section
-//		private RetreatingRoutine movementDirection = RetreatingRoutine.RotatingRight;
-//		private int nbOfFramesMoved = 0;
-//		private void VibrateRoutine()
-//		{
-//			switch (movementDirection)
-//			{
-//				case RetreatingRoutine.RunningBackwards:
-//					break;
-//				case RetreatingRoutine.RotatingRight:
-//					MoveRightAroundEnemy(CurrentEnemyTarget);
-//					if (--nbOfFramesMoved <= 0)
-//					{
-//						nbOfFramesMoved = 5;
-//						movementDirection = RetreatingRoutine.RotatingLeft;
-//					}
-//
-//					break;
-//				case RetreatingRoutine.RotatingLeft:
-//					MoveLeftAroundEnemy(CurrentEnemyTarget);
-//					if (--nbOfFramesMoved <= 0)
-//					{
-//						nbOfFramesMoved = 5;
-//						movementDirection = RetreatingRoutine.RotatingRight;
-//					}
-//
-//					break;
-//				default:
-//					throw new ArgumentOutOfRangeException();
-//			}
-//		}
 
 		protected override void DoEngaging()
 		{
@@ -127,18 +94,15 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			MoveRightAroundEnemy(CurrentEnemyTarget);
 			float distance = Vector3.Distance(CurrentEnemyTarget.transform.position, Mover.transform.position);
 			if (distance >= safeDistance)
 			{
-				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
+				MoveTowardsNpc(CurrentEnemyTarget);
 			}
 			else
 			{
 				MoveAwayFromNpc(CurrentEnemyTarget);
 			}
-			
-			MoveTowardsNpc(CurrentEnemyTarget);
 			
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
@@ -152,7 +116,6 @@ namespace Playmode.Npc.Strategies
 
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
-			MoveTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
 		}
@@ -164,12 +127,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
@@ -197,12 +155,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}

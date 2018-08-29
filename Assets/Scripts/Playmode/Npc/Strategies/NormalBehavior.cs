@@ -3,7 +3,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
-using Playmode.Npc.Strategies.BaseStrategyClasses;
+using Playmode.Npc.Strategies.BaseStrategies;
 using UnityEngine;
 
 namespace Playmode.Npc.Strategies

@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Playmode.Entity.Senses;
 using UnityEngine;
 
 namespace Playmode.Pickable.TypePickable
 {
 	public abstract class PickableBonusEffect
 	{
-		public PickableBonusEffect()
+		private GameObject objectToApplyTheEffect;
+		public PickableBonusEffect(GameObject objectToApplyTheEffect)
 		{
+			this.objectToApplyTheEffect = objectToApplyTheEffect;
 		}
 
-		public abstract void ApplyBonusEffect(PickableSensor pickableSensor);
+		public abstract void ApplyBonusEffect();
 	}
 }
 

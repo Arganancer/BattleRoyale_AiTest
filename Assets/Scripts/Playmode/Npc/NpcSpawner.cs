@@ -1,5 +1,6 @@
 ﻿using System;
 using Playmode.Npc.Strategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Util.Collections;
 using UnityEngine;
 
@@ -61,6 +62,7 @@ namespace Playmode.Npc
 				SpawnNpc(
 					transform.GetChild(i).position,
 					stragegyProvider.Next(),
+					//NpcStrategy.Cowboy,
 					colorProvider.Next()
 				);
 		}

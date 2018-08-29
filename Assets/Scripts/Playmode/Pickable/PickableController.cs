@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Playmode.Entity.Senses;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
@@ -13,14 +12,14 @@ namespace Playmode.Pickable
 		[SerializeField] private Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
-		private NpcSensorSight pickableSensorEventHandler;
+		private PickableSensorEventHandler pickableSensorEventHandler;
 		private TypePickable.TypePickable typePickable;
 
-		
-		private PickableBonusEffect bonusEffect;
+		private PickableBonusEffect ActivateBonusEffect;
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
+			pickableSensorEventHandler += OnPickablePicked;
 			ValidateSerialisedFields();
 		}
 
@@ -48,15 +47,12 @@ namespace Playmode.Pickable
 			switch (typePickable)
 			{
 				case TypePickable.TypePickable.Medicalkit:
-					bonusEffect = new MedkitBonusEffect();
 					visualComponent.sprite = medicalKit;
 					break;
 				case TypePickable.TypePickable.Shotgun:
-					bonusEffect = new ShotgunBonusEffect();
 					visualComponent.sprite = shotgun;
 					break;
 				case TypePickable.TypePickable.Uzi:
-					bonusEffect = new UziBonusEffect();
 					visualComponent.sprite = uzi;
 					break;
 				default:
@@ -73,10 +69,13 @@ namespace Playmode.Pickable
 
 		public void OnPickablePicked()
 		{
-			if (bonusEffect != null)
-			{
-				bonusEffect.ApplyBonusEffect(gameObject.transform.root.GetComponentInChildren<PickableSensor>());
-			}
+//		}
+//
+//		private void AppliedRelatedPickableEffect()
+//		{
+//			switch (typePickable)
+//			{
+//			}
 		}
 	}
 }

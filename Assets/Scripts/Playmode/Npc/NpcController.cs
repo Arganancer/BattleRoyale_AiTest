@@ -5,6 +5,7 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using UnityEngine;
 
 namespace Playmode.Npc
