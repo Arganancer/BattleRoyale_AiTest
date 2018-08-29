@@ -26,6 +26,8 @@ namespace Playmode.Npc
 		[SerializeField] private Sprite camperSprite;
 
 		[Header("Behaviour")] [SerializeField] private GameObject startingWeaponPrefab;
+		[SerializeField] private GameObject uziWeapon;
+		[SerializeField] private GameObject shotgunWeapon;
 
 		private Health health;
 		private Mover mover;
@@ -64,6 +66,10 @@ namespace Playmode.Npc
 				throw new ArgumentException("Type sprites must be provided. Camper is missing.");
 			if (startingWeaponPrefab == null)
 				throw new ArgumentException("StartingWeapon prefab must be provided.");
+			if (uziWeapon == null)
+				throw new ArgumentException("UziWeapon prefab must be provided.");
+			if (shotgunWeapon == null)
+				throw new ArgumentException("ShotgunWeapon prefab must be provided.");
 		}
 
 		private void InitializeComponent()
@@ -170,12 +176,14 @@ namespace Playmode.Npc
 
 		public void OnPickShotgun()
 		{
-			
+			SwitchWeapon(shotgunWeapon);
+			handController.AdjustWeaponNbOfBullet();
 		}
 
 		public void OnPickUzi()
 		{
-			
+			SwitchWeapon(uziWeapon);
+			handController.AdjustWeaponSpeed();
 		}
 		private void OnNpcSeen(NpcController npc)
 		{
@@ -183,6 +191,16 @@ namespace Playmode.Npc
 
 		private void OnNpcSightLost(NpcController npc)
 		{
+		}
+
+		private void SwitchWeapon(GameObject weaponObject)
+		{
+			handController.DropWeapon();
+			handController.Hold(Instantiate(
+				weaponObject,
+				Vector3.zero,
+				Quaternion.identity
+			));
 		}
 	}
 }
