@@ -62,7 +62,7 @@ namespace Playmode.Npc
 				SpawnNpc(
 					transform.GetChild(i).position,
 					//stragegyProvider.Next(),
-					NpcStrategy.Camper,
+					NpcStrategy.Cowboy,
 					colorProvider.Next()
 				);
 		}
