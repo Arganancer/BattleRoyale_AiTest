@@ -5,6 +5,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Pickable;
 using UnityEngine;
 using Random = UnityEngine.Random;

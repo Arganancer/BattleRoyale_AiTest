@@ -129,8 +129,6 @@ namespace Playmode.Npc
 
 		public void Configure(NpcStrategy strategy, Color color)
 		{
-//			body.GetComponent<SpriteRenderer>().color = color;
-//			sight.GetComponent<SpriteRenderer>().color = color;
 			switch (strategy)
 			{
 				case NpcStrategy.Cowboy:
@@ -146,9 +144,9 @@ namespace Playmode.Npc
 					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
-					body.GetComponent<SpriteRenderer>().color = Color.green;
-					sight.GetComponent<SpriteRenderer>().color = Color.green;
-					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
+					body.GetComponent<SpriteRenderer>().color = Color.yellow;
+					sight.GetComponent<SpriteRenderer>().color = Color.yellow;
+					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
 					this.strategy = new CamperBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				case NpcStrategy.Normal:
@@ -158,7 +156,10 @@ namespace Playmode.Npc
 					this.strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
+					body.GetComponent<SpriteRenderer>().color = Color.blue;
+					sight.GetComponent<SpriteRenderer>().color = Color.blue;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
+					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 			}
 		}

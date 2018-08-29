@@ -80,7 +80,7 @@ namespace Playmode.Npc.BodyParts
 
 		public void AdjustWeaponNbOfBullet()
 		{
-			weapon.GetComponentInChildren<WeaponController>().NbOfBullets = 5;
+			weapon.GetComponentInChildren<WeaponController>().NbOfShotgunBullets = 5;
 			weapon.WeaponType = TypePickable.Shotgun;
 		}
 	}

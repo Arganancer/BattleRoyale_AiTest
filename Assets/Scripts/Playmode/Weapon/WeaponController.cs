@@ -11,7 +11,7 @@ namespace Playmode.Weapon
 		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
 		[SerializeField] private float fireDelayInSeconds = 0.3f;
 		[SerializeField] private float angleBetweenBullet = 50f;
-		[SerializeField] private int nbOfBullets = 5;
+		[SerializeField] private int nbOfShotgunBullets = 5;
 		private TypePickable weaponType = TypePickable.None;
 
 		public TypePickable WeaponType
@@ -24,13 +24,13 @@ namespace Playmode.Weapon
 		public float FireDelayInSeconds
 		{
 			get { return fireDelayInSeconds; }
-			set { fireDelayInSeconds -= value; }
+			set { fireDelayInSeconds = value; }
 		}
 
-		public int NbOfBullets
+		public int NbOfShotgunBullets
 		{
-			get { return nbOfBullets; }
-			set { nbOfBullets += value; }
+			get { return nbOfShotgunBullets; }
+			set { nbOfShotgunBullets = value; }
 		}
 
 		private bool CanShoot => Time.time - lastTimeShotInSeconds > fireDelayInSeconds;
@@ -56,8 +56,6 @@ namespace Playmode.Weapon
 		{
 			if (CanShoot)
 			{
-				// TODO: Remove this line
-				// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + transform.position);
 				if (weaponType == TypePickable.Shotgun)
 				{
 					ShootInCone();
@@ -73,7 +71,7 @@ namespace Playmode.Weapon
 
 		public float GetBulletSpeed()
 		{
-			return bulletPrefab.GetComponentInChildren<AnchoredMover>().GetSpeed();
+			return bulletPrefab.GetComponentInChildren<AnchoredMover>().GetCurrentSpeed();
 		}
 
 		public void ShootInLine()
@@ -83,7 +81,7 @@ namespace Playmode.Weapon
 
 		public void ShootInCone()
 		{
-			for (int i = 0; i < nbOfBullets; ++i)
+			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
 				GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
 				if (i % 2 == 0)
