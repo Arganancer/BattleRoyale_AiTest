@@ -1,4 +1,5 @@
 ﻿using Playmode.Entity.Movement;
+using Playmode.Pickable.TypePickable;
 using Playmode.Weapon;
 using UnityEngine;
 
@@ -71,6 +72,18 @@ namespace Playmode.Npc.BodyParts
 		public void DropWeapon()
 		{
 			Destroy(weapon.transform.parent.gameObject);
+		}
+
+		public void AdjustWeaponSpeed()
+		{
+			weapon.GetComponentInChildren<WeaponController>().FireDelayInSeconds = 0.04f;
+			weapon.WeaponType = TypePickable.Uzi;
+		}
+
+		public void AdjustWeaponNbOfBullet()
+		{
+			weapon.GetComponentInChildren<WeaponController>().NbOfBullets = 5;
+			weapon.WeaponType = TypePickable.Shotgun;
 		}
 	}
 }
