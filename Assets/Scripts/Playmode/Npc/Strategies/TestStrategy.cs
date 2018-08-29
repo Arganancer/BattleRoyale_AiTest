@@ -3,7 +3,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
-using Playmode.Npc.Strategies.BaseStrategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -173,7 +173,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			if (Health.HealthPoints < 50)
+			if (Health.HealthPoints < 80)
 			{
 				return State.Retreating;
 			}

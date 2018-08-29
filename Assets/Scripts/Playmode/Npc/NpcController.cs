@@ -5,6 +5,7 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using UnityEngine;
 
 namespace Playmode.Npc
@@ -26,6 +27,8 @@ namespace Playmode.Npc
 		[SerializeField] private Sprite camperSprite;
 
 		[Header("Behaviour")] [SerializeField] private GameObject startingWeaponPrefab;
+		[SerializeField] private GameObject uziWeapon;
+		[SerializeField] private GameObject shotgunWeapon;
 
 		private Health health;
 		private Mover mover;
@@ -64,12 +67,16 @@ namespace Playmode.Npc
 				throw new ArgumentException("Type sprites must be provided. Camper is missing.");
 			if (startingWeaponPrefab == null)
 				throw new ArgumentException("StartingWeapon prefab must be provided.");
+			if (uziWeapon == null)
+				throw new ArgumentException("UziWeapon prefab must be provided.");
+			if (shotgunWeapon == null)
+				throw new ArgumentException("ShotgunWeapon prefab must be provided.");
 		}
 
 		private void InitializeComponent()
 		{
 			health = GetComponent<Health>();
-			mover = GetComponent<RootMover>();
+			mover = GetComponent<Mover>();
 			destroyer = GetComponent<RootDestroyer>();
 
 			var rootTransform = transform.root;
@@ -126,21 +133,24 @@ namespace Playmode.Npc
 //			sight.GetComponent<SpriteRenderer>().color = color;
 			switch (strategy)
 			{
-				case NpcStrategy.Careful:
-					body.GetComponent<SpriteRenderer>().color = Color.white;
-					sight.GetComponent<SpriteRenderer>().color = Color.white;
-					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
-					break;
 				case NpcStrategy.Cowboy:
 					body.GetComponent<SpriteRenderer>().color = Color.cyan;
 					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
 					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
+				case NpcStrategy.Careful:
+					body.GetComponent<SpriteRenderer>().color = Color.white;
+					sight.GetComponent<SpriteRenderer>().color = Color.white;
+					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					break;
 				case NpcStrategy.Camper:
-//					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
-//					break;
+					body.GetComponent<SpriteRenderer>().color = Color.green;
+					sight.GetComponent<SpriteRenderer>().color = Color.green;
+					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
+					this.strategy = new CamperBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					break;
 				case NpcStrategy.Normal:
 					body.GetComponent<SpriteRenderer>().color = Color.red;
 					sight.GetComponent<SpriteRenderer>().color = Color.red;
@@ -163,9 +173,21 @@ namespace Playmode.Npc
 			destroyer.Destroy();
 		}
 
-		private void OnHeal(int healPoint)
+		public void OnHeal(int healPoint)
 		{
 			health.Heal(healPoint);
+		}
+
+		public void OnPickShotgun()
+		{
+			SwitchWeapon(shotgunWeapon);
+			handController.AdjustWeaponNbOfBullet();
+		}
+
+		public void OnPickUzi()
+		{
+			SwitchWeapon(uziWeapon);
+			handController.AdjustWeaponSpeed();
 		}
 		private void OnNpcSeen(NpcController npc)
 		{
@@ -173,6 +195,16 @@ namespace Playmode.Npc
 
 		private void OnNpcSightLost(NpcController npc)
 		{
+		}
+
+		private void SwitchWeapon(GameObject weaponObject)
+		{
+			handController.DropWeapon();
+			handController.Hold(Instantiate(
+				weaponObject,
+				Vector3.zero,
+				Quaternion.identity
+			));
 		}
 	}
 }

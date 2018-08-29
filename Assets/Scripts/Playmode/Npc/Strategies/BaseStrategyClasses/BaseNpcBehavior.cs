@@ -9,7 +9,7 @@ using Playmode.Pickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Playmode.Npc.Strategies.BaseStrategies
+namespace Playmode.Npc.Strategies.BaseStrategyClasses
 {
 	/// <summary>
 	/// An NPC will change their current state depending on their behavior as well as current situation:
@@ -47,6 +47,8 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 	/// </summary>
 	public abstract class BaseNpcBehavior : INpcStrategy
 	{
+		protected static readonly System.Random Rand = new System.Random();
+
 		protected enum SightRoutine
 		{
 			None,
@@ -181,17 +183,20 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			}
 			else
 			{
-				CurrentRetreatingRoutine = RetreatingRoutine.RunningBackwards;
-				var chanceOfRetreatingRoutine = Random.Range(1, 150);
+				var chanceOfRetreatingRoutine = Rand.Next(1, 4);
+				var randomTimeInt = Rand.Next(30, 70);
+				currentRetreatingRoutineDelay = randomTimeInt / 100f;
 				if (chanceOfRetreatingRoutine <= 1)
 				{
-					currentRetreatingRoutineDelay = Random.Range(0.8f, 1.2f);
 					CurrentRetreatingRoutine = RetreatingRoutine.RotatingLeft;
 				}
 				else if (chanceOfRetreatingRoutine <= 2)
 				{
-					currentRetreatingRoutineDelay = Random.Range(0.8f, 1.2f);
 					CurrentRetreatingRoutine = RetreatingRoutine.RotatingRight;
+				}
+				else
+				{
+					CurrentRetreatingRoutine = RetreatingRoutine.RunningBackwards;
 				}
 			}
 
@@ -219,7 +224,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			}
 			else if (CurrentSightRoutine == SightRoutine.None)
 			{
-				var chanceOfSightRoutine = Random.Range(1, 100);
+				var chanceOfSightRoutine = Rand.Next(1, 100);
 				if (chanceOfSightRoutine <= 2)
 				{
 					CurrentSightRoutine =
@@ -254,7 +259,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 
 		protected void MoveTowardsNpc(NpcController npcController)
 		{
-			Mover.MoveRelativeToWorld(npcController.transform.parent.position - Mover.transform.parent.position);
+			Mover.MoveRelativeToWorld(npcController.transform.root.position - Mover.transform.root.position);
 		}
 
 		protected void MoveTowardsPickable(PickableController pickableController)
@@ -306,6 +311,11 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected void RotateTowardsNpc(NpcController npcController)
 		{
 			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
+		}
+		
+		protected void RotateTowards(Vector3 target)
+		{
+			Mover.RotateTowards(target - Mover.transform.root.position);
 		}
 
 		protected void RotateTowardsPickable(PickableController pickableController)

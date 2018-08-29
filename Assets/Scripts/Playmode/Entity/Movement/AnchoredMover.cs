@@ -1,34 +1,36 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Playmode.Entity.Movement
 {
-	public class AnchoredMover : Mover
+	public class AnchoredMover : MonoBehaviour
 	{
 		private Transform rootTransform;
+		public static readonly Vector3 Forward = Vector3.up;
 
-		private new void Awake()
+		[SerializeField] protected float Speed = 2f;
+		[SerializeField] protected float RotateSpeed = 90f;
+		
+		protected void Awake()
 		{
-			base.Awake();
-
+			ValidateSerialisedFields();
 			InitializeComponent();
 		}
 
+		private void ValidateSerialisedFields()
+		{
+			if (Speed < 0)
+				throw new ArgumentException("Speed can't be lower than 0.");
+			if (RotateSpeed < 0)
+				throw new ArgumentException("RotateSpeed can't be lower than 0.");
+		}
+		
 		private void InitializeComponent()
 		{
 			rootTransform = transform.root;
 		}
 
-		public override void MoveRelativeToSelf(Vector3 direction)
-		{
-			transform.Translate(direction.normalized * Speed * Time.deltaTime);
-		}
-
-		public override void MoveRelativeToWorld(Vector3 direction)
-		{
-			rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.World);
-		}
-
-		public override void Rotate(float direction)
+		public void Rotate(float direction)
 		{
 			transform.RotateAround(
 				rootTransform.position,
@@ -37,24 +39,14 @@ namespace Playmode.Entity.Movement
 			);
 		}
 
-		public override void RotateTowards(Vector3 target)
+		public void MoveRelativeToSelf(Vector3 direction)
 		{
-			var desiredOrientation = Quaternion.LookRotation(target);
-			Quaternion.RotateTowards(rootTransform.rotation, desiredOrientation, RotateSpeed * Time.deltaTime);
+			rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.Self);
 		}
-
-		public override void UpdatePosition()
+		
+		public float GetSpeed()
 		{
-			PositionLastFrame = rootTransform.position;
-		}
-
-		public override Vector3 GetVelocity()
-		{
-			if(PositionLastFrame == rootTransform.position)
-				return new Vector3(0, 0, 0);
-			var directionalVector = (rootTransform.position - PositionLastFrame).normalized;
-			var velocityVector = directionalVector * Speed;
-			return velocityVector;
+			return Speed;
 		}
 	}
 }

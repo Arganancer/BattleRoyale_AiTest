@@ -1,19 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Playmode.Entity.Senses;
 using UnityEngine;
 
 namespace Playmode.Pickable.TypePickable
 {
 	public class MedkitBonusEffect : PickableBonusEffect {
 
-		MedkitBonusEffect(GameObject objectToApplyBonusEffect) : base(objectToApplyBonusEffect)
+		public MedkitBonusEffect()
 		{
 			
 		}
 
-		public override void ApplyBonusEffect()
+		public override void ApplyBonusEffect(PickableSensor pickableSensor)
 		{
-			throw new System.NotImplementedException();
+			pickableSensor.Heal(10);
 		}
 	}
 }

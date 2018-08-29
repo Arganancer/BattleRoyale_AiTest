@@ -9,7 +9,7 @@ namespace Playmode.Bullet
 	{
 		[Header("Behaviour")] [SerializeField] private float lifeSpanInSeconds = 5f;
 
-		private Mover mover;
+		private AnchoredMover anchoredMover;
 		private Destroyer destroyer;
 		private float timeSinceSpawnedInSeconds;
 
@@ -29,7 +29,7 @@ namespace Playmode.Bullet
 
 		private void InitialzeComponent()
 		{
-			mover = GetComponent<RootMover>();
+			anchoredMover = GetComponent<AnchoredMover>();
 			destroyer = GetComponent<RootDestroyer>();
 
 			timeSinceSpawnedInSeconds = 0;
@@ -55,7 +55,9 @@ namespace Playmode.Bullet
 		private void Act()
 		{
 			if (IsAlive)
-				mover.MoveRelativeToSelf(Mover.Forward);
+			{
+				anchoredMover.MoveRelativeToSelf(AnchoredMover.Forward);
+			}
 			else
 				destroyer.Destroy();
 		}

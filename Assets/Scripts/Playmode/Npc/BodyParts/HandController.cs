@@ -1,4 +1,5 @@
 ﻿using Playmode.Entity.Movement;
+using Playmode.Pickable.TypePickable;
 using Playmode.Weapon;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Playmode.Npc.BodyParts
 	public class HandController : MonoBehaviour
 	{
 		public event WeaponFiredEventHandler OnWeaponFired;
-		private Mover mover;
+		private AnchoredMover mover;
 		private WeaponController weapon;
 
 		private void Awake()
@@ -49,8 +50,6 @@ namespace Playmode.Npc.BodyParts
 
 		public void Use()
 		{
-			// TODO: Remove this line
-			// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + mover.transform.root.position);
 			if (OnWeaponFired != null) OnWeaponFired(GetWeaponPosition());
 			if (weapon != null)
 			{
@@ -66,6 +65,23 @@ namespace Playmode.Npc.BodyParts
 		public Vector3 GetWeaponPosition()
 		{
 			return weapon.GetComponentInChildren<WeaponController>().transform.position;
+		}
+
+		public void DropWeapon()
+		{
+			Destroy(weapon.transform.parent.gameObject);
+		}
+
+		public void AdjustWeaponSpeed()
+		{
+			weapon.GetComponentInChildren<WeaponController>().FireDelayInSeconds = 0.04f;
+			weapon.WeaponType = TypePickable.Uzi;
+		}
+
+		public void AdjustWeaponNbOfBullet()
+		{
+			weapon.GetComponentInChildren<WeaponController>().NbOfBullets = 5;
+			weapon.WeaponType = TypePickable.Shotgun;
 		}
 	}
 }

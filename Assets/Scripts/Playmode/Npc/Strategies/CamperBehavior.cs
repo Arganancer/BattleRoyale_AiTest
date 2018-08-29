@@ -1,10 +1,9 @@
 ﻿using System.Linq;
-using System.Runtime.InteropServices;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
-using Playmode.Npc.Strategies.BaseStrategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
@@ -12,8 +11,8 @@ namespace Playmode.Npc.Strategies
 {
 	public class CamperBehavior : BaseNpcBehavior
 	{
-		//TODO: change naming
-		[SerializeField] private float healthPercentageToLose = 70f;
+		[SerializeField] private float healthPointsToLose = 70f;
+		[SerializeField] private float distanceToStay = 2f;
 		
 		public CamperBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
@@ -34,7 +33,9 @@ namespace Playmode.Npc.Strategies
 		
 		protected override void DoInvestigating()
 		{
-			throw new System.NotImplementedException();
+			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			UpdateSightRoutine();
+			MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
@@ -51,7 +52,7 @@ namespace Playmode.Npc.Strategies
 			}
 
 			// Decision
-			if (Health.HealthPoints % healthPercentageToLose <= 0 && CurrentPickableTarget != null)
+			if (Health.HealthPoints % healthPointsToLose <= 0 && CurrentPickableTarget != null)
 			{
 				RotateTowardsPickable(CurrentPickableTarget);
 				MoveTowardsPickable(CurrentPickableTarget);
@@ -68,9 +69,11 @@ namespace Playmode.Npc.Strategies
 				{
 					if (CurrentPickableTarget.GetPickableType() == TypePickable.Medicalkit)
 					{
-						//TODO: doit rester a coté
-						RotateTowardsPickable(CurrentPickableTarget);
-						MoveTowardsPickable(CurrentPickableTarget);
+						Vector3 direction = (CurrentPickableTarget.transform.position - Mover.transform.position);
+						direction += new Vector3(distanceToStay, distanceToStay);
+						
+						RotateTowardsDirection(direction);
+						MoveTowardsDirection(direction);
 
 						if (CurrentEnemyTarget != null)
 						{
@@ -95,12 +98,18 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoAttacking()
 		{
-			//TODO: Stay aside medicalkit
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			MoveRightAroundEnemy(CurrentEnemyTarget);
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			if (CurrentPickableTarget != null)
+			{
+				RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			}
+			else
+			{
+				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
+				RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			}
 
 			HandController.Use();
 		}
@@ -112,6 +121,7 @@ namespace Playmode.Npc.Strategies
 			
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
+			
 			HandController.Use();
 		}
 
@@ -122,12 +132,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
@@ -213,12 +218,17 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 			
-			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
+			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensorSight.NpcsInSight.Any())
+			{
+				return State.Idle;
+			}
+
+			return State.Retreating;
 		}
 	}
 }
