@@ -49,8 +49,6 @@ namespace Playmode.Npc.BodyParts
 
 		public void Use()
 		{
-			// TODO: Remove this line
-			// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + mover.transform.root.position);
 			if (OnWeaponFired != null) OnWeaponFired(GetWeaponPosition());
 			if (weapon != null)
 			{

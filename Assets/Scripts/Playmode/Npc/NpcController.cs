@@ -126,18 +126,18 @@ namespace Playmode.Npc
 //			sight.GetComponent<SpriteRenderer>().color = color;
 			switch (strategy)
 			{
-				case NpcStrategy.Careful:
-					body.GetComponent<SpriteRenderer>().color = Color.white;
-					sight.GetComponent<SpriteRenderer>().color = Color.white;
-					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
-					break;
 				case NpcStrategy.Cowboy:
-					body.GetComponent<SpriteRenderer>().color = Color.cyan;
-					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
-					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
-					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
-					break;
+//					body.GetComponent<SpriteRenderer>().color = Color.cyan;
+//					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
+//					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
+//					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+//					break;
+				case NpcStrategy.Careful:
+//					body.GetComponent<SpriteRenderer>().color = Color.white;
+//					sight.GetComponent<SpriteRenderer>().color = Color.white;
+//					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+//					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+//					break;
 				case NpcStrategy.Camper:
 //					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
 //					break;
