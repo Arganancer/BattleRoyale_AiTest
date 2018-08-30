@@ -7,11 +7,17 @@ namespace Playmode.Entity.Movement
 	{
 		private Transform rootTransform;
 		public static readonly Vector3 Forward = Vector3.up;
+		[SerializeField] private float maxSpeed = 2f;
 
-		[SerializeField] protected float MaxSpeed = 2f;
+		public float MaxSpeed
+		{
+			get { return maxSpeed; }
+			set { maxSpeed = value; }
+		}
+
 		private float currentSpeed = 2f;
 		[SerializeField] protected float RotateSpeed = 90f;
-		
+
 		protected void Awake()
 		{
 			ValidateSerialisedFields();
@@ -25,10 +31,11 @@ namespace Playmode.Entity.Movement
 			if (RotateSpeed < 0)
 				throw new ArgumentException("RotateSpeed can't be lower than 0.");
 		}
-		
+
 		private void InitializeComponent()
 		{
 			rootTransform = transform.root;
+			currentSpeed = MaxSpeed;
 		}
 
 		public void Rotate(float direction)
@@ -44,15 +51,10 @@ namespace Playmode.Entity.Movement
 		{
 			rootTransform.Translate(direction.normalized * MaxSpeed * Time.deltaTime, Space.Self);
 		}
-		
+
 		public float GetCurrentSpeed()
 		{
 			return currentSpeed;
-		}
-
-		public float GetMaxSpeed()
-		{
-			return MaxSpeed;
 		}
 
 		public void SetCurrentSpeed(float speed)

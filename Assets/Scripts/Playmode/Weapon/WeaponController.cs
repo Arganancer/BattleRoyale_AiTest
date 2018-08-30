@@ -3,6 +3,7 @@ using Playmode.Bullet;
 using Playmode.Entity.Movement;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Weapon
 {
@@ -71,7 +72,7 @@ namespace Playmode.Weapon
 
 		public float GetBulletSpeed()
 		{
-			return bulletPrefab.GetComponentInChildren<AnchoredMover>().GetCurrentSpeed();
+			return bulletPrefab.GetComponentInChildren<AnchoredMover>().MaxSpeed;
 		}
 
 		public void ShootInLine()
@@ -84,14 +85,9 @@ namespace Playmode.Weapon
 			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
 				GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-				if (i % 2 == 0)
-				{
-					bullet.transform.Rotate(Vector3.forward*angleBetweenBullet*i,Space.Self);
-				}
-				else
-				{
-					bullet.transform.Rotate(Vector3.back*angleBetweenBullet*i,Space.Self);
-				}
+				bullet.transform.Rotate(Vector3.forward*Random.Range(-4, 4),Space.Self);
+				bullet.transform.GetComponentInChildren<AnchoredMover>().MaxSpeed *= Random.Range(1.1f, 1.2f);
+				bullet.transform.GetComponentInChildren<BulletController>().LifeSpanInSeconds = 0.5f;
 			}
 		}
 	}
