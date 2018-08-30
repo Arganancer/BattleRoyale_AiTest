@@ -65,7 +65,7 @@ namespace Playmode.Bullet
 		{
 			var percentageModifier = 1f - (currentPercentageDuration - startDyingPercentageDuration) / dyingPercentageRemaining;
 			transform.root.localScale = new Vector3(0.5f, 0.5f, 1) * percentageModifier;
-			anchoredMover.SetCurrentSpeed(anchoredMover.GetMaxSpeed() * percentageModifier);
+			anchoredMover.SetCurrentSpeed(anchoredMover.MaxSpeed * percentageModifier);
 			
 		}
 
