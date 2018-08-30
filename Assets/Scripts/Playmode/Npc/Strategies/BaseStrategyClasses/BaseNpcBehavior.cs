@@ -7,6 +7,7 @@ using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Pickable;
+using Playmode.Pickable.TypePickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -25,27 +26,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		Retreating
 	}
 
-	/// <summary>
-	/// 
-	/// An NPC has a list of priorities depending on their current state for the following targets:
-	///     Enemy
-	///     MedicalKit
-	///     Weapon
-	///
-	/// An NPC will change their current state depending on their behavior as well as current situation:
-	///     Idle/Roaming
-	///     Engaging
-	///     Attacking
-	///     Retreating
-	///
-	/// Sensors considered by NPCs to determine action:
-	/// 	Vision
-	/// 		Nearest Target
-	/// 			Angle to target
-	/// 		Current Target Lock
-	/// 	CurrentHealth
-	/// 
-	/// </summary>
 	public abstract class BaseNpcBehavior : INpcStrategy
 	{
 		protected static readonly System.Random Rand = new System.Random();
@@ -54,8 +34,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		{
 			None,
 			LookingLeft,
-			LookingRight,
-			LookingSideToSide
+			LookingRight
 		}
 
 		protected enum RetreatingRoutine
@@ -64,6 +43,8 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			RotatingRight,
 			RotatingLeft
 		}
+
+		protected float HealthRetreatTolerance;
 
 		private float currentSightRoutineDelay;
 		private const float DefaultSightRoutineDelay = 0.5f;
@@ -78,15 +59,17 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
-		protected readonly float DistanceSwitchFromEngagingToAttacking = 8f;
-		protected readonly float DistanceSwitchFromAttackingToEngaging = 15f;
+		protected float DistanceSwitchFromEngagingToAttacking = 8f;
+		protected float DistanceSwitchFromAttackingToEngaging = 15f;
 		protected State CurrentState;
 		protected float TimeUntilStateSwitch;
 		protected Vector3 MovementDirection;
-		protected float DistanceToCurrentTarget;
+		protected float DistanceToCurrentEnemy;
 		protected int RotationOrientation;
 		protected NpcController CurrentEnemyTarget;
-		protected PickableController CurrentPickableTarget;
+		protected PickableController CurrentMedicalKitTarget;
+		protected PickableController CurrentShotgunTarget;
+		protected PickableController CurrentUziTarget;
 
 		protected const float MinIdleTime = 0.2f;
 		protected const float MaxIdleTime = 0.5f;
@@ -110,7 +93,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		public void Act()
 		{
 			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position, Mover.transform.up);
-			
+			UpdateTargetInformation();
 			switch (CurrentState)
 			{
 				case State.Idle:
@@ -139,7 +122,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 
 		private void UpdateNpcLogic()
 		{
-			UpdateCurrentEnemyTarget();
 			switch (CurrentState)
 			{
 				case State.Idle:
@@ -162,15 +144,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
-			}
-		}
-
-		private void UpdateCurrentEnemyTarget()
-		{
-			if (CurrentEnemyTarget != null)
-			{
-				DistanceToCurrentTarget = Vector3.Distance(CurrentEnemyTarget.transform.position,
-					Mover.transform.parent.position);
 			}
 		}
 
@@ -202,13 +175,13 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			switch (CurrentRetreatingRoutine)
 			{
 				case RetreatingRoutine.RunningBackwards:
-					MoveAwayFromNpc(npcController);
+					Mover.MoveAwayFromPosition(npcController.transform.root.position);
 					break;
 				case RetreatingRoutine.RotatingRight:
-					MoveRightAroundEnemy(npcController);
+					Mover.MoveRightAroundPosition(npcController.transform.root.position);
 					break;
 				case RetreatingRoutine.RotatingLeft:
-					MoveLeftAroundEnemy(npcController);
+					Mover.MoveLeftAroundPosition(npcController.transform.root.position);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -239,9 +212,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 				case SightRoutine.LookingRight:
 					LookToTheRight();
 					break;
-				case SightRoutine.LookingSideToSide:
-					LookSideToSide();
-					break;
 				case SightRoutine.None:
 					LookForward();
 					break;
@@ -256,75 +226,9 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			CurrentSightRoutine = SightRoutine.None;
 		}
 
-		protected void MoveTowardsNpc(NpcController npcController)
-		{
-			Mover.MoveRelativeToWorld(npcController.transform.root.position - Mover.transform.root.position);
-		}
-
-		protected void MoveTowardsPickable(PickableController pickableController)
-		{
-			Mover.MoveRelativeToWorld(pickableController.transform.parent.position - Mover.transform.parent.position);
-		}
-
-		protected void MoveTowardsDirection(Vector3 direction)
-		{
-			Mover.MoveRelativeToWorld(direction);
-		}
-
-		protected void MoveAwayFromNpc(NpcController npcController)
-		{
-			Mover.MoveRelativeToWorld(Mover.transform.parent.position - npcController.transform.parent.position);
-		}
-
-		protected void MoveRightAroundEnemy(NpcController npcController)
-		{
-			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
-			var perpendicularDirection =
-				new Vector3(directionTowardsEnemy.y, -directionTowardsEnemy.x, directionTowardsEnemy.z);
-			Mover.MoveRelativeToWorld(perpendicularDirection);
-		}
-
-		protected void MoveLeftAroundEnemy(NpcController npcController)
-		{
-			var directionTowardsEnemy = npcController.transform.parent.position - Mover.transform.parent.position;
-			var perpendicularDirection =
-				new Vector3(-directionTowardsEnemy.y, directionTowardsEnemy.x, directionTowardsEnemy.z);
-			Mover.MoveRelativeToWorld(perpendicularDirection);
-		}
-
-		protected static Vector3 GetRandomDirection()
-		{
-			return Random.insideUnitCircle;
-		}
-
-		protected void RotateTowardsAngle(int angle)
-		{
-			Mover.Rotate(angle);
-		}
-
-		protected void RotateTowardsDirection(Vector3 direction)
-		{
-			Mover.RotateTowards(direction);
-		}
-
-		protected void RotateTowardsNpc(NpcController npcController)
-		{
-			Mover.RotateTowards(npcController.transform.root.position - Mover.transform.root.position);
-		}
-		
-		protected void RotateTowards(Vector3 target)
-		{
-			Mover.RotateTowards(target - Mover.transform.root.position);
-		}
-
-		protected void RotateTowardsPickable(PickableController pickableController)
-		{
-			Mover.RotateTowards(pickableController.transform.root.position - Mover.transform.root.position);
-		}
-
 		private void LookForward()
 		{
-			RotateTowardsDirection(MovementDirection);
+			Mover.RotateTowardsDirection(MovementDirection);
 		}
 
 		private void LookToTheRight()
@@ -351,10 +255,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			}
 		}
 
-		private void LookSideToSide()
-		{
-		}
-
 		protected NpcController GetClosestNpc(IEnumerable<NpcController> npcsInSight)
 		{
 			NpcController closestNpc = null;
@@ -379,16 +279,17 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 				}
 			}
 
-			DistanceToCurrentTarget = distance;
+			DistanceToCurrentEnemy = distance;
 			return closestNpc;
 		}
 
-		protected PickableController GetClosestPickable(IEnumerable<PickableController> pickablesInSight)
+		protected PickableController GetClosestPickable(IEnumerable<PickableController> pickablesInSight, TypePickable typePickable)
 		{
 			PickableController closestPickable = null;
 			var distance = float.MaxValue;
 			foreach (var pickable in pickablesInSight)
 			{
+				if (pickable.GetPickableType() != typePickable) continue;
 				if (closestPickable == null)
 				{
 					closestPickable = pickable;
@@ -406,8 +307,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 					}
 				}
 			}
-
-			DistanceToCurrentTarget = distance;
 			return closestPickable;
 		}
 
@@ -486,6 +385,40 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 
 
 			return bulletVelocity;
+		}
+
+		private void UpdateTargetInformation()
+		{
+			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
+			{
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+			}
+
+			if (NpcSensorSight.PickablesInSight.Any() && CurrentMedicalKitTarget == null)
+			{
+				CurrentMedicalKitTarget = GetClosestPickable(NpcSensorSight.PickablesInSight, TypePickable.Medicalkit);
+			}
+			
+			if (NpcSensorSight.PickablesInSight.Any() && CurrentShotgunTarget == null)
+			{
+				CurrentShotgunTarget = GetClosestPickable(NpcSensorSight.PickablesInSight, TypePickable.Shotgun);
+			}
+			
+			if (NpcSensorSight.PickablesInSight.Any() && CurrentUziTarget == null)
+			{
+				CurrentUziTarget = GetClosestPickable(NpcSensorSight.PickablesInSight, TypePickable.Uzi);
+			}
+			
+			UpdateCurrentEnemyDistance();
+		}
+		
+		private void UpdateCurrentEnemyDistance()
+		{
+			if (CurrentEnemyTarget != null)
+			{
+				DistanceToCurrentEnemy = Vector3.Distance(CurrentEnemyTarget.transform.position,
+					Mover.transform.parent.position);
+			}
 		}
 
 		protected abstract void DoIdle();

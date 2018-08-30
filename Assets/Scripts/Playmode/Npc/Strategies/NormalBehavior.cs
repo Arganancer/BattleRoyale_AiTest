@@ -10,37 +10,6 @@ namespace Playmode.Npc.Strategies
 {
 	public class NormalBehavior : BaseNpcBehavior
 	{
-		/*private bool hasTarget;
-		private readonly Mover mover;
-		private readonly HandController handController;
-		private NpcController npcController;
-		private NpcSensor npcSensor;
-
-		public NormalBehaviour(Mover mover, HandController handController)
-		{
-			this.mover = mover;
-			this.handController = handController;
-			npcController = null;
-		}
-
-		public void Act()
-		{
-		}
-
-		public void MoveAndShootTowardTheNpc(Vector2 direction)
-		{
-			mover.MoveRelativeToSelf(direction * Time.deltaTime);
-			handController.Use();
-		}
-
-		public void ReactToLooseOfNpcSight(NpcController npc)
-		{
-			if (npc == npcController)
-			{
-				npcController = null;
-			}
-		}*/
-
 		[SerializeField] private int healthPointsToLose = 20;
 
 		public NormalBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,

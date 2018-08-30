@@ -20,75 +20,47 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoIdle()
 		{
-			RotateTowardsAngle(RotationOrientation);
+			Mover.RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
 			UpdateSightRoutine();
-			MoveTowardsDirection(MovementDirection);
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoInvestigating()
 		{
 			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
 			UpdateSightRoutine();
-			MoveTowardsDirection(MovementDirection);
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
-			// Evaluate Surroundings
-			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
+			if (CurrentShotgunTarget != null)
 			{
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				Mover.RotateTowardsPosition(CurrentShotgunTarget.transform.root.position);
+				Mover.MoveTowardsPosition(CurrentShotgunTarget.transform.root.position);
 			}
-
-			if (NpcSensorSight.PickablesInSight.Any() && CurrentPickableTarget == null)
+			else if (CurrentUziTarget != null)
 			{
-				var pickableToEvaluate = GetClosestPickable(NpcSensorSight.PickablesInSight);
-				if (pickableToEvaluate.GetPickableType() != TypePickable.Medicalkit)
-					CurrentPickableTarget = pickableToEvaluate;
+				Mover.RotateTowardsPosition(CurrentUziTarget.transform.root.position);
+				Mover.MoveTowardsPosition(CurrentUziTarget.transform.root.position);
 			}
-
-			// Make Decision
-			if (CurrentPickableTarget != null)
+			else if (CurrentEnemyTarget != null)
 			{
-				if (CurrentEnemyTarget != null)
-				{
-					RotateTowardsNpc(CurrentEnemyTarget);
-					HandController.Use();
-				}
-				else
-				{
-					RotateTowardsPickable(CurrentPickableTarget);
-				}
-
-				MoveTowardsPickable(CurrentPickableTarget);
-			}
-			else
-			{
-				RotateTowardsNpc(CurrentEnemyTarget);
-				MoveTowardsNpc(CurrentEnemyTarget);
+				Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
+				Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
 				HandController.Use();
 			}
 		}
 
 		protected override void DoAttacking()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
-
-			if (CurrentPickableTarget != null && CurrentPickableTarget.GetPickableType() != TypePickable.Medicalkit)
+			if (CurrentEnemyTarget != null)
 			{
-				RotateTowardsDirection(CurrentPickableTarget.transform.position);
-				MoveTowardsDirection(CurrentPickableTarget.transform.position);
-			}
-			else
-			{
-				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
-				RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-				
+				Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
 				HandController.Use();
 			}
 		}
@@ -105,13 +77,7 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				if (GetClosestPickable(NpcSensorSight.PickablesInSight).GetPickableType() != TypePickable.Medicalkit)
-					return State.Engaging;
-			}
-
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
 			{
 				return State.Engaging;
 			}
@@ -124,7 +90,7 @@ namespace Playmode.Npc.Strategies
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				MovementDirection = GetRandomDirection();
+				MovementDirection = Mover.GetRandomDirection();
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 				return State.Roaming;
 			}
@@ -134,20 +100,12 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{
-			if (TimeUntilStateSwitch > MaxRoamingTime)
+			if (TimeUntilStateSwitch > MaxIdleTime)
 			{
-				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
+				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				if (GetClosestPickable(NpcSensorSight.PickablesInSight).GetPickableType() != TypePickable.Medicalkit)
-				{
-					return State.Engaging;
-				}
-			}
-
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
 			{
 				return State.Engaging;
 			}
@@ -169,7 +127,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateInvestigating()
 		{
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
 			{
 				return State.Engaging;
 			}
@@ -184,22 +142,32 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateEngaging()
 		{
+			if (CurrentShotgunTarget != null || CurrentUziTarget != null)
+			{
+				return State.Engaging;
+			}
+			
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
 
-			return DistanceToCurrentTarget > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
+			return DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateAttacking()
 		{
+			if (CurrentShotgunTarget != null || CurrentUziTarget != null)
+			{
+				return State.Engaging;
+			}
+			
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
 
-			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
+			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()

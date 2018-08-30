@@ -21,13 +21,13 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoIdle()
 		{
-			RotateTowardsAngle(RotationOrientation);
+			Mover.RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
 			UpdateSightRoutine();
-			MoveTowardsDirection(MovementDirection);
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 		
 		protected override void DoInvestigating()
@@ -35,7 +35,7 @@ namespace Playmode.Npc.Strategies
 			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
 			
 			UpdateSightRoutine();
-			MoveTowardsDirection(MovementDirection);
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
@@ -43,9 +43,9 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
-			MoveTowardsNpc(CurrentEnemyTarget);
+			Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
 
 			HandController.Use();
 		}
@@ -55,8 +55,8 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			MoveRightAroundEnemy(CurrentEnemyTarget);
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			Mover.MoveRightAroundPosition(CurrentEnemyTarget.transform.root.position);
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
 			HandController.Use();
 		}
@@ -66,7 +66,7 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
 
 			HandController.Use();
@@ -96,7 +96,7 @@ namespace Playmode.Npc.Strategies
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				MovementDirection = GetRandomDirection();
+				MovementDirection = Mover.GetRandomDirection();
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 				return State.Roaming;
 			}
@@ -163,7 +163,7 @@ namespace Playmode.Npc.Strategies
 				return State.Retreating;
 			}
 
-			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
+			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateAttacking()
@@ -178,7 +178,7 @@ namespace Playmode.Npc.Strategies
 				return State.Retreating;
 			}
 
-			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
+			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()

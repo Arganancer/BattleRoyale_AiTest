@@ -11,150 +11,73 @@ using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
+	/// <summary>
+	/// Prudent. Dès qu’il trouve un ennemi, il tire dessus en gardant ses distances.
+	/// Si sa vie est trop basse, il tente immédiatement de trouver un « MedicalKit ».
+	/// S’il croise une arme, il se dirige dessus que s’il n’est pas à la recherche d’un « MedicalKit ».
+	/// </summary>
 	public class CarefulBehavior : BaseNpcBehavior
 	{
-		[SerializeField] private float healthPercentageToLose = 50f;
-		[SerializeField] private float safeDistance = 100f;
+		private float distanceSwitchFromAttackingToRetreating = 14f;
 
 		public CarefulBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
+			HealthRetreatTolerance = 50;
+			DistanceSwitchFromAttackingToEngaging = 20f;
+			DistanceSwitchFromEngagingToAttacking = 17f;
 		}
 
 		protected override void DoIdle()
 		{
-			RotateTowardsAngle(RotationOrientation);
+			Mover.RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
 			UpdateSightRoutine();
-			MoveTowardsDirection(MovementDirection);
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoInvestigating()
 		{
 			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
 			UpdateSightRoutine();
-			MoveTowardsDirection(MovementDirection);
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
-
-		// TODO: Remove this section
-//		private RetreatingRoutine movementDirection = RetreatingRoutine.RotatingRight;
-//		private int nbOfFramesMoved = 0;
-//		private void VibrateRoutine()
-//		{
-//			switch (movementDirection)
-//			{
-//				case RetreatingRoutine.RunningBackwards:
-//					break;
-//				case RetreatingRoutine.RotatingRight:
-//					MoveRightAroundEnemy(CurrentEnemyTarget);
-//					if (--nbOfFramesMoved <= 0)
-//					{
-//						nbOfFramesMoved = 5;
-//						movementDirection = RetreatingRoutine.RotatingLeft;
-//					}
-//
-//					break;
-//				case RetreatingRoutine.RotatingLeft:
-//					MoveLeftAroundEnemy(CurrentEnemyTarget);
-//					if (--nbOfFramesMoved <= 0)
-//					{
-//						nbOfFramesMoved = 5;
-//						movementDirection = RetreatingRoutine.RotatingRight;
-//					}
-//
-//					break;
-//				default:
-//					throw new ArgumentOutOfRangeException();
-//			}
-//		}
 
 		protected override void DoEngaging()
 		{
-			// Evaluate
-			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
+			if (Health.HealthPoints < HealthRetreatTolerance &&
+			    CurrentMedicalKitTarget != null)
 			{
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				Mover.RotateTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
+				Mover.MoveTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
 			}
-
-			if (NpcSensorSight.PickablesInSight.Any() && CurrentPickableTarget == null)
+			else if (CurrentEnemyTarget != null)
 			{
-				CurrentPickableTarget = GetClosestPickable(NpcSensorSight.PickablesInSight);
+				Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
+				Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
+				HandController.Use();
 			}
-			
-			// Decision
-			if (Health.HealthPoints % healthPercentageToLose <= 0)
+			else if (CurrentUziTarget != null)
 			{
-				if (CurrentPickableTarget != null && CurrentPickableTarget.GetPickableType() == TypePickable.Medicalkit)
-				{
-					RotateTowardsPickable(CurrentPickableTarget);
-					MoveTowardsPickable(CurrentPickableTarget);
-				}
-
-				if (CurrentEnemyTarget != null)
-				{
-					//TODO: change for UpdateRetreatingRoutine?
-					CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
-					RotateTowardsNpc(CurrentEnemyTarget);
-					MoveAwayFromNpc(CurrentEnemyTarget);
-					
-					HandController.Use();
-				}
-			}
-			else
-			{
-				if (CurrentEnemyTarget != null)
-				{
-					RotateTowardsNpc(CurrentEnemyTarget);
-					MoveTowardsNpc(CurrentEnemyTarget);
-					
-					HandController.Use();
-				}
-
-				if (CurrentPickableTarget != null && CurrentPickableTarget.GetPickableType() != TypePickable.Medicalkit)
-				{
-					RotateTowardsPickable(CurrentPickableTarget);
-					MoveTowardsPickable(CurrentPickableTarget);
-				}
+				Mover.RotateTowardsPosition(CurrentUziTarget.transform.root.position);
+				Mover.MoveTowardsPosition(CurrentUziTarget.transform.root.position);
 			}
 		}
 
 		protected override void DoAttacking()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
-
-			MoveRightAroundEnemy(CurrentEnemyTarget);
-			
-			float distance = Vector3.Distance(CurrentEnemyTarget.transform.position, Mover.transform.position);
-			if (DistanceToCurrentTarget > DistanceSwitchFromEngagingToAttacking)
-			{
-				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
-			}
-			else
-			{
-				MoveAwayFromNpc(CurrentEnemyTarget);
-			}
-			
-			MoveTowardsNpc(CurrentEnemyTarget);
-			
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
-
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
-			MoveTowardsNpc(CurrentEnemyTarget);
-
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			Mover.MoveAwayFromPosition(CurrentEnemyTarget.transform.root.position);
 			HandController.Use();
 		}
 
@@ -165,16 +88,11 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
 			{
 				return State.Engaging;
 			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
+
 			if (NpcSensorSound.SoundsInformations.Any())
 			{
 				return State.Investigating;
@@ -183,7 +101,7 @@ namespace Playmode.Npc.Strategies
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				MovementDirection = GetRandomDirection();
+				MovementDirection = Mover.GetRandomDirection();
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 				return State.Roaming;
 			}
@@ -198,16 +116,11 @@ namespace Playmode.Npc.Strategies
 				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
 			{
 				return State.Engaging;
 			}
-			
-			if (NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Engaging;
-			}
-			
+
 			if (NpcSensorSound.SoundsInformations.Any())
 			{
 				return State.Investigating;
@@ -223,7 +136,6 @@ namespace Playmode.Npc.Strategies
 
 				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxRoamingTime);
 				return State.Idle;
-				
 			}
 
 			return State.Roaming;
@@ -231,7 +143,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateInvestigating()
 		{
-			if (NpcSensorSight.NpcsInSight.Any())
+			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
 			{
 				return State.Engaging;
 			}
@@ -246,12 +158,22 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateEngaging()
 		{
+			if (Health.HealthPoints < HealthRetreatTolerance && CurrentMedicalKitTarget == null)
+			{
+				return State.Retreating;
+			}
+
+			if (NpcSensorSight.PickablesInSight.Any())
+			{
+				return State.Engaging;
+			}
+			
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
-			
-			return DistanceToCurrentTarget > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
+
+			return DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateAttacking()
@@ -261,12 +183,29 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			return DistanceToCurrentTarget < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
+			if (Health.HealthPoints < HealthRetreatTolerance ||
+			    DistanceToCurrentEnemy < distanceSwitchFromAttackingToRetreating)
+			{
+				return State.Retreating;
+			}
+
+			return DistanceToCurrentEnemy < DistanceSwitchFromAttackingToEngaging ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			if (Health.HealthPoints % healthPercentageToLose >= healthPercentageToLose && !NpcSensorSight.NpcsInSight.Any())
+			if (Health.HealthPoints > HealthRetreatTolerance ||
+			    DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking)
+			{
+				return State.Attacking;
+			}
+
+			if (Health.HealthPoints >= HealthRetreatTolerance || CurrentMedicalKitTarget != null)
+			{
+				return State.Engaging;
+			}
+
+			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
 			}
