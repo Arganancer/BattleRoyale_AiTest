@@ -42,6 +42,7 @@ namespace Playmode.Npc
 		private INpcStrategy strategy;
 
 		private NpcDeathEventChannel npcDeathEventChannel;
+		private HitEventChannel hitEventChannel;
 
 		private void Awake()
 		{
@@ -89,6 +90,7 @@ namespace Playmode.Npc
 			handController = hand.GetComponent<HandController>();
 
 			npcDeathEventChannel = GameObject.FindWithTag("GameController").GetComponent<NpcDeathEventChannel>();
+			hitEventChannel = GameObject.FindWithTag("GameController").GetComponent<HitEventChannel>();
 		}
 
 		private void CreateStartingWeapon()
@@ -171,6 +173,8 @@ namespace Playmode.Npc
 
 		private void OnHit(int hitPoints)
 		{
+			NotifyHit();
+			
 			health.Hit(hitPoints);
 		}
 
@@ -218,6 +222,11 @@ namespace Playmode.Npc
 		private void NotifyDeath()
 		{
 			npcDeathEventChannel.Publish();
+		}
+
+		private void NotifyHit()
+		{
+			hitEventChannel.Publish();
 		}
 	}
 }

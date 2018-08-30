@@ -12,7 +12,8 @@ namespace Playmode.Sound
 		private void Awake()
 		{
 			shootEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<ShootEventChannel>();
-			audioSource = GetComponent<AudioSource>();
+			var aSource = GetComponents(typeof(AudioSource));
+			audioSource = (AudioSource) aSource[0];
 		}
 
 		private void OnEnable()
