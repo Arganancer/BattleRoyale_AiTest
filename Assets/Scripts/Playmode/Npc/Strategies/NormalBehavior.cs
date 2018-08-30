@@ -16,36 +16,52 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
+			DistanceSwitchFromAttackingToEngaging = 3f;
+			DistanceSwitchFromEngagingToAttacking = 4f;
 		}
 
 		protected override void DoIdle()
 		{
-			throw new System.NotImplementedException();
+			Mover.RotateTowardsAngle(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
-			throw new System.NotImplementedException();
+			UpdateSightRoutine();
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
-			throw new System.NotImplementedException();
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+
+			Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
+
+			HandController.Use();
 		}
 
 		protected override void DoInvestigating()
 		{
-			throw new System.NotImplementedException();
+			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			
+			UpdateSightRoutine();
+			Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoAttacking()
 		{
-			throw new System.NotImplementedException();
+			if (CurrentEnemyTarget == null)
+				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			throw new System.NotImplementedException();
+			// only goes forward
 		}
 
 		protected override State EvaluateIdle()
@@ -58,7 +74,7 @@ namespace Playmode.Npc.Strategies
 			TimeUntilStateSwitch -= Time.deltaTime;
 			if (TimeUntilStateSwitch <= 0)
 			{
-				MovementDirection = GetRandomDirection();
+				MovementDirection = Mover.GetRandomDirection();
 				TimeUntilStateSwitch = Random.Range(4f, 6f);
 				return State.Roaming;
 			}
@@ -85,7 +101,12 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateInvestigating()
 		{
-			throw new System.NotImplementedException();
+			if (!NpcSensorSound.SoundsInformations.Any())
+			{
+				return State.Idle;
+			}
+
+			return State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
@@ -95,6 +116,10 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
+			if (DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking)
+			{
+				return State.Attacking;
+			}
 			return State.Engaging;
 		}
 
@@ -105,17 +130,16 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
+			if (DistanceToCurrentEnemy > DistanceSwitchFromAttackingToEngaging)
+			{
+				return State.Engaging;
+			}
 			return State.Attacking;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			//if (Health.HealthPoints >= healthPointsToLose)
-			//{
-			return State.Attacking;
-			//}
-
-			//return State.Retreating;
+			return State.Idle;
 		}
 	}
 }
