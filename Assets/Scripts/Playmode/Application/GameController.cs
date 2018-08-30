@@ -1,5 +1,4 @@
-﻿using Playmode.Event;
-using Playmode.Util.Values;
+﻿using Playmode.Util.Values;
 using UnityEngine;
 
 namespace Playmode.Application
@@ -7,12 +6,10 @@ namespace Playmode.Application
 	public class GameController : MonoBehaviour
 	{
 		private MainController mainController;
-		private NpcDeathEventChannel npcDeathEventChannel;
 
 		private void Awake()
 		{
 			mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
-			npcDeathEventChannel = GetComponent<NpcDeathEventChannel>();
 		}
 
 		private void OnEnable()

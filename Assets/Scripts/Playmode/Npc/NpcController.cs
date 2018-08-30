@@ -3,6 +3,7 @@ using Playmode.Entity.Destruction;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
+using Playmode.Event;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
@@ -39,6 +40,8 @@ namespace Playmode.Npc
 		private HandController handController;
 
 		private INpcStrategy strategy;
+
+		private NpcDeathEventChannel npcDeathEventChannel;
 
 		private void Awake()
 		{
@@ -84,6 +87,8 @@ namespace Playmode.Npc
 			npcSensorSound = rootTransform.GetComponentInChildren<NpcSensorSound>();
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
+
+			npcDeathEventChannel = GameObject.FindWithTag("Npc").GetComponent<NpcDeathEventChannel>();
 		}
 
 		private void CreateStartingWeapon()
@@ -171,6 +176,8 @@ namespace Playmode.Npc
 
 		private void OnDeath()
 		{
+			NotifyDeath();
+			
 			destroyer.Destroy();
 		}
 
@@ -206,6 +213,11 @@ namespace Playmode.Npc
 				Vector3.zero,
 				Quaternion.identity
 			));
+		}
+
+		private void NotifyDeath()
+		{
+			npcDeathEventChannel.Publish();
 		}
 	}
 }

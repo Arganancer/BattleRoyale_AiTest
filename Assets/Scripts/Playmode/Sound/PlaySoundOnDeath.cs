@@ -17,17 +17,17 @@ namespace Playmode.Sound
 
 		private void OnEnable()
 		{
-			//npcDeathEventChannel.OnEventPublished += PlaySound;
+			npcDeathEventChannel.OnEventPublished += PlaySound;
 		}
 
 		private void OnDisable()
 		{
-			//npcDeathEventChannel.OnEventPublished -= PlaySound;
+			npcDeathEventChannel.OnEventPublished -= PlaySound;
 		}
 
-		/*private void PlaySound();
+		private void PlaySound()
 		{
-			AudioSource.Play();
-		}*/
+			audioSource.Play();
+		}
 	}
 }

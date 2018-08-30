@@ -16,7 +16,6 @@ namespace Playmode.Weapon
 		private TypePickable weaponType = TypePickable.None;
 
 		private ShootEventChannel shootEventChannel;
-		private PlaySoundOnShoot playSoundOnShoot;
 
 		public TypePickable WeaponType
 		{
