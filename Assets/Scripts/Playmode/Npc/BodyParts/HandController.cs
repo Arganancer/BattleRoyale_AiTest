@@ -50,8 +50,6 @@ namespace Playmode.Npc.BodyParts
 
 		public void Use()
 		{
-			// TODO: Remove this line
-			// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + mover.transform.root.position);
 			if (OnWeaponFired != null) OnWeaponFired(GetWeaponPosition());
 			if (weapon != null)
 			{
@@ -82,7 +80,7 @@ namespace Playmode.Npc.BodyParts
 
 		public void AdjustWeaponNbOfBullet()
 		{
-			weapon.GetComponentInChildren<WeaponController>().NbOfBullets = 5;
+			weapon.GetComponentInChildren<WeaponController>().NbOfShotgunBullets = 5;
 			weapon.WeaponType = TypePickable.Shotgun;
 		}
 	}

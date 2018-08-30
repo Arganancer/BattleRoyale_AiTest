@@ -1,8 +1,11 @@
 ﻿using System;
 using Playmode.Bullet;
 using Playmode.Entity.Movement;
+using Playmode.Event;
 using Playmode.Pickable.TypePickable;
+using Playmode.Sound;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Weapon
 {
@@ -11,8 +14,10 @@ namespace Playmode.Weapon
 		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
 		[SerializeField] private float fireDelayInSeconds = 0.3f;
 		[SerializeField] private float angleBetweenBullet = 50f;
-		[SerializeField] private int nbOfBullets = 5;
+		[SerializeField] private int nbOfShotgunBullets = 5;
 		private TypePickable weaponType = TypePickable.None;
+
+		private ShootEventChannel shootEventChannel;
 
 		public TypePickable WeaponType
 		{
@@ -24,13 +29,13 @@ namespace Playmode.Weapon
 		public float FireDelayInSeconds
 		{
 			get { return fireDelayInSeconds; }
-			set { fireDelayInSeconds -= value; }
+			set { fireDelayInSeconds = value; }
 		}
 
-		public int NbOfBullets
+		public int NbOfShotgunBullets
 		{
-			get { return nbOfBullets; }
-			set { nbOfBullets += value; }
+			get { return nbOfShotgunBullets; }
+			set { nbOfShotgunBullets = value; }
 		}
 
 		private bool CanShoot => Time.time - lastTimeShotInSeconds > fireDelayInSeconds;
@@ -50,14 +55,14 @@ namespace Playmode.Weapon
 		private void InitializeComponent()
 		{
 			lastTimeShotInSeconds = 0;
+			
+			shootEventChannel = GameObject.FindWithTag("GameController").GetComponent<ShootEventChannel>();
 		}
 
 		public void Shoot()
 		{
 			if (CanShoot)
 			{
-				// TODO: Remove this line
-				// Debug.Log("Time Fired: " + Time.time + "\nHandController position: " + transform.position);
 				if (weaponType == TypePickable.Shotgun)
 				{
 					ShootInCone();
@@ -65,7 +70,9 @@ namespace Playmode.Weapon
 				else
 				{
 					ShootInLine();
+					
 				}
+				NotifyShot();
 
 				lastTimeShotInSeconds = Time.time;
 			}
@@ -73,7 +80,7 @@ namespace Playmode.Weapon
 
 		public float GetBulletSpeed()
 		{
-			return bulletPrefab.GetComponentInChildren<AnchoredMover>().GetSpeed();
+			return bulletPrefab.GetComponentInChildren<AnchoredMover>().MaxSpeed;
 		}
 
 		public void ShootInLine()
@@ -83,18 +90,18 @@ namespace Playmode.Weapon
 
 		public void ShootInCone()
 		{
-			for (int i = 0; i < nbOfBullets; ++i)
+			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
 				GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-				if (i % 2 == 0)
-				{
-					bullet.transform.Rotate(Vector3.forward*angleBetweenBullet*i,Space.Self);
-				}
-				else
-				{
-					bullet.transform.Rotate(Vector3.back*angleBetweenBullet*i,Space.Self);
-				}
+				bullet.transform.Rotate(Vector3.forward*Random.Range(-4, 4),Space.Self);
+				bullet.transform.GetComponentInChildren<AnchoredMover>().MaxSpeed *= Random.Range(1.1f, 1.2f);
+				bullet.transform.GetComponentInChildren<BulletController>().LifeSpanInSeconds = 0.5f;
 			}
+		}
+
+		private void NotifyShot()
+		{
+			shootEventChannel.Publish();
 		}
 	}
 }

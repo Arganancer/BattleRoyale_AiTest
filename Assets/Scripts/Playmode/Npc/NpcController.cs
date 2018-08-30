@@ -3,13 +3,14 @@ using Playmode.Entity.Destruction;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
+using Playmode.Event;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using UnityEngine;
 
 namespace Playmode.Npc
 {
-	
 	public class NpcController : MonoBehaviour
 	{
 		[Header("Body Parts")] [SerializeField]
@@ -39,6 +40,8 @@ namespace Playmode.Npc
 		private HandController handController;
 
 		private INpcStrategy strategy;
+
+		private NpcDeathEventChannel npcDeathEventChannel;
 
 		private void Awake()
 		{
@@ -84,6 +87,8 @@ namespace Playmode.Npc
 			npcSensorSound = rootTransform.GetComponentInChildren<NpcSensorSound>();
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
+
+			npcDeathEventChannel = GameObject.FindWithTag("GameController").GetComponent<NpcDeathEventChannel>();
 		}
 
 		private void CreateStartingWeapon()
@@ -129,33 +134,37 @@ namespace Playmode.Npc
 
 		public void Configure(NpcStrategy strategy, Color color)
 		{
-//			body.GetComponent<SpriteRenderer>().color = color;
-//			sight.GetComponent<SpriteRenderer>().color = color;
 			switch (strategy)
 			{
-				case NpcStrategy.Careful:
-					body.GetComponent<SpriteRenderer>().color = Color.white;
-					sight.GetComponent<SpriteRenderer>().color = Color.white;
-					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
-					break;
 				case NpcStrategy.Cowboy:
 					body.GetComponent<SpriteRenderer>().color = Color.cyan;
 					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
 					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
+				case NpcStrategy.Careful:
+					body.GetComponent<SpriteRenderer>().color = Color.white;
+					sight.GetComponent<SpriteRenderer>().color = Color.white;
+					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					break;
 				case NpcStrategy.Camper:
-					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
+					body.GetComponent<SpriteRenderer>().color = Color.yellow;
+					sight.GetComponent<SpriteRenderer>().color = Color.yellow;
+					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+					this.strategy = new CamperBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				case NpcStrategy.Normal:
 					body.GetComponent<SpriteRenderer>().color = Color.red;
 					sight.GetComponent<SpriteRenderer>().color = Color.red;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
+					body.GetComponent<SpriteRenderer>().color = Color.blue;
+					sight.GetComponent<SpriteRenderer>().color = Color.blue;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
+					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 			}
 		}
@@ -167,6 +176,8 @@ namespace Playmode.Npc
 
 		private void OnDeath()
 		{
+			NotifyDeath();
+			
 			destroyer.Destroy();
 		}
 
@@ -202,6 +213,11 @@ namespace Playmode.Npc
 				Vector3.zero,
 				Quaternion.identity
 			));
+		}
+
+		private void NotifyDeath()
+		{
+			npcDeathEventChannel.Publish();
 		}
 	}
 }

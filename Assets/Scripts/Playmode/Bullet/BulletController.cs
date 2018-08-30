@@ -9,9 +9,18 @@ namespace Playmode.Bullet
 	{
 		[Header("Behaviour")] [SerializeField] private float lifeSpanInSeconds = 5f;
 
+		public float LifeSpanInSeconds
+		{
+			get { return lifeSpanInSeconds; }
+			set { lifeSpanInSeconds = value; }
+		}
+
 		private AnchoredMover anchoredMover;
 		private Destroyer destroyer;
 		private float timeSinceSpawnedInSeconds;
+		private float currentPercentageDuration;
+		private float startDyingPercentageDuration = 0.7f;
+		private float dyingPercentageRemaining = 0.3f;
 
 		private bool IsAlive => timeSinceSpawnedInSeconds < lifeSpanInSeconds;
 
@@ -45,6 +54,19 @@ namespace Playmode.Bullet
 		private void UpdateLifeSpan()
 		{
 			timeSinceSpawnedInSeconds += Time.deltaTime;
+			currentPercentageDuration = timeSinceSpawnedInSeconds / lifeSpanInSeconds;
+			if (currentPercentageDuration > startDyingPercentageDuration)
+			{
+				UpdateBulletDying();
+			}
+		}
+
+		private void UpdateBulletDying()
+		{
+			var percentageModifier = 1f - (currentPercentageDuration - startDyingPercentageDuration) / dyingPercentageRemaining;
+			transform.root.localScale = new Vector3(0.5f, 0.5f, 1) * percentageModifier;
+			anchoredMover.SetCurrentSpeed(anchoredMover.MaxSpeed * percentageModifier);
+			
 		}
 
 		public void Hit()

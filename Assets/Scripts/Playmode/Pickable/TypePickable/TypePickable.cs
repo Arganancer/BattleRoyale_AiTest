@@ -2,9 +2,9 @@
 {
 	public enum TypePickable
 	{
+		None,
 		Medicalkit,
 		Shotgun,
-		Uzi,
-		None
+		Uzi
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Playmode.Npc.Strategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Util.Collections;
 using UnityEngine;
 
@@ -60,8 +61,8 @@ namespace Playmode.Npc
 			for (var i = 0; i < nbOfEnemies /* <-- TODO: Change for transform.childCount */; i++)
 				SpawnNpc(
 					transform.GetChild(i).position,
-					//stragegyProvider.Next(),
-					NpcStrategy.Normal,
+					stragegyProvider.Next(),
+					//NpcStrategy.Cowboy,
 					colorProvider.Next()
 				);
 		}

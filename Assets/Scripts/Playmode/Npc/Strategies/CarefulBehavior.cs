@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
-using Playmode.Npc.Strategies.BaseStrategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
@@ -37,6 +39,38 @@ namespace Playmode.Npc.Strategies
 			UpdateSightRoutine();
 			MoveTowardsDirection(MovementDirection);
 		}
+
+		// TODO: Remove this section
+//		private RetreatingRoutine movementDirection = RetreatingRoutine.RotatingRight;
+//		private int nbOfFramesMoved = 0;
+//		private void VibrateRoutine()
+//		{
+//			switch (movementDirection)
+//			{
+//				case RetreatingRoutine.RunningBackwards:
+//					break;
+//				case RetreatingRoutine.RotatingRight:
+//					MoveRightAroundEnemy(CurrentEnemyTarget);
+//					if (--nbOfFramesMoved <= 0)
+//					{
+//						nbOfFramesMoved = 5;
+//						movementDirection = RetreatingRoutine.RotatingLeft;
+//					}
+//
+//					break;
+//				case RetreatingRoutine.RotatingLeft:
+//					MoveLeftAroundEnemy(CurrentEnemyTarget);
+//					if (--nbOfFramesMoved <= 0)
+//					{
+//						nbOfFramesMoved = 5;
+//						movementDirection = RetreatingRoutine.RotatingRight;
+//					}
+//
+//					break;
+//				default:
+//					throw new ArgumentOutOfRangeException();
+//			}
+//		}
 
 		protected override void DoEngaging()
 		{
@@ -93,9 +127,10 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			//MoveRightAroundEnemy(CurrentEnemyTarget);
+			MoveRightAroundEnemy(CurrentEnemyTarget);
+			
 			float distance = Vector3.Distance(CurrentEnemyTarget.transform.position, Mover.transform.position);
-			if (distance >= safeDistance)
+			if (DistanceToCurrentTarget > DistanceSwitchFromEngagingToAttacking)
 			{
 				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
 			}
@@ -103,6 +138,8 @@ namespace Playmode.Npc.Strategies
 			{
 				MoveAwayFromNpc(CurrentEnemyTarget);
 			}
+			
+			MoveTowardsNpc(CurrentEnemyTarget);
 			
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
@@ -116,6 +153,7 @@ namespace Playmode.Npc.Strategies
 
 			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
+			MoveTowardsNpc(CurrentEnemyTarget);
 
 			HandController.Use();
 		}

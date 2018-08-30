@@ -82,6 +82,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 1399810628277264, guid: 5b3563603dcbbce449eb771ff30aba92,
     type: 2}
-  fireDelayInSeconds: 0.1
-  angleBetweenBullet: 5
-  nbOfBullets: 5
+  fireDelayInSeconds: 1
+  angleBetweenBullet: 2
+  nbOfShotgunBullets: 5

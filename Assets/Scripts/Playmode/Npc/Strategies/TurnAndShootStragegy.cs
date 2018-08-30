@@ -1,5 +1,6 @@
 ﻿using Playmode.Entity.Movement;
 using Playmode.Npc.BodyParts;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 
 namespace Playmode.Npc.Strategies
 {

@@ -3,7 +3,7 @@ using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
-using Playmode.Npc.Strategies.BaseStrategies;
+using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -79,10 +79,18 @@ namespace Playmode.Npc.Strategies
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
 
-			MoveRightAroundEnemy(CurrentEnemyTarget);
-			RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-
-			HandController.Use();
+			if (CurrentPickableTarget != null && CurrentPickableTarget.GetPickableType() != TypePickable.Medicalkit)
+			{
+				RotateTowardsDirection(CurrentPickableTarget.transform.position);
+				MoveTowardsDirection(CurrentPickableTarget.transform.position);
+			}
+			else
+			{
+				MoveTowardsDirection(CurrentEnemyTarget.transform.position);
+				RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+				
+				HandController.Use();
+			}
 		}
 
 		protected override void DoRetreating()
@@ -196,12 +204,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRetreating()
 		{
-			if (!NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Idle;
-			}
-
-			return State.Retreating;
+			return State.Idle;
 		}
 	}
 }
