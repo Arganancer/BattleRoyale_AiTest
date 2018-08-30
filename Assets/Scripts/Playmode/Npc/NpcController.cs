@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace Playmode.Npc
 {
+	
 	public class NpcController : MonoBehaviour
 	{
 		[Header("Body Parts")] [SerializeField]
@@ -145,13 +146,13 @@ namespace Playmode.Npc
 					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
-//					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
-//					break;
+					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
+					break;
 				case NpcStrategy.Normal:
 					body.GetComponent<SpriteRenderer>().color = Color.red;
 					sight.GetComponent<SpriteRenderer>().color = Color.red;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;

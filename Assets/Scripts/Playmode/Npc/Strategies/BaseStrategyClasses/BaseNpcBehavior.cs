@@ -62,6 +62,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 			RotatingLeft
 		}
 
+		private bool isOutsideOfZone = false;
 		private float currentSightRoutineDelay;
 		private const float DefaultSightRoutineDelay = 0.5f;
 		private float currentRetreatingRoutineDelay;
@@ -75,8 +76,8 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
-		protected readonly float DistanceSwitchFromEngagingToAttacking = 8f;
-		protected readonly float DistanceSwitchFromAttackingToEngaging = 15f;
+		protected float DistanceSwitchFromEngagingToAttacking = 8f;
+		protected float DistanceSwitchFromAttackingToEngaging = 15f;
 		protected State CurrentState;
 		protected float TimeUntilStateSwitch;
 		protected Vector3 MovementDirection;
@@ -85,6 +86,7 @@ namespace Playmode.Npc.Strategies.BaseStrategies
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentPickableTarget;
 
+		private NpcController attachedNpcController;
 		protected const float MinIdleTime = 0.2f;
 		protected const float MaxIdleTime = 0.5f;
 		protected const float MinRoamingTime = 1.2f;

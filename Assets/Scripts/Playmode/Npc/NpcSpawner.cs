@@ -61,7 +61,7 @@ namespace Playmode.Npc
 				SpawnNpc(
 					transform.GetChild(i).position,
 					//stragegyProvider.Next(),
-					NpcStrategy.Careful,
+					NpcStrategy.Normal,
 					colorProvider.Next()
 				);
 		}
