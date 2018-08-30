@@ -88,7 +88,7 @@ namespace Playmode.Npc
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
 
-			npcDeathEventChannel = GameObject.FindWithTag("Npc").GetComponent<NpcDeathEventChannel>();
+			npcDeathEventChannel = GameObject.FindWithTag("GameController").GetComponent<NpcDeathEventChannel>();
 		}
 
 		private void CreateStartingWeapon()
