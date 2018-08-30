@@ -1,9 +1,6 @@
-﻿using UnityEngine;
-
-namespace Playmode.Event
+﻿namespace Playmode.Event
 {
-	public class ShootEventChannel : MonoBehaviour
+	public class ShootEventChannel : EventChannel
 	{
-		
 	}
 }

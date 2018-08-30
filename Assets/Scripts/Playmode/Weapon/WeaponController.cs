@@ -1,7 +1,9 @@
 ﻿using System;
 using Playmode.Bullet;
 using Playmode.Entity.Movement;
+using Playmode.Event;
 using Playmode.Pickable.TypePickable;
+using Playmode.Sound;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,6 +16,9 @@ namespace Playmode.Weapon
 		[SerializeField] private float angleBetweenBullet = 50f;
 		[SerializeField] private int nbOfShotgunBullets = 5;
 		private TypePickable weaponType = TypePickable.None;
+
+		private ShootEventChannel shootEventChannel;
+		private PlaySoundOnShoot playSoundOnShoot;
 
 		public TypePickable WeaponType
 		{
@@ -51,6 +56,8 @@ namespace Playmode.Weapon
 		private void InitializeComponent()
 		{
 			lastTimeShotInSeconds = 0;
+			
+			shootEventChannel = GameObject.FindWithTag("GameController").GetComponent<ShootEventChannel>();
 		}
 
 		public void Shoot()
@@ -64,7 +71,9 @@ namespace Playmode.Weapon
 				else
 				{
 					ShootInLine();
+					
 				}
+				NotifyShot();
 
 				lastTimeShotInSeconds = Time.time;
 			}
@@ -89,6 +98,11 @@ namespace Playmode.Weapon
 				bullet.transform.GetComponentInChildren<AnchoredMover>().MaxSpeed *= Random.Range(1.1f, 1.2f);
 				bullet.transform.GetComponentInChildren<BulletController>().LifeSpanInSeconds = 0.5f;
 			}
+		}
+
+		private void NotifyShot()
+		{
+			shootEventChannel.Publish();
 		}
 	}
 }
