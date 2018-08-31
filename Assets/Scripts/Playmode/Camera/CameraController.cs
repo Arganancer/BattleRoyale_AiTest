@@ -87,7 +87,7 @@ public class CameraController : MonoBehaviour
 			movement.x = -cameraMovementSpeed*Time.deltaTime;
 		}
 
-		if (Input.GetAxis(MOUSE_WHEEL) > 0f)
+		if (Input.GetAxis(MOUSE_WHEEL) > 0f && mainCam.orthographicSize >0)
 		{
 			--mainCam.orthographicSize;
 		}
