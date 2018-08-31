@@ -4,6 +4,8 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
+using Playmode.Npc.Strategies.Routines.MovementRoutines;
+using Playmode.Npc.Strategies.Routines.SightRoutines;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,41 +13,48 @@ namespace Playmode.Npc.Strategies
 {
 	public class OpStrategy : BaseNpcBehavior
 	{
+		private readonly MovementRoutine retreatingMovementRoutine;
+		private readonly MovementRoutine engagingMovementRoutine;
+		private readonly SightRoutine noEnemySightRoutine;
+		
 		public OpStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
+			retreatingMovementRoutine = new RetreatWhileDodgingMovementRoutine(Mover);
+			engagingMovementRoutine = new AdvanceWhileDodgingMovementRoutine(Mover);
+			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
 		}
 
 		#region DoTheStuff
 
 		protected override void DoIdle()
 		{
-			Mover.RotateTowardsAngle(RotationOrientation);
+			Mover.Rotate(RotationOrientation);
 		}
 
 		protected override void DoRoaming()
 		{
-			UpdateSightRoutine();
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 		
 		protected override void DoInvestigating()
 		{
-			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
 			
-			UpdateSightRoutine();
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
+
 		}
 
 		protected override void DoEngaging()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
+			engagingMovementRoutine.UpdateMovementRoutine(CurrentEnemyTarget.transform.root.position);
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-
-			Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
 
 			HandController.Use();
 		}
@@ -53,7 +62,7 @@ namespace Playmode.Npc.Strategies
 		protected override void DoAttacking()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
 			Mover.MoveRightAroundPosition(CurrentEnemyTarget.transform.root.position);
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
@@ -64,10 +73,10 @@ namespace Playmode.Npc.Strategies
 		protected override void DoRetreating()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
+			retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
 
 			HandController.Use();
 		}
@@ -77,63 +86,23 @@ namespace Playmode.Npc.Strategies
 		#region Evaluate
 
 		protected override State EvaluateIdle()
-		{
-			if (TimeUntilStateSwitch > MaxIdleTime)
-			{
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
-			}
-			
+		{	
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
 			
-			if (NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Investigating;
-			}
-			
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				MovementDirection = Mover.GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
-				return State.Roaming;
-			}
-
-			return State.Idle;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
-		{
-			if (TimeUntilStateSwitch > MaxRoamingTime)
-			{
-				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
-			}
-			
+		{	
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
 
-			if (NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Investigating;
-			}
-
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				while (RotationOrientation != 0)
-				{
-					RotationOrientation = Random.Range(-1, 1);
-				}
-
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxRoamingTime);
-				return State.Idle;
-			}
-
-			return State.Roaming;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()

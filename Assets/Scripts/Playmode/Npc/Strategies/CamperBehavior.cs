@@ -4,6 +4,8 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
+using Playmode.Npc.Strategies.Routines.MovementRoutines;
+using Playmode.Npc.Strategies.Routines.SightRoutines;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
@@ -11,13 +13,15 @@ namespace Playmode.Npc.Strategies
 {
 	public class CamperBehavior : BaseNpcBehavior
 	{
-		[SerializeField] private float healthPointsToLose = 70f;
-		[SerializeField] private float distanceToStay = 2f;
+		private readonly MovementRoutine retreatingMovementRoutine;
+		private readonly SightRoutine noEnemySightRoutine;
 		
 		public CamperBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
+			retreatingMovementRoutine = new RetreatWhileDodgingMovementRoutine(Mover);
+			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
 		}
 
 		protected override void DoIdle()
@@ -27,20 +31,20 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
-			UpdateSightRoutine();
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 		
 		protected override void DoInvestigating()
 		{
-			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
-			UpdateSightRoutine();
+			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
-			if (Health.HealthPoints % healthPointsToLose <= 0 && CurrentMedicalKitTarget != null)
+			if (Health.HealthPoints % HealthRetreatTolerance <= 0 && CurrentMedicalKitTarget != null)
 			{
 				Mover.RotateTowardsPosition(CurrentMedicalKitTarget.transform.root.position);				
 				Mover.MoveTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
@@ -57,8 +61,9 @@ namespace Playmode.Npc.Strategies
 				{
 					if (CurrentMedicalKitTarget.GetPickableType() == TypePickable.Medicalkit)
 					{
+						// TODO: What
 						Vector3 direction = (CurrentMedicalKitTarget.transform.position - Mover.transform.position);
-						direction += new Vector3(distanceToStay, distanceToStay);
+						direction += new Vector3(0, 0);
 						
 						Mover.RotateTowardsDirection(direction);
 						Mover.MoveTowardsDirection(direction);
@@ -87,7 +92,7 @@ namespace Playmode.Npc.Strategies
 		protected override void DoAttacking()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
 			if (CurrentMedicalKitTarget != null)
 			{
@@ -105,73 +110,32 @@ namespace Playmode.Npc.Strategies
 		protected override void DoRetreating()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 			
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			UpdateRetreatingRoutine(GetClosestNpc(NpcSensorSight.NpcsInSight));
+			retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
 			
 			HandController.Use();
 		}
 
 		protected override State EvaluateIdle()
 		{
-			if (TimeUntilStateSwitch > MaxIdleTime)
-			{
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
-			}
-
 			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
 			
-			if (NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Investigating;
-			}
-
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				MovementDirection = Mover.GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
-				return State.Roaming;
-			}
-
-			return State.Idle;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
 		{
-			if (TimeUntilStateSwitch > MaxRoamingTime)
-			{
-				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
-			}
-
 			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Engaging;
 			}
 			
-			if (NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Investigating;
-			}
-
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				while (RotationOrientation != 0)
-				{
-					RotationOrientation = Random.Range(-1, 1);
-				}
-
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxRoamingTime);
-				return State.Idle;
-				
-			}
-
-			return State.Roaming;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()

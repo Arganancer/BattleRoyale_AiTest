@@ -116,7 +116,7 @@ namespace Playmode.Entity.Movement
 			return Random.insideUnitCircle;
 		}
 
-		public void RotateTowardsAngle(int angle)
+		public void RotateTowardsAngle(float angle)
 		{
 			Rotate(angle);
 		}

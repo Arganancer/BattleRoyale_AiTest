@@ -8,16 +8,15 @@ namespace Playmode.Pickable
 {
 	public class PickableController : MonoBehaviour
 	{
-		private SpriteRenderer visualComponent;
-
 		[SerializeField] private Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
-		private NpcSensorSight pickableSensorEventHandler;
-		private TypePickable.TypePickable typePickable;
 
-		
+		private TypePickable.TypePickable typePickable;
+		private NpcSensorSight pickableSensorEventHandler;
+		private SpriteRenderer visualComponent;
 		private PickableBonusEffect bonusEffect;
+		
 		private void Awake()
 		{
 			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();

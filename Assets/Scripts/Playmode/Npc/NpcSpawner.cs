@@ -8,8 +8,9 @@ namespace Playmode.Npc
 {
 	public class NpcSpawner : MonoBehaviour
 	{
-		// TODO: Remove (Debug Field)
+		#if UNITY_EDITOR
 		[SerializeField] private int nbOfEnemies;
+		#endif
 
 		private static readonly Color[] DefaultColors =
 		{

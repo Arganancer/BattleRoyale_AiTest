@@ -4,20 +4,23 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
+using Playmode.Npc.Strategies.Routines.MovementRoutines;
+using Playmode.Npc.Strategies.Routines.SightRoutines;
 using UnityEngine;
 
 namespace Playmode.Npc.Strategies
 {
 	public class NormalBehavior : BaseNpcBehavior
 	{
-		[SerializeField] private int healthPointsToLose = 20;
+		private readonly SightRoutine noEnemySightRoutine;
 
 		public NormalBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
-			DistanceSwitchFromAttackingToEngaging = 3f;
-			DistanceSwitchFromEngagingToAttacking = 4f;
+			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
+			DistanceSwitchFromAttackingToEngaging = 4f;
+			DistanceSwitchFromEngagingToAttacking = 3f;
 		}
 
 		protected override void DoIdle()
@@ -27,14 +30,14 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
-			UpdateSightRoutine();
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
@@ -45,68 +48,52 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoInvestigating()
 		{
-			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
+			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
 			
-			UpdateSightRoutine();
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 
 		protected override void DoAttacking()
 		{
 			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			// only goes forward
+			// Too dumb to retreat
 		}
 
 		protected override State EvaluateIdle()
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
-				return State.Attacking;
+				return State.Engaging;
 			}
 
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				MovementDirection = Mover.GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(4f, 6f);
-				return State.Roaming;
-			}
-
-			return State.Idle;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
 			{
-				return State.Attacking;
+				return State.Engaging;
 			}
 
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				TimeUntilStateSwitch = Random.Range(0.5f, 1.5f);
-				return State.Idle;
-			}
-
-			return State.Roaming;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()
 		{
-			if (!NpcSensorSound.SoundsInformations.Any())
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
-				return State.Idle;
+				return State.Engaging;
 			}
-
-			return State.Investigating;
+			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
@@ -116,11 +103,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			if (DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking)
-			{
-				return State.Attacking;
-			}
-			return State.Engaging;
+			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateAttacking()
@@ -130,11 +113,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 			}
 
-			if (DistanceToCurrentEnemy > DistanceSwitchFromAttackingToEngaging)
-			{
-				return State.Engaging;
-			}
-			return State.Attacking;
+			return DistanceToCurrentEnemy > DistanceSwitchFromAttackingToEngaging ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateRetreating()

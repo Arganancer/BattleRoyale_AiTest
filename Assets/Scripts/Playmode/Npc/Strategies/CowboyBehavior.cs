@@ -4,7 +4,7 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
-using Playmode.Pickable.TypePickable;
+using Playmode.Npc.Strategies.Routines.SightRoutines;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,10 +12,13 @@ namespace Playmode.Npc.Strategies
 {
 	public class CowboyBehavior : BaseNpcBehavior
 	{
+		private readonly SightRoutine noEnemySightRoutine;
+
 		public CowboyBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 			: base(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound)
 		{
+			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
 		}
 
 		protected override void DoIdle()
@@ -25,15 +28,15 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
-			UpdateSightRoutine();
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 
 		protected override void DoInvestigating()
 		{
-			MovementDirection = GetNewestSoundPosition() - Mover.transform.root.position;
-			UpdateSightRoutine();
+			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
 			Mover.MoveTowardsDirection(MovementDirection);
+			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 
 		protected override void DoEngaging()
@@ -72,57 +75,22 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			if (TimeUntilStateSwitch > MaxIdleTime)
-			{
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
-			}
-
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
 			{
 				return State.Engaging;
 			}
 
-			if (NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Investigating;
-			}
-
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				MovementDirection = Mover.GetRandomDirection();
-				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
-				return State.Roaming;
-			}
-
-			return State.Idle;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
 		{
-			if (TimeUntilStateSwitch > MaxIdleTime)
-			{
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
-			}
-
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
 			{
 				return State.Engaging;
 			}
 
-			if (NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Investigating;
-			}
-
-			TimeUntilStateSwitch -= Time.deltaTime;
-			if (TimeUntilStateSwitch <= 0)
-			{
-				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
-				return State.Idle;
-			}
-
-			return State.Roaming;
+			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()
@@ -132,12 +100,7 @@ namespace Playmode.Npc.Strategies
 				return State.Engaging;
 			}
 
-			if (!NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Idle;
-			}
-
-			return State.Investigating;
+			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
@@ -146,7 +109,7 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Engaging;
 			}
-			
+
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
@@ -161,7 +124,7 @@ namespace Playmode.Npc.Strategies
 			{
 				return State.Engaging;
 			}
-			
+
 			if (!NpcSensorSight.NpcsInSight.Any())
 			{
 				return State.Idle;
