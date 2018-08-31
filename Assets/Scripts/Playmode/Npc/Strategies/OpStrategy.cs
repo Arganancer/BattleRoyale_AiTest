@@ -9,9 +9,9 @@ using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
-	public class TestStrategy : BaseNpcBehavior
+	public class OpStrategy : BaseNpcBehavior
 	{
-		public TestStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+		public OpStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
