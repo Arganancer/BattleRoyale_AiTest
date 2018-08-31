@@ -23,7 +23,10 @@ namespace Playmode.Application
 			}
 		}
 
-		public bool IsGameOver => numberOfNpcs == 1;
+		public bool IsGameOver
+		{
+			get { return numberOfNpcs == 1 || numberOfNpcs == 0; }
+		}
 
 		public bool IsGamePaused
 		{
