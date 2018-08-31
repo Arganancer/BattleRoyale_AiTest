@@ -8,6 +8,7 @@ using Playmode.Npc.BodyParts;
 using Playmode.Pickable;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies.BaseStrategyClasses
 {
@@ -26,31 +27,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 
 	public abstract class BaseNpcBehavior : INpcStrategy
 	{
-		protected static readonly System.Random Rand = new System.Random();
-
-		protected enum SightRoutine
-		{
-			None,
-			LookingLeft,
-			LookingRight
-		}
-
-		protected enum RetreatingRoutine
-		{
-			RunningBackwards,
-			RotatingRight,
-			RotatingLeft
-		}
-
-		protected float HealthRetreatTolerance;
-
-		private bool isOutsideOfZone = false;
-		private float currentSightRoutineDelay;
-		private const float DefaultSightRoutineDelay = 0.5f;
-		private float currentRetreatingRoutineDelay;
-
-		protected SightRoutine CurrentSightRoutine;
-		protected RetreatingRoutine CurrentRetreatingRoutine;
+		private State currentState;
 
 		protected readonly NpcSensorSound NpcSensorSound;
 		protected readonly Mover Mover;
@@ -58,13 +35,17 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
+
 		protected float DistanceSwitchFromEngagingToAttacking = 8f;
 		protected float DistanceSwitchFromAttackingToEngaging = 15f;
-		protected State CurrentState;
-		protected float TimeUntilStateSwitch;
-		protected Vector3 MovementDirection;
 		protected float DistanceToCurrentEnemy;
-		protected int RotationOrientation;
+		protected Vector3 MovementDirection;
+		protected float RotationOrientation;
+
+		protected float HealthRetreatTolerance;
+		protected float TimeUntilStateSwitch = 0f;
+		protected bool IsOutsideOfZone = false;
+
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentMedicalKitTarget;
 		protected PickableController CurrentShotgunTarget;
@@ -78,13 +59,12 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected BaseNpcBehavior(Mover mover, HandController handController,
 			HitSensor hitSensor, Health health, NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 		{
-			CurrentState = State.Idle;
+			currentState = State.Idle;
 			Mover = mover;
 			HandController = handController;
 			HitSensor = hitSensor;
 			Health = health;
 			NpcSensorSight = npcSensorSight;
-			TimeUntilStateSwitch = 0;
 			MovementDirection = new Vector3();
 			NpcSensorSound = npcSensorSound;
 		}
@@ -93,35 +73,40 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		{
 			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position, Mover.transform.up);
 			UpdateTargetInformation();
-			switch (CurrentState)
+			UpdatNpcState();
+			UpdateNpcAction();
+		}
+
+		private void UpdatNpcState()
+		{
+			switch (currentState)
 			{
 				case State.Idle:
-					CurrentState = EvaluateIdle();
+					currentState = EvaluateIdle();
 					break;
 				case State.Roaming:
-					CurrentState = EvaluateRoaming();
+					currentState = EvaluateRoaming();
 					break;
 				case State.Investigating:
-					CurrentState = EvaluateInvestigating();
+					currentState = EvaluateInvestigating();
 					break;
 				case State.Engaging:
-					CurrentState = EvaluateEngaging();
+					currentState = EvaluateEngaging();
 					break;
 				case State.Attacking:
-					CurrentState = EvaluateAttacking();
+					currentState = EvaluateAttacking();
 					break;
 				case State.Retreating:
-					CurrentState = EvaluateRetreating();
+					currentState = EvaluateRetreating();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
-			UpdateNpcLogic();
 		}
 
-		private void UpdateNpcLogic()
+		private void UpdateNpcAction()
 		{
-			switch (CurrentState)
+			switch (currentState)
 			{
 				case State.Idle:
 					DoIdle();
@@ -145,189 +130,39 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		protected void UpdateRetreatingRoutine(NpcController npcController)
-		{
-			if (currentRetreatingRoutineDelay > 0f)
-			{
-				currentRetreatingRoutineDelay -= Time.deltaTime;
-			}
-			else
-			{
-				var chanceOfRetreatingRoutine = Rand.Next(1, 4);
-				var randomTimeInt = Rand.Next(30, 70);
-				currentRetreatingRoutineDelay = randomTimeInt / 100f;
-				if (chanceOfRetreatingRoutine <= 1)
-				{
-					CurrentRetreatingRoutine = RetreatingRoutine.RotatingLeft;
-				}
-				else if (chanceOfRetreatingRoutine <= 2)
-				{
-					CurrentRetreatingRoutine = RetreatingRoutine.RotatingRight;
-				}
-				else
-				{
-					CurrentRetreatingRoutine = RetreatingRoutine.RunningBackwards;
-				}
-			}
-
-			switch (CurrentRetreatingRoutine)
-			{
-				case RetreatingRoutine.RunningBackwards:
-					Mover.MoveAwayFromPosition(npcController.transform.root.position);
-					break;
-				case RetreatingRoutine.RotatingRight:
-					Mover.MoveRightAroundPosition(npcController.transform.root.position);
-					break;
-				case RetreatingRoutine.RotatingLeft:
-					Mover.MoveLeftAroundPosition(npcController.transform.root.position);
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-		}
-
-		protected void UpdateSightRoutine()
-		{
-			if (currentSightRoutineDelay > 0f)
-			{
-				currentSightRoutineDelay -= Time.deltaTime;
-			}
-			else if (CurrentSightRoutine == SightRoutine.None)
-			{
-				var chanceOfSightRoutine = Rand.Next(1, 100);
-				if (chanceOfSightRoutine <= 2)
-				{
-					CurrentSightRoutine =
-						chanceOfSightRoutine <= 1 ? SightRoutine.LookingRight : SightRoutine.LookingLeft;
-				}
-			}
-
-			switch (CurrentSightRoutine)
-			{
-				case SightRoutine.LookingLeft:
-					LookToTheLeft();
-					break;
-				case SightRoutine.LookingRight:
-					LookToTheRight();
-					break;
-				case SightRoutine.None:
-					LookForward();
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-		}
-
-		private void StartSightRoutineDelay()
-		{
-			currentSightRoutineDelay = DefaultSightRoutineDelay;
-			CurrentSightRoutine = SightRoutine.None;
-		}
-
-		private void LookForward()
-		{
-			Mover.RotateTowardsDirection(MovementDirection);
-		}
-
-		private void LookToTheRight()
-		{
-			if (Vector3.Angle(Mover.transform.up, MovementDirection) < 70f)
-			{
-				Mover.Rotate(1);
-			}
-			else
-			{
-				StartSightRoutineDelay();
-			}
-		}
-
-		private void LookToTheLeft()
-		{
-			if (Vector3.Angle(Mover.transform.up, MovementDirection) < 70f)
-			{
-				Mover.Rotate(-1);
-			}
-			else
-			{
-				StartSightRoutineDelay();
-			}
-		}
-
-		protected NpcController GetClosestNpc(IEnumerable<NpcController> npcsInSight)
-		{
-			NpcController closestNpc = null;
-			var distance = float.MaxValue;
-			foreach (var npc in npcsInSight)
-			{
-				if (closestNpc == null)
-				{
-					closestNpc = npc;
-					distance = Vector3.Distance(closestNpc.transform.position,
-						Mover.transform.parent.position);
-				}
-				else
-				{
-					var currentNpcDistance =
-						Vector3.Distance(closestNpc.transform.position, npc.transform.position);
-					if (distance > currentNpcDistance)
-					{
-						distance = currentNpcDistance;
-						closestNpc = npc;
-					}
-				}
-			}
-
-			DistanceToCurrentEnemy = distance;
-			return closestNpc;
-		}
-
-		protected PickableController GetClosestPickable(IEnumerable<PickableController> pickablesInSight, TypePickable typePickable)
-		{
-			PickableController closestPickable = null;
-			var distance = float.MaxValue;
-			foreach (var pickable in pickablesInSight)
-			{
-				if (pickable.GetPickableType() != typePickable) continue;
-				if (closestPickable == null)
-				{
-					closestPickable = pickable;
-					distance = Vector3.Distance(closestPickable.transform.position,
-						Mover.transform.parent.position);
-				}
-				else
-				{
-					var currentPickableDistance =
-						Vector3.Distance(closestPickable.transform.position, pickable.transform.position);
-					if (distance > currentPickableDistance)
-					{
-						distance = currentPickableDistance;
-						closestPickable = pickable;
-					}
-				}
-			}
-			return closestPickable;
-		}
-
-		public Vector3 GetClosestSoundPosition(Vector3 npcCurrentPosition)
-		{
-			var closestSoundDistance = float.MaxValue;
-			var closestSoundPosition = new Vector3();
-			foreach (var soundValue in NpcSensorSound.SoundsInformations)
-			{
-				if (Vector3.Magnitude(soundValue.Value - npcCurrentPosition) < closestSoundDistance)
-				{
-					closestSoundDistance = Vector3.Magnitude(soundValue.Value - npcCurrentPosition);
-					closestSoundPosition = soundValue.Value;
-				}
-			}
-
-			return closestSoundPosition;
-		}
 		
-		protected Vector3 GetNewestSoundPosition()
+		private void UpdateTargetInformation()
 		{
-			return NpcSensorSound.SoundsInformations.Values.Last();
+			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
+			{
+				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
+			}
+
+			if (NpcSensorSight.PickablesInSight.Any() && CurrentMedicalKitTarget == null)
+			{
+				CurrentMedicalKitTarget = NpcSensorSight.GetClosestPickable(TypePickable.Medicalkit);
+			}
+
+			if (NpcSensorSight.PickablesInSight.Any() && CurrentShotgunTarget == null)
+			{
+				CurrentShotgunTarget = NpcSensorSight.GetClosestPickable(TypePickable.Shotgun);
+			}
+
+			if (NpcSensorSight.PickablesInSight.Any() && CurrentUziTarget == null)
+			{
+				CurrentUziTarget = NpcSensorSight.GetClosestPickable(TypePickable.Uzi);
+			}
+
+			UpdateCurrentEnemyDistance();
+		}
+
+		private void UpdateCurrentEnemyDistance()
+		{
+			if (CurrentEnemyTarget != null)
+			{
+				DistanceToCurrentEnemy = Vector3.Distance(CurrentEnemyTarget.transform.position,
+					Mover.transform.parent.position);
+			}
 		}
 
 		/// <summary>
@@ -386,40 +221,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			return bulletVelocity;
 		}
 
-		private void UpdateTargetInformation()
-		{
-			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
-			{
-				CurrentEnemyTarget = GetClosestNpc(NpcSensorSight.NpcsInSight);
-			}
-
-			if (NpcSensorSight.PickablesInSight.Any() && CurrentMedicalKitTarget == null)
-			{
-				CurrentMedicalKitTarget = GetClosestPickable(NpcSensorSight.PickablesInSight, TypePickable.Medicalkit);
-			}
-			
-			if (NpcSensorSight.PickablesInSight.Any() && CurrentShotgunTarget == null)
-			{
-				CurrentShotgunTarget = GetClosestPickable(NpcSensorSight.PickablesInSight, TypePickable.Shotgun);
-			}
-			
-			if (NpcSensorSight.PickablesInSight.Any() && CurrentUziTarget == null)
-			{
-				CurrentUziTarget = GetClosestPickable(NpcSensorSight.PickablesInSight, TypePickable.Uzi);
-			}
-			
-			UpdateCurrentEnemyDistance();
-		}
-		
-		private void UpdateCurrentEnemyDistance()
-		{
-			if (CurrentEnemyTarget != null)
-			{
-				DistanceToCurrentEnemy = Vector3.Distance(CurrentEnemyTarget.transform.position,
-					Mover.transform.parent.position);
-			}
-		}
-
 		protected abstract void DoIdle();
 
 		protected abstract void DoRoaming();
@@ -432,9 +233,42 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 
 		protected abstract void DoRetreating();
 
-		protected abstract State EvaluateIdle();
+		protected virtual State EvaluateIdle()
+		{
+			if (TimeUntilStateSwitch > MaxIdleTime)
+			{
+				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxIdleTime);
+			}
+			
+			TimeUntilStateSwitch -= Time.deltaTime;
+			if (TimeUntilStateSwitch <= 0)
+			{
+				MovementDirection = Mover.GetRandomDirection();
+				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
+				return State.Roaming;
+			}
 
-		protected abstract State EvaluateRoaming();
+			return State.Idle;
+		}
+
+		protected virtual State EvaluateRoaming()
+		{
+			if (TimeUntilStateSwitch > MaxRoamingTime)
+			{
+				TimeUntilStateSwitch = Random.Range(MinRoamingTime, MaxRoamingTime);
+			}
+			
+			TimeUntilStateSwitch -= Time.deltaTime;
+			if (TimeUntilStateSwitch <= 0)
+			{
+				RotationOrientation = Random.Range(-1, 1);
+
+				TimeUntilStateSwitch = Random.Range(MinIdleTime, MaxRoamingTime);
+				return State.Idle;
+			}
+
+			return State.Roaming;
+		}
 
 		protected abstract State EvaluateInvestigating();
 

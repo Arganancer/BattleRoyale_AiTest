@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Playmode.Npc;
 using Playmode.Npc.BodyParts;
 using UnityEngine;
@@ -57,6 +58,27 @@ namespace Playmode.Entity.Senses
 			{
 				soundsInformations.Remove(outdatedSound.Key);
 			}
+		}
+		
+		public Vector3 GetClosestSoundPosition()
+		{
+			var closestSoundDistance = float.MaxValue;
+			var closestSoundPosition = new Vector3();
+			foreach (var soundValue in SoundsInformations)
+			{
+				if (Vector3.Magnitude(soundValue.Value - transform.root.position) < closestSoundDistance)
+				{
+					closestSoundDistance = Vector3.Magnitude(soundValue.Value - transform.root.position);
+					closestSoundPosition = soundValue.Value;
+				}
+			}
+
+			return closestSoundPosition;
+		}
+
+		public Vector3 GetNewestSoundPosition()
+		{
+			return SoundsInformations.Values.Last();
 		}
 
 		public void EnterSoundRange(NpcController npc)

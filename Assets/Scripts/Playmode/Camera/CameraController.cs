@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Experimental.UIElements;
 
+/// <summary>
+/// TODO: Add "private" to functions
+/// </summary>
 public class CameraController : MonoBehaviour
 {
 	private Camera mainCam;
@@ -23,7 +26,7 @@ public class CameraController : MonoBehaviour
 		movement = Vector2.zero;
 	}
 
-	public void onResetButtonClick()
+	public void OnResetButtonClick()
 	{
 		mainCam.transform.position = 
 			new Vector3(zoneObject.offset.x*10,
