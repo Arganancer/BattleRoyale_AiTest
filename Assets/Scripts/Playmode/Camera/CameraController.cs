@@ -6,118 +6,122 @@ using UnityEngine.Experimental.UIElements;
 
 public class CameraController : MonoBehaviour
 {
+	private const int MAX_SHRINKING_SIZE = 2;
+	private const string MOUSE_WHEEL = "Mouse ScrollWheel";
+	
 	private Camera mainCam;
 	private CircleCollider2D zoneObject;
-	private float middleHeight, middleWidth;
-	private Vector2 movement;
+	
 	private int cameraMovementSpeed = 5;
-	private bool isMoving = false;
+	private int cameraSizeRatio = 20;
+	private float cameraHeight, cameraWidth;
+	private float middleHeight, middleWidth;
+	private int sizeOfCamera = 20;
+	private Vector2 movement;
+	
 	private void Awake()
 	{
 		mainCam = Camera.main;
-		zoneObject = GameObject.Find("Zone").GetComponentInChildren<CircleCollider2D>();
-		float height = mainCam.orthographicSize*2f;
-		float width = height * mainCam.aspect;
-		middleHeight = height/2;
-		middleWidth = width/2;
+		
+		mainCam.orthographicSize = sizeOfCamera;
+		cameraHeight = mainCam.orthographicSize*2f;
+		cameraWidth = cameraHeight * mainCam.aspect;
+		middleHeight = cameraHeight/2/cameraSizeRatio;
+		middleWidth = cameraWidth/2/cameraSizeRatio;
 		movement = Vector2.zero;
+		
+		zoneObject = GameObject.Find("Zone").GetComponentInChildren<CircleCollider2D>();
 	}
 
-	public void onResetButtonClick()
+	/// <summary>
+	/// Used by unity UI
+	/// </summary>
+	public void OnResetButtonClick()
 	{
 		mainCam.transform.position = 
 			new Vector3(zoneObject.offset.x*10,
 			zoneObject.offset.y*10,
 			-10);
 	}
-	// Use this for initialization
-	void Start () {
-		
-	}
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
+		
+		cameraHeight = mainCam.orthographicSize*2f;
+		cameraWidth = cameraHeight * mainCam.aspect;
+		middleHeight = cameraHeight/2/cameraSizeRatio;
+		middleWidth = cameraWidth/2/cameraSizeRatio;
 		MoveCamera();
 		
 	}
 
-	void MoveCamera()
+	private void MoveCamera()
 	{
-		CheckKeyDown();
-		CheckKeyUp();
-		mainCam.transform.position = new Vector3(mainCam.transform.position.x+ movement.x,
-			mainCam.transform.position.y+movement.y,-10);
+		CheckKey();
+		mainCam.transform.Translate(movement);
+		CheckAndMoveCameraIfNeeded();
 	}
 
-	void CheckKeyDown()
+	private void CheckKey()
 	{
-		if (CheckIfCameraCanGoUp() && (Input.GetKeyDown(KeyCode.W) || isMoving))
+		movement.x = 0;
+		movement.y = 0;
+		
+		if (CheckIfCameraCanGoUp() && Input.GetKey(KeyCode.W))
 		{
-			isMoving = true;
 			movement.y = cameraMovementSpeed*Time.deltaTime;
 		}
 
-		if (CheckIfCameraCanGoDown() && (Input.GetKeyDown(KeyCode.S) || isMoving))
+		if (CheckIfCameraCanGoDown() && Input.GetKey(KeyCode.S))
 		{
-			isMoving = true;
 			movement.y = -cameraMovementSpeed*Time.deltaTime;
 		}
-		if (CheckIfCameraCanGoRight() && (Input.GetKeyDown(KeyCode.D) || isMoving))
+		
+		if (CheckIfCameraCanGoRight() && Input.GetKey(KeyCode.D))
 		{
-			isMoving = true;
 			movement.x = cameraMovementSpeed*Time.deltaTime;
 		}
 
-		if (CheckIfCameraCanGoLeft() && (Input.GetKeyDown(KeyCode.A) || isMoving))
+		if (CheckIfCameraCanGoLeft() && Input.GetKey(KeyCode.A))
 		{
-			isMoving = true;
 			movement.x = -cameraMovementSpeed*Time.deltaTime;
 		}
-	}
 
-	void CheckKeyUp()
-	{
-		if (Input.GetKeyUp(KeyCode.W))
+		if (Input.GetAxis(MOUSE_WHEEL) > 0f)
 		{
-			isMoving = false;
-			movement.y =0;
+			--mainCam.orthographicSize;
 		}
-
-		if (Input.GetKeyUp(KeyCode.S))
+		else if (Input.GetAxis(MOUSE_WHEEL) < 0f)
 		{
-			isMoving = false;
-			movement.y =0;
-		}
-		if (Input.GetKeyUp(KeyCode.D))
-		{
-			isMoving = false;
-			movement.x =0;
-		}
-
-		if (Input.GetKeyUp(KeyCode.A))
-		{
-			isMoving = false;
-			movement.x =0;
+			++mainCam.orthographicSize;
 		}
 	}
 
-	bool CheckIfCameraCanGoUp()
+	private bool CheckIfCameraCanGoUp()
 	{
-		return mainCam.transform.position.y + middleHeight + cameraMovementSpeed < zoneObject.radius;
+		return mainCam.transform.position.y + middleHeight + cameraMovementSpeed < zoneObject.radius*cameraSizeRatio/2;
 	}
 	
-	bool CheckIfCameraCanGoDown()
+	private bool CheckIfCameraCanGoDown()
 	{
-		return mainCam.transform.position.y - middleHeight - cameraMovementSpeed > -zoneObject.radius;
+		return mainCam.transform.position.y - middleHeight - cameraMovementSpeed > -zoneObject.radius*cameraSizeRatio/2;
 	}
 
-	bool CheckIfCameraCanGoRight()
+	private bool CheckIfCameraCanGoRight()
 	{
-		return mainCam.transform.position.x + middleHeight + cameraMovementSpeed < zoneObject.radius;
+		return mainCam.transform.position.x + middleWidth + cameraMovementSpeed < zoneObject.radius*cameraSizeRatio/2-30;
 	}
 
-	bool CheckIfCameraCanGoLeft()
+	private bool CheckIfCameraCanGoLeft()
 	{
-		return mainCam.transform.position.y - middleHeight - cameraMovementSpeed > -zoneObject.radius;
+		return mainCam.transform.position.x - middleWidth - cameraMovementSpeed > -zoneObject.radius*cameraSizeRatio/2;
+	}
+
+	private void CheckAndMoveCameraIfNeeded()
+	{
+		if ( zoneObject.radius<= MAX_SHRINKING_SIZE)
+		{
+			mainCam.transform.position = new Vector3(zoneObject.offset.x*10,zoneObject.offset.y*10,-10);
+		}
 	}
 }
