@@ -1,126 +1,126 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Experimental.UIElements;
+﻿using UnityEngine;
 
-/// <summary>
-/// TODO: Add "private" to functions
-/// </summary>
-public class CameraController : MonoBehaviour
+namespace Playmode.Camera
 {
-	private Camera mainCam;
-	private CircleCollider2D zoneObject;
-	private float middleHeight, middleWidth;
-	private Vector2 movement;
-	private int cameraMovementSpeed = 5;
-	private bool isMoving = false;
-	private void Awake()
+	public class CameraController : MonoBehaviour
 	{
-		mainCam = Camera.main;
-		zoneObject = GameObject.Find("Zone").GetComponentInChildren<CircleCollider2D>();
-		float height = mainCam.orthographicSize*2f;
-		float width = height * mainCam.aspect;
-		middleHeight = height/2;
-		middleWidth = width/2;
-		movement = Vector2.zero;
-	}
-
-	public void OnResetButtonClick()
-	{
-		mainCam.transform.position = 
-			new Vector3(zoneObject.offset.x*10,
-			zoneObject.offset.y*10,
-			-10);
-	}
-	// Use this for initialization
-	void Start () {
-		
-	}
+		private const int MaxShrinkingSize = 2;
+		private const string MouseWheel = "Mouse ScrollWheel";
 	
-	// Update is called once per frame
-	void Update () {
-		MoveCamera();
-		
-	}
-
-	void MoveCamera()
-	{
-		CheckKeyDown();
-		CheckKeyUp();
-		mainCam.transform.position = new Vector3(mainCam.transform.position.x+ movement.x,
-			mainCam.transform.position.y+movement.y,-10);
-	}
-
-	void CheckKeyDown()
-	{
-		if (CheckIfCameraCanGoUp() && (Input.GetKeyDown(KeyCode.W) || isMoving))
-		{
-			isMoving = true;
-			movement.y = cameraMovementSpeed*Time.deltaTime;
-		}
-
-		if (CheckIfCameraCanGoDown() && (Input.GetKeyDown(KeyCode.S) || isMoving))
-		{
-			isMoving = true;
-			movement.y = -cameraMovementSpeed*Time.deltaTime;
-		}
-		if (CheckIfCameraCanGoRight() && (Input.GetKeyDown(KeyCode.D) || isMoving))
-		{
-			isMoving = true;
-			movement.x = cameraMovementSpeed*Time.deltaTime;
-		}
-
-		if (CheckIfCameraCanGoLeft() && (Input.GetKeyDown(KeyCode.A) || isMoving))
-		{
-			isMoving = true;
-			movement.x = -cameraMovementSpeed*Time.deltaTime;
-		}
-	}
-
-	void CheckKeyUp()
-	{
-		if (Input.GetKeyUp(KeyCode.W))
-		{
-			isMoving = false;
-			movement.y =0;
-		}
-
-		if (Input.GetKeyUp(KeyCode.S))
-		{
-			isMoving = false;
-			movement.y =0;
-		}
-		if (Input.GetKeyUp(KeyCode.D))
-		{
-			isMoving = false;
-			movement.x =0;
-		}
-
-		if (Input.GetKeyUp(KeyCode.A))
-		{
-			isMoving = false;
-			movement.x =0;
-		}
-	}
-
-	bool CheckIfCameraCanGoUp()
-	{
-		return mainCam.transform.position.y + middleHeight + cameraMovementSpeed < zoneObject.radius;
-	}
+		private UnityEngine.Camera mainCam;
+		private CircleCollider2D zoneObject;
 	
-	bool CheckIfCameraCanGoDown()
-	{
-		return mainCam.transform.position.y - middleHeight - cameraMovementSpeed > -zoneObject.radius;
-	}
+		private int cameraMovementSpeed = 5;
+		private int cameraSizeRatio = 20;
+		private float cameraHeight, cameraWidth;
+		private float middleHeight, middleWidth;
+		private int sizeOfCamera = 20;
+		private Vector2 movement;
+	
+		private void Awake()
+		{
+			mainCam = UnityEngine.Camera.main;
+		
+			mainCam.orthographicSize = sizeOfCamera;
+			cameraHeight = mainCam.orthographicSize*2f;
+			cameraWidth = cameraHeight * mainCam.aspect;
+			middleHeight = cameraHeight/2/cameraSizeRatio;
+			middleWidth = cameraWidth/2/cameraSizeRatio;
+			movement = Vector2.zero;
+		
+			zoneObject = GameObject.Find("Zone").GetComponentInChildren<CircleCollider2D>();
+		}
 
-	bool CheckIfCameraCanGoRight()
-	{
-		return mainCam.transform.position.x + middleHeight + cameraMovementSpeed < zoneObject.radius;
-	}
+		/// <summary>
+		/// Used by unity UI
+		/// </summary>
+		public void OnResetButtonClick()
+		{
+			mainCam.transform.position = 
+				new Vector3(zoneObject.offset.x*10,
+					zoneObject.offset.y*10,
+					-10);
+		}
+	
+		// Update is called once per frame
+		private void Update () {
+		
+			cameraHeight = mainCam.orthographicSize*2f;
+			cameraWidth = cameraHeight * mainCam.aspect;
+			middleHeight = cameraHeight/2/cameraSizeRatio;
+			middleWidth = cameraWidth/2/cameraSizeRatio;
+			MoveCamera();
+		
+		}
 
-	bool CheckIfCameraCanGoLeft()
-	{
-		return mainCam.transform.position.y - middleHeight - cameraMovementSpeed > -zoneObject.radius;
+		private void MoveCamera()
+		{
+			CheckKey();
+			mainCam.transform.Translate(movement);
+			CheckAndMoveCameraIfNeeded();
+		}
+
+		private void CheckKey()
+		{
+			movement.x = 0;
+			movement.y = 0;
+		
+			if (CheckIfCameraCanGoUp() && Input.GetKey(KeyCode.W))
+			{
+				movement.y = cameraMovementSpeed*Time.deltaTime;
+			}
+
+			if (CheckIfCameraCanGoDown() && Input.GetKey(KeyCode.S))
+			{
+				movement.y = -cameraMovementSpeed*Time.deltaTime;
+			}
+		
+			if (CheckIfCameraCanGoRight() && Input.GetKey(KeyCode.D))
+			{
+				movement.x = cameraMovementSpeed*Time.deltaTime;
+			}
+
+			if (CheckIfCameraCanGoLeft() && Input.GetKey(KeyCode.A))
+			{
+				movement.x = -cameraMovementSpeed*Time.deltaTime;
+			}
+
+			if (Input.GetAxis(MouseWheel) > 0f && mainCam.orthographicSize >0)
+			{
+				--mainCam.orthographicSize;
+			}
+			else if (Input.GetAxis(MouseWheel) < 0f)
+			{
+				++mainCam.orthographicSize;
+			}
+		}
+
+		private bool CheckIfCameraCanGoUp()
+		{
+			return mainCam.transform.position.y + middleHeight + cameraMovementSpeed < zoneObject.radius*cameraSizeRatio/2;
+		}
+	
+		private bool CheckIfCameraCanGoDown()
+		{
+			return mainCam.transform.position.y - middleHeight - cameraMovementSpeed > -zoneObject.radius*cameraSizeRatio/2;
+		}
+
+		private bool CheckIfCameraCanGoRight()
+		{
+			return mainCam.transform.position.x + middleWidth + cameraMovementSpeed < zoneObject.radius*cameraSizeRatio/2-30;
+		}
+
+		private bool CheckIfCameraCanGoLeft()
+		{
+			return mainCam.transform.position.x - middleWidth - cameraMovementSpeed > -zoneObject.radius*cameraSizeRatio/2;
+		}
+
+		private void CheckAndMoveCameraIfNeeded()
+		{
+			if ( zoneObject.radius<= MaxShrinkingSize)
+			{
+				mainCam.transform.position = new Vector3(zoneObject.offset.x*10,zoneObject.offset.y*10,-10);
+			}
+		}
 	}
 }
