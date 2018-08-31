@@ -12,7 +12,12 @@ namespace Playmode.Application
 		private void Start()
 		{
 			SetTimeScale();
-			LoadGameScene();
+			StartCoroutine(LoadMenuSceneRoutine());
+		}
+
+		public void StartGame()
+		{
+			StartCoroutine(LoadGameSceneRoutine());
 		}
 
 		private static void SetTimeScale()
@@ -23,34 +28,23 @@ namespace Playmode.Application
 			Time.timeScale = TimeScale;
 		}
 
-		private void LoadGameScene()
-		{
-			StartCoroutine(LoadGameSceneRoutine());
-		}
-
-		public void ReloadGameScene()
-		{
-			StartCoroutine(ReloadGameSceneRoutine());
-		}
-
 		private static IEnumerator LoadGameSceneRoutine()
 		{
+			if (SceneManager.GetSceneByName(Scenes.Menu).isLoaded)
+				yield return SceneManager.UnloadSceneAsync(Scenes.Menu);
+			
 			if (!SceneManager.GetSceneByName(Scenes.Game).isLoaded)
 				yield return SceneManager.LoadSceneAsync(Scenes.Game, LoadSceneMode.Additive);
 
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(Scenes.Game));
 		}
-
-		private static IEnumerator UnloadGameSceneRoutine()
+		
+		private static IEnumerator LoadMenuSceneRoutine()
 		{
-			if (SceneManager.GetSceneByName(Scenes.Game).isLoaded)
-				yield return SceneManager.UnloadSceneAsync(Scenes.Game);
-		}
+			if (!SceneManager.GetSceneByName(Scenes.Menu).isLoaded)
+				yield return SceneManager.LoadSceneAsync(Scenes.Menu, LoadSceneMode.Additive);
 
-		private static IEnumerator ReloadGameSceneRoutine()
-		{
-			yield return UnloadGameSceneRoutine();
-			yield return LoadGameSceneRoutine();
+			SceneManager.SetActiveScene(SceneManager.GetSceneByName(Scenes.Menu));
 		}
 	}
 }
