@@ -6,7 +6,7 @@ namespace Playmode.Pickable
 {
 	public class PickableSpawner : MonoBehaviour
 	{
-		private Camera cam;
+		private UnityEngine.Camera cam;
 		private float maxGameWidth;
 		private float camViewWidth;
 		private float camViewHeight;
@@ -23,7 +23,7 @@ namespace Playmode.Pickable
 
 		private void Awake()
 		{
-			cam = Camera.main;
+			cam = UnityEngine.Camera.main;
 			camViewHeight = cam.orthographicSize * 2f;
 			camViewWidth = camViewHeight * cam.aspect;
 			ValidateSerialisedFields();
