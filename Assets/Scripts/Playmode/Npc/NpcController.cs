@@ -160,7 +160,7 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.red;
 					sight.GetComponent<SpriteRenderer>().color = Color.red;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new TestStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
 					body.GetComponent<SpriteRenderer>().color = Color.blue;

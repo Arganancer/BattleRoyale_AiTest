@@ -24,7 +24,7 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
-			HealthRetreatTolerance = 50;
+			HealthRetreatTolerance = 80;
 			DistanceSwitchFromAttackingToEngaging = 20f;
 			DistanceSwitchFromEngagingToAttacking = 17f;
 		}
@@ -206,7 +206,7 @@ namespace Playmode.Npc.Strategies
 			}
 
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
+			{			
 				return State.Idle;
 			}
 

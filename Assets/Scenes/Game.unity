@@ -396,7 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72432366c1b6064449b5f39cb18b4a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBufferToMoveZone: 2
+  timeBufferToMoveZone: 120
   startingRadiusZoneSize: 10
   minimunSizeShrink: 2
   maximumSizeShrink: 3
@@ -2094,7 +2094,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2073673046
 MonoBehaviour:
   m_ObjectHideFlags: 0
