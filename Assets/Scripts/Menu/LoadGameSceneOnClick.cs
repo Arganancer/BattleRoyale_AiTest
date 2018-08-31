@@ -1,11 +1,10 @@
 ﻿using Playmode.Application;
 using Playmode.Util.Values;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Menu
 {
-	public class LoadSceneOnClick : MonoBehaviour
+	public class LoadGameSceneOnClick : MonoBehaviour
 	{
 		public void LoadScene(string sceneName)
 		{
