@@ -70,6 +70,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4017572104063094}
+  - component: {fileID: 114713499007399478}
+  - component: {fileID: 58987541195775724}
+  - component: {fileID: 114113867375229332}
   m_Layer: 8
   m_Name: UI
   m_TagString: Untagged
@@ -358,6 +361,21 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!58 &58987541195775724
+CircleCollider2D:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1585018391542474}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!60 &60192341613569478
 PolygonCollider2D:
   m_ObjectHideFlags: 1
@@ -423,6 +441,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 896131d0d06d48d08bcbf4d0a7e56fc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114113867375229332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1585018391542474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7319738c4ea96bb43991d02c52d26de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114136075856512652
@@ -493,6 +522,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d650ce41c0d4151a1d594c24c2bc7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114713499007399478
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1585018391542474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f2f622a0b7eb7468a055bb1c11f2f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114771647671017566
