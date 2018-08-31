@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Playmode.Entity.Senses;
+using Playmode.Npc;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
@@ -70,11 +71,11 @@ namespace Playmode.Pickable
 			return typePickable;
 		}
 
-		public void OnPickablePicked()
+		public void OnPickablePicked(NpcController npcController)
 		{
 			if (bonusEffect != null)
 			{
-				bonusEffect.ApplyBonusEffect(gameObject.transform.root.GetComponentInChildren<PickableSensor>());
+				bonusEffect.ApplyBonusEffect(npcController);
 			}
 		}
 	}

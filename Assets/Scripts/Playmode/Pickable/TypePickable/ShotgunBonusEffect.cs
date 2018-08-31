@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Playmode.Entity.Senses;
+using Playmode.Npc;
 using UnityEngine;
 
 namespace Playmode.Pickable.TypePickable
@@ -12,9 +13,9 @@ namespace Playmode.Pickable.TypePickable
 		{
 		}
 
-		public override void ApplyBonusEffect(PickableSensor pickableSensor)
+		public override void ApplyBonusEffect(NpcController npcController)
 		{
-			pickableSensor.PickShotgun();
+			npcController.PickShotgun();
 		}
 	}
 }

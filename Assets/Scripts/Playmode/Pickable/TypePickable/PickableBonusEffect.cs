@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Playmode.Entity.Senses;
+using Playmode.Npc;
 using UnityEngine;
 
 namespace Playmode.Pickable.TypePickable
@@ -11,7 +12,7 @@ namespace Playmode.Pickable.TypePickable
 		{
 		}
 
-		public abstract void ApplyBonusEffect(PickableSensor pickableSensor);
+		public abstract void ApplyBonusEffect(NpcController npcController);
 	}
 }
 

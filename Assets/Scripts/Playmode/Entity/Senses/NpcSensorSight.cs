@@ -7,17 +7,17 @@ using UnityEngine;
 namespace Playmode.Entity.Senses
 {
 	public delegate void NpcSensorEventHandler(NpcController npc);
-
-	public delegate void PickableSensorEventHandler();
+	public delegate void PickableViewSensorEventHandler(PickableController pickable);
 
 	public class NpcSensorSight : MonoBehaviour
 	{
 		private HashSet<NpcController> npcsInSight;
-		private ICollection<PickableController> pickablesInSight;
+		private HashSet<PickableController> pickablesInSight;
 
 		public event NpcSensorEventHandler OnNpcSeen;
 		public event NpcSensorEventHandler OnNpcSightLost;
-		public event PickableSensorEventHandler PickablePickedEventHandler;
+		public event PickableViewSensorEventHandler OnPickableSeen;
+		public event PickableViewSensorEventHandler OnPickableSightLost;
 
 		public IEnumerable<NpcController> NpcsInSight => npcsInSight;
 		public IEnumerable<PickableController> PickablesInSight => pickablesInSight;
@@ -33,21 +33,21 @@ namespace Playmode.Entity.Senses
 			pickablesInSight = new HashSet<PickableController>();
 		}
 
-		public void See(NpcController npc)
+		public void SeeNpc(NpcController npc)
 		{
 			npcsInSight.Add(npc);
 
 			NotifyNpcSeen(npc);
 		}
 
-		public void LoseSightOf(NpcController npc)
+		public void LoseSightOfNpc(NpcController npc)
 		{
 			
 			npcsInSight.Remove(npc);
 
 			NotifyNpcSightLost(npc);
 		}
-
+		
 		private void NotifyNpcSeen(NpcController npc)
 		{
 			if (OnNpcSeen != null) OnNpcSeen(npc);
@@ -58,9 +58,36 @@ namespace Playmode.Entity.Senses
 			if (OnNpcSightLost != null) OnNpcSightLost(npc);
 		}
 
+		public void SeePickable(PickableController pickable)
+		{
+			pickablesInSight.Add(pickable);
+			NotifyPickableSeen(pickable);
+		}
+
+		public void LoseSightOfPickable(PickableController pickable)
+		{
+			pickablesInSight.Remove(pickable);
+			NotifyPickableSightLost(pickable);
+		}
+
+		private void NotifyPickableSeen(PickableController pickable)
+		{
+			if (OnPickableSeen != null) OnPickableSeen(pickable);
+		}
+
+		private void NotifyPickableSightLost(PickableController pickable)
+		{
+			if (OnNpcSightLost != null) OnPickableSightLost(pickable);
+		}
+		
 		public void RemoveNullNpc()
 		{
 			npcsInSight.RemoveWhere(it => it == null);
+		}
+
+		public void RemoveNullPickable()
+		{
+			pickablesInSight.RemoveWhere(it => it == null);
 		}
 		
 		public NpcController GetClosestNpc()
@@ -115,29 +142,6 @@ namespace Playmode.Entity.Senses
 			}
 
 			return closestPickable;
-		}
-
-		public void PickPickable(NpcController npcController,PickableSensor pickableSensor,PickableController pickableController)
-		{
-			if (PickablePickedEventHandler != null)
-			{
-				PickablePickedEventHandler();
-			}
-			else
-			{
-				SetPickEventAction(npcController,pickableSensor,pickableController);
-				PickablePickedEventHandler();
-			}
-		}
-
-		public void SetPickEventAction(NpcController npcController, 
-			PickableSensor pickableSensor,
-			PickableController pickableController)
-		{
-			PickablePickedEventHandler += pickableController.OnPickablePicked;
-			pickableSensor.onMedkitPick += npcController.OnHeal;
-			pickableSensor.onShotgunPick += npcController.OnPickShotgun;
-			pickableSensor.onUziPick += npcController.OnPickUzi;
 		}
 	}
 }
