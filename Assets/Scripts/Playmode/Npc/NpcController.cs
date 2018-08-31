@@ -116,6 +116,7 @@ namespace Playmode.Npc
 		private void Update()
 		{
 			npcSensorSight.RemoveNullNpc();
+			npcSensorSight.RemoveNullPickable();
 			strategy.Act();
 		}
 
@@ -145,19 +146,22 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.cyan;
 					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
-					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight,
+						npcSensorSound);
 					break;
 				case NpcStrategy.Careful:
 					body.GetComponent<SpriteRenderer>().color = Color.white;
 					sight.GetComponent<SpriteRenderer>().color = Color.white;
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight,
+						npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
 					body.GetComponent<SpriteRenderer>().color = Color.yellow;
 					sight.GetComponent<SpriteRenderer>().color = Color.yellow;
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CamperBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight,
+						npcSensorSound);
 					break;
 				case NpcStrategy.Normal:
 					body.GetComponent<SpriteRenderer>().color = Color.red;
@@ -169,7 +173,8 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.blue;
 					sight.GetComponent<SpriteRenderer>().color = Color.blue;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight,
+						npcSensorSound);
 					break;
 			}
 		}
@@ -177,14 +182,19 @@ namespace Playmode.Npc
 		private void OnHit(int hitPoints)
 		{
 			NotifyHit();
-			
+
 			health.Hit(hitPoints);
+		}
+
+		public void OnHeal(int healPoint)
+		{
+			health.Heal(healPoint);
 		}
 
 		private void OnDeath()
 		{
 			NotifyDeath();
-			
+
 			destroyer.Destroy();
 		}
 
@@ -204,6 +214,7 @@ namespace Playmode.Npc
 			SwitchWeapon(uziWeapon);
 			handController.AdjustWeaponSpeed();
 		}
+
 		private void OnNpcSeen(NpcController npc)
 		{
 		}

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Playmode.Npc;
 using Playmode.Pickable;
+using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
 namespace Playmode.Entity.Senses
@@ -10,8 +11,8 @@ namespace Playmode.Entity.Senses
 
 	public class NpcSensorSight : MonoBehaviour
 	{
-		private ICollection<NpcController> npcsInSight;
-		private ICollection<PickableController> pickablesInSight;
+		private HashSet<NpcController> npcsInSight;
+		private HashSet<PickableController> pickablesInSight;
 
 		public event NpcSensorEventHandler OnNpcSeen;
 		public event NpcSensorEventHandler OnNpcSightLost;
@@ -81,19 +82,66 @@ namespace Playmode.Entity.Senses
 		
 		public void RemoveNullNpc()
 		{
-			ICollection<NpcController> npcsInSightToRemove = new List<NpcController>();
+			npcsInSight.RemoveWhere(it => it == null);
+		}
+
+		public void RemoveNullPickable()
+		{
+			pickablesInSight.RemoveWhere(it => it == null);
+		}
+		
+		public NpcController GetClosestNpc()
+		{
+			NpcController closestNpc = null;
+			var distance = float.MaxValue;
 			foreach (var npc in npcsInSight)
 			{
-				if (npc == null)
+				if (closestNpc == null)
 				{
-					npcsInSightToRemove.Add(npc);
+					closestNpc = npc;
+					distance = Vector3.Distance(closestNpc.transform.position,
+						transform.root.position);
+				}
+				else
+				{
+					var currentNpcDistance =
+						Vector3.Distance(closestNpc.transform.position, npc.transform.position);
+					if (distance > currentNpcDistance)
+					{
+						distance = currentNpcDistance;
+						closestNpc = npc;
+					}
+				}
+			}
+			return closestNpc;
+		}
+		
+		public PickableController GetClosestPickable(TypePickable typePickable)
+		{
+			PickableController closestPickable = null;
+			var distance = float.MaxValue;
+			foreach (var pickable in pickablesInSight)
+			{
+				if (pickable.GetPickableType() != typePickable) continue;
+				if (closestPickable == null)
+				{
+					closestPickable = pickable;
+					distance = Vector3.Distance(closestPickable.transform.position,
+						transform.root.position);
+				}
+				else
+				{
+					var currentPickableDistance =
+						Vector3.Distance(closestPickable.transform.position, pickable.transform.position);
+					if (distance > currentPickableDistance)
+					{
+						distance = currentPickableDistance;
+						closestPickable = pickable;
+					}
 				}
 			}
 
-			foreach (var npc in npcsInSightToRemove)
-			{
-				npcsInSight.Remove(npc);
-			}
+			return closestPickable;
 		}
 	}
 }
