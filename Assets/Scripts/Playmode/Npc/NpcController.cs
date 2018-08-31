@@ -108,6 +108,9 @@ namespace Playmode.Npc
 			npcSensorSight.OnNpcSightLost += OnNpcSightLost;
 			hitSensor.OnHit += OnHit;
 			health.OnDeath += OnDeath;
+			hitSensor.onUziPick += OnPickUzi;
+			hitSensor.onMedkitPick += OnPickMedKit;
+			hitSensor.onShotgunPick += OnPickShotgun;
 		}
 
 		private void Update()
@@ -160,7 +163,7 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.red;
 					sight.GetComponent<SpriteRenderer>().color = Color.red;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
 					body.GetComponent<SpriteRenderer>().color = Color.blue;
@@ -185,7 +188,7 @@ namespace Playmode.Npc
 			destroyer.Destroy();
 		}
 
-		public void OnHeal(int healPoint)
+		public void OnPickMedKit(int healPoint)
 		{
 			health.Heal(healPoint);
 		}
@@ -227,6 +230,26 @@ namespace Playmode.Npc
 		private void NotifyHit()
 		{
 			hitEventChannel.Publish();
+		}
+
+		public int GetHealth()
+		{
+			return health.HealthPoints;
+		}
+		
+		public void Heal(int healPoint)
+		{
+			OnPickMedKit(healPoint);
+		}
+
+		public void PickShotgun()
+		{
+			OnPickShotgun();
+		}
+
+		public void PickUzi()
+		{
+			OnPickUzi();
 		}
 	}
 }
