@@ -547,6 +547,7 @@ GameObject:
   - component: {fileID: 564472154}
   - component: {fileID: 564472153}
   - component: {fileID: 564472152}
+  - component: {fileID: 564472155}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -629,6 +630,13 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!222 &564472155
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 564472150}
+  m_CullTransparentMesh: 0
 --- !u!1 &571965527
 GameObject:
   m_ObjectHideFlags: 0
