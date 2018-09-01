@@ -101,7 +101,7 @@ namespace Playmode.Weapon
 
 		private void NotifyShot()
 		{
-			shootEventChannel.Publish();
+			shootEventChannel.PublishWeaponShot(weaponType);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Playmode.Camera
+namespace Playmode.Interface.Camera
 {
 	public class CameraController : MonoBehaviour
 	{
@@ -10,7 +10,7 @@ namespace Playmode.Camera
 		private UnityEngine.Camera mainCam;
 		private CircleCollider2D zoneObject;
 	
-		private int cameraMovementSpeed = 5;
+		private int cameraMovementSpeed = 15;
 		private int cameraSizeRatio = 20;
 		private float cameraHeight, cameraWidth;
 		private float middleHeight, middleWidth;

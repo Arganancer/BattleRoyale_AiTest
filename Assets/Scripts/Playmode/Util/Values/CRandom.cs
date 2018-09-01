@@ -4,7 +4,7 @@
 	{
 		private static readonly System.Random CRand = new System.Random();
 
-		public static float Next(int minValue, int maxValue)
+		public static int Next(int minValue, int maxValue)
 		{
 			return CRand.Next(minValue, maxValue);
 		}

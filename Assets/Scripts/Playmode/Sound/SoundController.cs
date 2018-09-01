@@ -10,10 +10,12 @@ namespace Playmode.Sound
 		private NpcDeathEventChannel npcDeathEventChannel;
 		private HitEventChannel hitEventChannel;
 
-		private AudioSource shootSound;
+		private AudioSource[] starterWeaponShootSounds;
+		private AudioSource[] uziShootSounds;
+		private AudioSource shotgunShootSound;
 		private AudioSource deathSound;
 		private AudioSource hitSound;
-		
+
 		private void Awake()
 		{
 			shootEventChannel = GameObject.FindWithTag(Tags.SoundController).GetComponent<ShootEventChannel>();
@@ -21,9 +23,20 @@ namespace Playmode.Sound
 			hitEventChannel = GameObject.FindWithTag(Tags.SoundController).GetComponent<HitEventChannel>();
 
 			var sources = GetComponents(typeof(AudioSource));
-			shootSound = (AudioSource) sources[0];
-			deathSound = (AudioSource) sources[1];
-			hitSound = (AudioSource) sources[2];
+			starterWeaponShootSounds = new[]
+			{
+				(AudioSource) sources[0],
+				(AudioSource) sources[1],
+				(AudioSource) sources[2]
+			};
+			uziShootSounds = new[]
+			{
+				(AudioSource) sources[3],
+				(AudioSource) sources[4]
+			};
+			shotgunShootSound = (AudioSource) sources[5];
+			deathSound = (AudioSource) sources[6];
+			hitSound = (AudioSource) sources[7];
 		}
 
 		private void OnEnable()
@@ -42,7 +55,7 @@ namespace Playmode.Sound
 
 		private void PlayShootSound()
 		{
-			shootSound.Play();
+			starterWeaponShootSounds[CRandom.Next(0, 2)].Play();
 		}
 
 		private void PlayDeathSound()

@@ -13,7 +13,7 @@ namespace Playmode.Sound
 		{
 			hitEventChannel = GameObject.FindGameObjectWithTag(Tags.GameController).GetComponent<HitEventChannel>();
 			var aSources = GetComponents(typeof(AudioSource));
-			audioSource = (AudioSource) aSources[2];
+			audioSource = (AudioSource) aSources[7];
 		}
 
 		private void OnEnable()

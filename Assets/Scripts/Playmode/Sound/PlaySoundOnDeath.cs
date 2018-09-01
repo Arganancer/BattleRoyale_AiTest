@@ -13,7 +13,7 @@ namespace Playmode.Sound
 		{
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
 			var aSources = GetComponents(typeof(AudioSource));
-			audioSource = (AudioSource) aSources[1];
+			audioSource = (AudioSource) aSources[6];
 		}
 
 		private void OnEnable()
