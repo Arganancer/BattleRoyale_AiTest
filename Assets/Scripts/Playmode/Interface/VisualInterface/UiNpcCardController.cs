@@ -28,6 +28,7 @@ namespace Playmode.Interface.VisualInterface
 			{
 				healthText.text = "0";
 				stateText.text = "dead";
+				stateText.color = Color.red;
 				positionText.text = "";
 			}
 			else
@@ -41,8 +42,8 @@ namespace Playmode.Interface.VisualInterface
 		public void Configure(NpcController npcController)
 		{
 			this.npcController = npcController;
-			behaviorText.text = "Some Strat";
-			stateText.text = "Some State";
+			behaviorText.text = "PH_Behavior";
+			stateText.text = "PH_State";
 		}
 	}
 }
