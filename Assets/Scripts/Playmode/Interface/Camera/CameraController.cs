@@ -10,11 +10,12 @@ namespace Playmode.Interface.Camera
 		private UnityEngine.Camera mainCam;
 		private CircleCollider2D zoneObject;
 	
-		private int cameraMovementSpeed = 15;
-		private int cameraSizeRatio = 20;
+		private int cameraMovementSpeed = 100;
+		private int cameraSizeRatio = 90;
 		private float cameraHeight, cameraWidth;
 		private float middleHeight, middleWidth;
-		private int sizeOfCamera = 20;
+		private int sizeOfCamera = 90;
+		private float cameraHeightAdjuster = 5f;
 		private Vector2 movement;
 	
 		private void Awake()
@@ -87,11 +88,11 @@ namespace Playmode.Interface.Camera
 
 			if (Input.GetAxis(MouseWheel) > 0f && mainCam.orthographicSize >0)
 			{
-				--mainCam.orthographicSize;
+				mainCam.orthographicSize -= cameraHeightAdjuster;
 			}
 			else if (Input.GetAxis(MouseWheel) < 0f)
 			{
-				++mainCam.orthographicSize;
+				mainCam.orthographicSize += cameraHeightAdjuster;
 			}
 		}
 

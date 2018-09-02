@@ -190,9 +190,8 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			//C is distance traveled by bullet until impact (bulletSpeed * t (time))
 			var cosTheta = Vector3.Dot(enemyToBulletDirection, enemyVelocityDirection);
 
-			float t;
+			float time;
 
-			// START VALIDATE PREDICTIVE AIM POSSIBLE
 			var a = bulletSpeedSq - enemySpeedSq;
 			var b = 2.0f * enemyToBulletDistance * enemySpeed * cosTheta;
 			var c = -enemyToBulletDistanceSq;
@@ -202,21 +201,13 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			var t0 = 0.5f * (-b + uglyNumber) / a;
 			var t1 = 0.5f * (-b - uglyNumber) / a;
 
-			t = Mathf.Min(t0, t1);
-			if (t < Mathf.Epsilon)
+			time = Mathf.Min(t0, t1);
+			if (time < Mathf.Epsilon)
 			{
-				t = Mathf.Max(t0, t1);
+				time = Mathf.Max(t0, t1);
 			}
 
-			if (t < Mathf.Epsilon)
-			{
-				// TODO: Validsolution not found;
-				// t = PredictiveAimWildGuessAtImpactTime();
-			}
-			// END PREDICTIVE AIM VALIDATION
-
-			var bulletVelocity = enemyVelocity + -enemyToBullet / t;
-
+			var bulletVelocity = enemyVelocity + -enemyToBullet / time;
 
 			return bulletVelocity;
 		}

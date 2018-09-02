@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using Playmode.Npc.Strategies;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Util.Collections;
+using Playmode.Util.Values;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Playmode.Npc
 {
 	public class NpcSpawner : MonoBehaviour
 	{
-		#if UNITY_EDITOR
-		[SerializeField] private int nbOfEnemies;
-		#endif
+#if UNITY_EDITOR
+#endif
 
 		private static readonly Color[] DefaultColors =
 		{
@@ -45,26 +47,59 @@ namespace Playmode.Npc
 				throw new ArgumentException("Can't spawn null ennemy prefab.");
 			if (colors == null || colors.Length == 0)
 				throw new ArgumentException("Ennemies needs colors to be spawned.");
-			if (transform.childCount <= 0)
-				throw new ArgumentException("Can't spawn ennemis whitout spawn points. " +
-				                            "Create chilldrens for this GameObject as spawn points.");
 		}
 
 		private void SpawnNpcs()
 		{
 			var stragegyProvider = new LoopingEnumerator<NpcStrategy>(DefaultStrategies);
 			var colorProvider = new LoopingEnumerator<Color>(colors);
+			var spawnsPoints = GenerateSpawnPoints();
 
-			// TODO: Remove (Debug variable)
-			if (nbOfEnemies > transform.childCount)
-				nbOfEnemies = transform.childCount;
-
-			for (var i = 0; i < nbOfEnemies /* <-- TODO: Change for transform.childCount */; i++)
+			for (var i = 0; i < GameValues.NbOfEnemies; i++)
 				SpawnNpc(
-					transform.GetChild(i).position,
+					spawnsPoints[i],
 					stragegyProvider.Next(),
 					colorProvider.Next()
 				);
+		}
+
+		private List<Vector3> GenerateSpawnPoints()
+		{
+			// TODO: Get radius from world information.
+			var spawnPoints = new List<Vector3>();
+			const float maxDistanceFromMapCenter = 100f;
+			const float minDistanceBetweenNpcs = 30f;
+
+			var currentSpawnPoint = GeneratePointWithinPlayableArea(maxDistanceFromMapCenter);
+			spawnPoints.Add(currentSpawnPoint);
+
+			// TODO: Clean the fuck out of this, it is so ugly.
+			for (var i = 0; i < GameValues.NbOfEnemies - 1; i++)
+			{
+				var j = 0;
+				var positionTooClose = false;
+				do
+				{
+					j += 1;
+					positionTooClose = false;
+					currentSpawnPoint = GeneratePointWithinPlayableArea(maxDistanceFromMapCenter);
+					foreach (var spawnPoint in spawnPoints)
+					{
+						if (!(Vector3.Distance(spawnPoint, currentSpawnPoint) < minDistanceBetweenNpcs)) continue;
+						positionTooClose = true;
+					}
+				} while (positionTooClose && j < 100);
+
+				spawnPoints.Add(currentSpawnPoint);
+			}
+
+			return spawnPoints;
+		}
+
+		private Vector3 GeneratePointWithinPlayableArea(float maxDistanceFromMapCenter)
+		{
+			Vector3 position = Random.insideUnitCircle;
+			return position * CRandom.Nextf(0f, maxDistanceFromMapCenter);
 		}
 
 		private void SpawnNpc(Vector3 position, NpcStrategy strategy, Color color)
