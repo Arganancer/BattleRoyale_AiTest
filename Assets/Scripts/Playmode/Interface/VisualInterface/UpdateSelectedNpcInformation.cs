@@ -12,25 +12,25 @@ public class UpdateSelectedNpcInformation : MonoBehaviour
 
 	private void Awake()
 	{
-		healthText = GameObject.Find("NpcInformation").GetComponentInChildren<Text>();
-		baseText = healthText.text;
+//		healthText = GameObject.Find("NpcInformation").GetComponentInChildren<Text>();
+//		baseText = healthText.text;
 	}
 
 	public void RegisterNpc(NpcController npcSelected)
 	{
-		this.npcSelected = npcSelected;
+//		this.npcSelected = npcSelected;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (npcSelected != null)
-		{
-			int nbHealth = npcSelected.GetHealth();
-			healthText.text = baseText + " " + nbHealth;
-		}
-		else
-		{
-			healthText.text = baseText;
-		}
+//		if (npcSelected != null)
+//		{
+//			int nbHealth = npcSelected.GetHealth();
+//			healthText.text = baseText + " " + nbHealth;
+//		}
+//		else
+//		{
+//			healthText.text = baseText;
+//		}
 	}
 }

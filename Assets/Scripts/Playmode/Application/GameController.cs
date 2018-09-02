@@ -7,7 +7,6 @@ namespace Playmode.Application
 	public class GameController : MonoBehaviour
 	{
 		private MainController mainController;
-		//private SoundController soundController;
 		private NpcDeathEventChannel npcDeathEventChannel;
 
 		private int numberOfNpcs;
@@ -38,10 +37,7 @@ namespace Playmode.Application
 		private void Awake()
 		{
 			mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
-			//soundController = GameObject.FindWithTag(Tags.SoundController).GetComponent<SoundController>();
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
-
-			NumberOfNpcs = 9; //TODO: change for menu option
 		}
 
 		private void OnEnable()

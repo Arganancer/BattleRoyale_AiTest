@@ -35,13 +35,13 @@ namespace Playmode.Interface.Camera
 		/// <summary>
 		/// Used by unity UI
 		/// </summary>
-		public void OnResetButtonClick()
-		{
-			mainCam.transform.position = 
-				new Vector3(zoneObject.offset.x*10,
-					zoneObject.offset.y*10,
-					-10);
-		}
+//		public void OnResetButtonClick()
+//		{
+//			mainCam.transform.position = 
+//				new Vector3(zoneObject.offset.x*10,
+//					zoneObject.offset.y*10,
+//					-10);
+//		}
 	
 		// Update is called once per frame
 		private void Update () {

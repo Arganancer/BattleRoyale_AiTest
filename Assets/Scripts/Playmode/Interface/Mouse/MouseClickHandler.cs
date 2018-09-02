@@ -14,7 +14,7 @@ public class MouseClickHandler : MonoBehaviour
 	private LayerMask npcLayerMask;
 	private void Awake()
 	{
-		updateSelectedNpcInformation = GameObject.Find(UPDATER_OBJECT_NAME).GetComponent<UpdateSelectedNpcInformation>();
+		//updateSelectedNpcInformation = GameObject.Find(UPDATER_OBJECT_NAME).GetComponent<UpdateSelectedNpcInformation>();
 		npcClickCollider2D = GetComponent<CircleCollider2D>();
 		mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		mouse.z = 0;
@@ -34,14 +34,14 @@ public class MouseClickHandler : MonoBehaviour
 
 	private void MouseEvents()
 	{
-		if (Input.GetMouseButtonDown(0))
-		{
-			hit = Physics2D.Raycast(mouse,Vector2.zero,0,npcLayerMask);
-			if (hit)
-			{
-				updateSelectedNpcInformation.RegisterNpc(hit.transform.gameObject.transform.root.GetComponentInChildren<NpcController>());
-			}
-		}
+//		if (Input.GetMouseButtonDown(0))
+//		{
+//			hit = Physics2D.Raycast(mouse,Vector2.zero,0,npcLayerMask);
+//			if (hit)
+//			{
+//				updateSelectedNpcInformation.RegisterNpc(hit.transform.gameObject.transform.root.GetComponentInChildren<NpcController>());
+//			}
+//		}
 		
 	}
 }
