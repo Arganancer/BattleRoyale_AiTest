@@ -11,9 +11,6 @@ namespace Playmode.Npc
 {
 	public class NpcSpawner : MonoBehaviour
 	{
-#if UNITY_EDITOR
-#endif
-
 		private static readonly Color[] DefaultColors =
 		{
 			Color.white, Color.black, Color.blue, Color.cyan, Color.green,
