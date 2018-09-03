@@ -6,6 +6,7 @@ using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Npc.Strategies.Routines.MovementRoutines;
 using Playmode.Npc.Strategies.Routines.SightRoutines;
+using Playmode.Pickable;
 using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
@@ -15,13 +16,16 @@ namespace Playmode.Npc.Strategies
 	{
 		private readonly MovementRoutine retreatingMovementRoutine;
 		private readonly SightRoutine noEnemySightRoutine;
-		
+		private bool isCamping;
+		private PickableController campedMedKit;
+
 		public CamperBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
 			health, npcSensorSight, npcSensorSound)
 		{
 			retreatingMovementRoutine = new RetreatWhileDodgingMovementRoutine(Mover);
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
+			isCamping = false;
 		}
 
 		protected override void DoIdle()
@@ -34,153 +38,154 @@ namespace Playmode.Npc.Strategies
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
-		
+
 		protected override void DoInvestigating()
 		{
 			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
-			Mover.MoveTowardsDirection(MovementDirection);
+			if (!isCamping)
+			{
+				Mover.MoveTowardsDirection(MovementDirection);
+			}
+
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
 
 		protected override void DoEngaging()
 		{
-			if (Health.HealthPoints % HealthRetreatTolerance <= 0 && CurrentMedicalKitTarget != null)
+			var movementTarget = new Vector3();
+			var rotationTarget = new Vector3();
+
+			if (NpcSensorSight.PickablesInSight.Any())
 			{
-				Mover.RotateTowardsPosition(CurrentMedicalKitTarget.transform.root.position);				
-				Mover.MoveTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
-				
-				if (CurrentEnemyTarget != null)
+				if (campedMedKit != null)
 				{
-					Mover.MoveAwayFromPosition(CurrentEnemyTarget.transform.root.position);
-					HandController.Use();
+					movementTarget = campedMedKit.transform.root.position;
+					rotationTarget = movementTarget;
+				}
+				else if (CurrentUziTarget != null)
+				{
+					movementTarget = CurrentShotgunTarget.transform.root.position;
+					rotationTarget = movementTarget;
 				}
 			}
-			else
-			{
-				if (CurrentMedicalKitTarget != null)
-				{
-					if (CurrentMedicalKitTarget.GetPickableType() == TypePickable.Medicalkit)
-					{
-						// TODO: What
-						Vector3 direction = (CurrentMedicalKitTarget.transform.position - Mover.transform.position);
-						direction += new Vector3(0, 0);
-						
-						Mover.RotateTowardsDirection(direction);
-						Mover.MoveTowardsDirection(direction);
 
-						if (CurrentEnemyTarget != null)
-						{
-							Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
-							HandController.Use();
-						}
-					}
-					else
-					{
-						Mover.RotateTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
-						Mover.MoveTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
-					}
-				}
-				else if (CurrentEnemyTarget != null)
-				{
-					Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
-					Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
-					HandController.Use();
-				}
+			if (CurrentEnemyTarget != null)
+			{
+				if (campedMedKit == null)
+					movementTarget = CurrentEnemyTarget.transform.root.position;
+				rotationTarget = CurrentEnemyTarget.transform.root.position;
+			}
+
+			Mover.MoveTowardsPosition(movementTarget);
+			Mover.RotateTowardsPosition(rotationTarget);
+			if (CurrentEnemyTarget != null)
+			{
+				HandController.Use();
 			}
 		}
 
 		protected override void DoAttacking()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-
-			if (CurrentMedicalKitTarget != null)
-			{
-				Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			}
-			else
-			{
-				Mover.MoveTowardsDirection(CurrentEnemyTarget.transform.position);
-				Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			}
-
+			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			HandController.Use();
 		}
 
 		protected override void DoRetreating()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-			
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 			retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
-			
 			HandController.Use();
 		}
 
 		protected override State EvaluateIdle()
 		{
-			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
+			UpdateCampedMedicalKit();
+			if (isCamping)
 			{
-				return State.Engaging;
+				if (Health.HealthPoints < HealthRetreatTolerance)
+					return State.Engaging;
+				if (NpcSensorSight.NpcsInSight.Any())
+					return State.Attacking;
+				return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : State.Idle;
 			}
-			
+
+			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
+				return State.Engaging;
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
 		{
+			UpdateCampedMedicalKit();
 			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
-			
+
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()
 		{
+			UpdateCampedMedicalKit();
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Engaging;
-			}
+				return isCamping ? State.Attacking : State.Engaging;
 
-			if (!NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Idle;
-			}
-
-			return State.Investigating;
+			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
 		{
-			if (!NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Idle;
-			}
+			UpdateCampedMedicalKit();
+			if (isCamping)
+				return Health.HealthPoints < HealthRetreatTolerance ? State.Engaging : State.Idle;
 			
+			if (!NpcSensorSight.NpcsInSight.Any() && !NpcSensorSight.PickablesInSight.Any())
+				return State.Idle;
+
+			if (campedMedKit != null)
+				return State.Engaging;
+
+			if (NpcSensorSight.NpcsInSight.Any() && Health.HealthPoints < HealthRetreatTolerance)
+				return State.Retreating;
+
 			return DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateAttacking()
 		{
+			UpdateCampedMedicalKit();
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
-			
-			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
+
+			if (Health.HealthPoints < HealthRetreatTolerance)
+				return State.Retreating;
+
+			return isCamping || DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking
+				? State.Attacking
+				: State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			if (!NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Idle;
-			}
+			UpdateCampedMedicalKit();
+			if (campedMedKit != null)
+				return State.Engaging;
+			return !NpcSensorSight.NpcsInSight.Any() ? State.Idle : State.Retreating;
+		}
 
-			return State.Retreating;
+		private void UpdateCampedMedicalKit()
+		{
+			if (campedMedKit == null && CurrentMedicalKitTarget != null)
+				campedMedKit = CurrentMedicalKitTarget;
+			if (campedMedKit != null)
+			{
+				if (!isCamping &&
+				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) <= 10)
+				{
+					isCamping = true;
+				}
+			}
+			else
+				isCamping = false;
 		}
 	}
 }

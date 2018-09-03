@@ -9,6 +9,7 @@ TagManager:
   - MedicalKit
   - Weapon
   - ShowOnPause
+  - ShowOnEnd
   layers:
   - Default
   - TransparentFX
