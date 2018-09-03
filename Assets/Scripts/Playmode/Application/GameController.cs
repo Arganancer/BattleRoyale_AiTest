@@ -47,14 +47,23 @@ namespace Playmode.Application
 
 		private void Update()
 		{
-			if (IsGameOver)
+			/*if (IsGameOver)
 			{
 				GameObject.FindGameObjectWithTag(Tags.MainController).GetComponent<MainController>().StopGame();
-			}
+			}*/
 
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				PauseGame();
+				if (Time.timeScale == 1.0f)
+				{
+					isGamePaused = true;
+					PauseGame();
+				}
+				else
+				{
+					isGamePaused = false;
+					UnpauseGame();
+				}
 			}
 		}
 
@@ -70,7 +79,12 @@ namespace Playmode.Application
 
 		private void PauseGame()
 		{
-			GameObject.FindGameObjectWithTag(Tags.MainController).GetComponent<MainController>().PauseGame();	
+			Time.timeScale = 0;
+		}
+
+		private void UnpauseGame()
+		{
+			Time.timeScale = 1;
 		}
 	}
 }
