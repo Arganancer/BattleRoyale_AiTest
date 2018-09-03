@@ -1,9 +1,8 @@
-﻿using System.Runtime.InteropServices;
-using Playmode.Util.Values;
+﻿using Playmode.Util.Values;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Menu
+namespace MenuEvent
 {
 	public class DropdownEventHandler : MonoBehaviour
 	{
