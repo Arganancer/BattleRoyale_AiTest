@@ -25,20 +25,6 @@ namespace Playmode.Application
 			StartCoroutine(UnloadGameSceneRoutine());
 		}
 
-		public void PauseGame()
-		{
-			Time.timeScale = 0.0f;
-
-			StartCoroutine(LoadMenuSceneRoutine());
-		}
-
-		public void UnpauseGame()
-		{
-			Time.timeScale = 1.0f;
-
-			StartCoroutine(ReloadGameSceneRoutine());
-		}
-
 		private static void SetTimeScale()
 		{
 			// TODO: Remove this function.
@@ -67,14 +53,6 @@ namespace Playmode.Application
 				yield return SceneManager.LoadSceneAsync(Scenes.Menu, LoadSceneMode.Additive);
 
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(Scenes.Menu));
-		}
-
-		private static IEnumerator ReloadGameSceneRoutine()
-		{
-			if (SceneManager.GetSceneByName(Scenes.Menu).isLoaded)
-				yield return SceneManager.UnloadSceneAsync(Scenes.Menu);
-
-			SceneManager.SetActiveScene(SceneManager.GetSceneByName(Scenes.Game));
 		}
 		
 		private static IEnumerator LoadMenuSceneRoutine()

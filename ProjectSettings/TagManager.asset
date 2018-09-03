@@ -8,6 +8,8 @@ TagManager:
   - Npc
   - MedicalKit
   - Weapon
+  - ShowOnPause
+  - ShowOnEnd
   layers:
   - Default
   - TransparentFX

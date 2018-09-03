@@ -8,5 +8,7 @@
 		public const string Npc = "Npc";
 		public const string MedicalKit = "MedicalKit";
 		public const string Weapon = "Weapon";
+		public const string ShowOnPause = "ShowOnPause";
+		public const string ShowOnEnd = "ShowOnEnd";
 	}
 }
