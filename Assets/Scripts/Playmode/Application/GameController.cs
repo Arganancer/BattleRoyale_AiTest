@@ -9,6 +9,8 @@ namespace Playmode.Application
 		//private MainController mainController;
 		private NpcDeathEventChannel npcDeathEventChannel;
 
+		private GameObject[] pauseObjects;
+
 		private int numberOfNpcs;
 		private bool isGamePaused;
 		
@@ -40,6 +42,10 @@ namespace Playmode.Application
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
 
 			isGamePaused = false;
+			
+			pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
+
+			UnpauseGame();
 		}
 
 		private void OnEnable()
@@ -82,12 +88,22 @@ namespace Playmode.Application
 
 		private void PauseGame()
 		{
-			Time.timeScale = 0;
+			Time.timeScale = 0.0f;
+			
+			foreach(GameObject g in pauseObjects)
+			{
+				g.SetActive(true);
+			}
 		}
 
 		private void UnpauseGame()
 		{
-			Time.timeScale = 1;
+			Time.timeScale = 1.0f;
+			
+			foreach(GameObject g in pauseObjects)
+			{
+				g.SetActive(false);
+			}
 		}
 	}
 }
