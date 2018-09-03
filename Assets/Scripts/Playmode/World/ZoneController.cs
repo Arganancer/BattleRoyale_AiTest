@@ -10,13 +10,11 @@ public class ZoneController : MonoBehaviour
 	private const int MAX_SHRINK_SPEED_BUFFER = 100;
 	private const string ZONE_RENDERER_OBJECT = "ZoneRenderer";
 	
-	#if UNITY_EDITOR
 	[SerializeField] float timeBufferToMoveZone = 120f;
 	[SerializeField] private int startingRadiusZoneSize = 10;
 	[SerializeField] private int minimunSizeShrink = 2;
 	[SerializeField] private int maximumSizeShrink = 3;
 	[SerializeField] private float sizeReduction = 0.5f;
-	#endif
 	
 	private CircleCollider2D zoneCollider2D;
 	private GameObject zoneRenderer;
