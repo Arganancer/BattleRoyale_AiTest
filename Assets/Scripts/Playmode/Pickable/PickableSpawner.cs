@@ -16,6 +16,7 @@ namespace Playmode.Pickable
 		private float minDistanceBetween2Pickable = 10;
 		private int nbOfPickableToSpawn;
 		[SerializeField] private int numberOfPickable =1;
+		private float timeToSpawn;
 
 		private static readonly TypePickable.TypePickable[] DefaultTypePickable =
 		{
@@ -63,7 +64,7 @@ namespace Playmode.Pickable
 			// TEST LOOP
 			for (int i = 0; i < numberOfPickable; ++i)
 			{
-				SpawnPickable(
+				CreatePickable(
 					CreateRandomCoordonate(),
 					pickableStragegyProvider.Next()
 				);
@@ -85,11 +86,11 @@ namespace Playmode.Pickable
 			return currentPickableCoordonate;
 		}
 
-		private void SpawnPickable(Vector3 position, TypePickable.TypePickable strategy)
+		private void CreatePickable(Vector3 position, TypePickable.TypePickable strategy)
 		{
 			// TEST VARIABLE
 			position = transform.position;
-			strategy = TypePickable.TypePickable.Uzi;
+			strategy = TypePickable.TypePickable.Medicalkit;
 			
 			Instantiate(pickablePrefab, position, Quaternion.identity)
 				.GetComponentInChildren<PickableController>()
