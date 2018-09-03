@@ -22,12 +22,18 @@ public class ZoneController : MonoBehaviour
 	private float nextRadius;
 	private int shrinkSpeedBuffer = 0;
 	private float timeOfLastShrink;
+	private float currentRadius;
+	private bool zoneIsNotShrinking = true;
+
+	public float CurrentRadius => currentRadius;
+	public bool ZoneIsNotShrinking => zoneIsNotShrinking;
 	
 	private void Awake()
 	{
 		zoneCollider2D = transform.root.GetComponentInChildren<CircleCollider2D>();
 		zoneCollider2D.radius = startingRadiusZoneSize;
 		nextRadius = startingRadiusZoneSize;
+		currentRadius = nextRadius;
 
 		zoneRenderer = transform.root.Find(ZONE_RENDERER_OBJECT).gameObject;
 		zoneRenderer.transform.localScale = new Vector3(1.26f,1.26f,0);
@@ -54,6 +60,12 @@ public class ZoneController : MonoBehaviour
 		         && GetCurrentZoneRadius() - sizeReduction >1) //the 1 is there to make sure the radius doesn't go negative after the reduction.
 		{
 			ShrinkZone();
+			zoneIsNotShrinking = false;
+		}
+		else
+		{
+			currentRadius = nextRadius;
+			zoneIsNotShrinking = true;
 		}
 	}
 

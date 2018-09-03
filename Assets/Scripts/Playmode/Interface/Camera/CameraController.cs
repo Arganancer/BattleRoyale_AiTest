@@ -88,6 +88,7 @@ namespace Playmode.Interface.Camera
 
 			if (Input.GetAxis(MouseWheel) > 0f && mainCam.orthographicSize >0)
 			{
+				if (mainCam.orthographicSize - cameraHeightAdjuster >0)
 				mainCam.orthographicSize -= cameraHeightAdjuster;
 			}
 			else if (Input.GetAxis(MouseWheel) < 0f)

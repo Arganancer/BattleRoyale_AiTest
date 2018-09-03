@@ -925,7 +925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickablePrefab: {fileID: 1183028321534278, guid: ad8deac14a9ad93468cf153b528333b4,
     type: 2}
-  numberOfPickable: 2
+  numberOfPickable: 1
 --- !u!4 &1414076108
 Transform:
   m_ObjectHideFlags: 0
