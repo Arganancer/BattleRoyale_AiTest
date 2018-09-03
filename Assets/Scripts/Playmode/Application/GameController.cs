@@ -6,7 +6,7 @@ namespace Playmode.Application
 {
 	public class GameController : MonoBehaviour
 	{
-		private MainController mainController;
+		//private MainController mainController;
 		private NpcDeathEventChannel npcDeathEventChannel;
 
 		private int numberOfNpcs;
@@ -36,7 +36,7 @@ namespace Playmode.Application
 
 		private void Awake()
 		{
-			mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
+			//mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
 
 			isGamePaused = false;
@@ -49,6 +49,7 @@ namespace Playmode.Application
 
 		private void Update()
 		{
+			//TODO: game end condition
 			/*if (IsGameOver)
 			{
 				GameObject.FindGameObjectWithTag(Tags.MainController).GetComponent<MainController>().StopGame();
