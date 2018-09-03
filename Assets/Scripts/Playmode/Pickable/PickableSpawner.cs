@@ -53,7 +53,7 @@ namespace Playmode.Pickable
 
 		private void SpawnPickables()
 		{
-			var pickableStragegyProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
+			var pickableTypeProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
 //			for (int i = 0; i < nbOfPickableToSpawn; ++i)
 //			{
 //				SpawnPickable(
@@ -66,7 +66,7 @@ namespace Playmode.Pickable
 			{
 				CreatePickable(
 					CreateRandomCoordonate(),
-					pickableStragegyProvider.Next()
+					pickableTypeProvider.Next()
 				);
 			}
 		}

@@ -1,6 +1,7 @@
 ﻿using Playmode.Event;
 using Playmode.Util.Values;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 namespace Playmode.Sound
 {
@@ -66,6 +67,11 @@ namespace Playmode.Sound
 		private void PlayHitSound()
 		{
 			hitSound.Play();
+		}
+
+		public void PlayAndStopAudio()
+		{
+			AudioListener.pause = !AudioListener.pause;
 		}
 	}
 }
