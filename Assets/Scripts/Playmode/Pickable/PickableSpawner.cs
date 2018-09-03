@@ -52,7 +52,7 @@ namespace Playmode.Pickable
 
 		private void SpawnPickables()
 		{
-			var pickableStragegyProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
+			var pickableTypeProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
 //			for (int i = 0; i < nbOfPickableToSpawn; ++i)
 //			{
 //				SpawnPickable(
@@ -65,7 +65,7 @@ namespace Playmode.Pickable
 			{
 				SpawnPickable(
 					CreateRandomCoordonate(),
-					pickableStragegyProvider.Next()
+					pickableTypeProvider.Next()
 				);
 			}
 		}
@@ -89,7 +89,7 @@ namespace Playmode.Pickable
 		{
 			// TEST VARIABLE
 			position = transform.position;
-			strategy = TypePickable.TypePickable.Uzi;
+			strategy = TypePickable.TypePickable.Medicalkit;
 			
 			Instantiate(pickablePrefab, position, Quaternion.identity)
 				.GetComponentInChildren<PickableController>()

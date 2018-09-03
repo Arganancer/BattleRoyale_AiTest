@@ -179,7 +179,7 @@ namespace Playmode.Npc.Strategies
 			if (campedMedKit != null)
 			{
 				if (!isCamping &&
-				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) <= 10)
+				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) <= 3)
 				{
 					isCamping = true;
 				}
