@@ -1,15 +1,21 @@
 ﻿using System;
 using Playmode.Util.Collections;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Playmode.Pickable
 {
 	public class PickableSpawner : MonoBehaviour
 	{
-		private UnityEngine.Camera cam;
-		private float maxGameWidth;
-		private float camViewWidth;
-		private float camViewHeight;
+		private const string ZoneObjectName = "Zone";
+		
+		private ZoneController zoneController;
+
+		private float worldSize;
+		private Vector2 lastPickableCoordonate;
+		private float minDistanceBetween2Pickable = 10;
+		private int nbOfPickableToSpawn;
+		[SerializeField] private int numberOfPickable =1;
 
 		private static readonly TypePickable.TypePickable[] DefaultTypePickable =
 		{
@@ -19,14 +25,12 @@ namespace Playmode.Pickable
 		};
 
 		[SerializeField] private GameObject pickablePrefab;
-		[SerializeField] private int numberOfPickable = 4;
 
 		private void Awake()
 		{
-			cam = UnityEngine.Camera.main;
-			camViewHeight = cam.orthographicSize * 2f;
-			camViewWidth = camViewHeight * cam.aspect;
 			ValidateSerialisedFields();
+			zoneController = GameObject.Find(ZoneObjectName).GetComponentInChildren<ZoneController>();
+			worldSize = zoneController.CurrentRadius;
 		}
 
 		private void ValidateSerialisedFields()
@@ -37,34 +41,64 @@ namespace Playmode.Pickable
 
 		private void Start()
 		{
+			SelectNbOfPickableToSpawn();
 			SpawnPickables();
 		}
 
+//		private void Update()
+//		{
+//			throw new System.NotImplementedException();
+//		}
+
 		private void SpawnPickables()
 		{
-			var pickableStragegyProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
+			var pickableTypeProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
+//			for (int i = 0; i < nbOfPickableToSpawn; ++i)
+//			{
+//				SpawnPickable(
+//					CreateRandomCoordonate(),
+//					pickableStragegyProvider.Next()
+//				);
+//			}
+			// TEST LOOP
 			for (int i = 0; i < numberOfPickable; ++i)
 			{
 				SpawnPickable(
 					CreateRandomCoordonate(),
-					pickableStragegyProvider.Next()
+					pickableTypeProvider.Next()
 				);
 			}
 		}
 
 		private Vector2 CreateRandomCoordonate()
 		{
-			return new Vector2(UnityEngine.Random.Range(0, camViewWidth),
-				UnityEngine.Random.Range(0, camViewHeight));
+			 Vector2 currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize),
+				UnityEngine.Random.Range(0, worldSize));
+			while (Math.Abs(currentPickableCoordonate.x - lastPickableCoordonate.x) < minDistanceBetween2Pickable &&
+			       Math.Abs(currentPickableCoordonate.y - lastPickableCoordonate.y) < minDistanceBetween2Pickable)
+			{
+				currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize),
+					UnityEngine.Random.Range(0, worldSize));
+			}
+
+			lastPickableCoordonate = currentPickableCoordonate;
+			return currentPickableCoordonate;
 		}
 
 		private void SpawnPickable(Vector3 position, TypePickable.TypePickable strategy)
 		{
+			// TEST VARIABLE
 			position = transform.position;
-			strategy = TypePickable.TypePickable.Shotgun;
+			strategy = TypePickable.TypePickable.Medicalkit;
+			
 			Instantiate(pickablePrefab, position, Quaternion.identity)
 				.GetComponentInChildren<PickableController>()
 				.Configure(strategy);
+		}
+
+		private void SelectNbOfPickableToSpawn()
+		{
+			nbOfPickableToSpawn = UnityEngine.Random.Range(1, 3);
 		}
 	}
 }

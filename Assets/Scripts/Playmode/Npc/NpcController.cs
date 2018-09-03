@@ -153,14 +153,14 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.white;
 					sight.GetComponent<SpriteRenderer>().color = Color.white;
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
 					body.GetComponent<SpriteRenderer>().color = Color.yellow;
 					sight.GetComponent<SpriteRenderer>().color = Color.yellow;
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new CamperBehavior(mover, handController, hitSensor, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Normal:
@@ -173,7 +173,7 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.blue;
 					sight.GetComponent<SpriteRenderer>().color = Color.blue;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight,
 						npcSensorSound);
 					break;
 			}

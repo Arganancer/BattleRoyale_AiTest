@@ -10,13 +10,11 @@ public class ZoneController : MonoBehaviour
 	private const int MAX_SHRINK_SPEED_BUFFER = 100;
 	private const string ZONE_RENDERER_OBJECT = "ZoneRenderer";
 	
-	#if UNITY_EDITOR
 	[SerializeField] float timeBufferToMoveZone = 120f;
 	[SerializeField] private int startingRadiusZoneSize = 10;
 	[SerializeField] private int minimunSizeShrink = 2;
 	[SerializeField] private int maximumSizeShrink = 3;
 	[SerializeField] private float sizeReduction = 0.5f;
-	#endif
 	
 	private CircleCollider2D zoneCollider2D;
 	private GameObject zoneRenderer;
@@ -24,12 +22,18 @@ public class ZoneController : MonoBehaviour
 	private float nextRadius;
 	private int shrinkSpeedBuffer = 0;
 	private float timeOfLastShrink;
+	private float currentRadius;
+	private bool zoneIsNotShrinking = true;
+
+	public float CurrentRadius => currentRadius;
+	public bool ZoneIsNotShrinking => zoneIsNotShrinking;
 	
 	private void Awake()
 	{
 		zoneCollider2D = transform.root.GetComponentInChildren<CircleCollider2D>();
 		zoneCollider2D.radius = startingRadiusZoneSize;
 		nextRadius = startingRadiusZoneSize;
+		currentRadius = nextRadius;
 
 		zoneRenderer = transform.root.Find(ZONE_RENDERER_OBJECT).gameObject;
 		zoneRenderer.transform.localScale = new Vector3(1.26f,1.26f,0);
@@ -56,6 +60,12 @@ public class ZoneController : MonoBehaviour
 		         && GetCurrentZoneRadius() - sizeReduction >1) //the 1 is there to make sure the radius doesn't go negative after the reduction.
 		{
 			ShrinkZone();
+			zoneIsNotShrinking = false;
+		}
+		else
+		{
+			currentRadius = nextRadius;
+			zoneIsNotShrinking = true;
 		}
 	}
 

@@ -77,7 +77,7 @@ namespace Playmode.Entity.Senses
 
 		private void NotifyPickableSightLost(PickableController pickable)
 		{
-			if (OnNpcSightLost != null) OnPickableSightLost(pickable);
+			if (OnPickableSightLost != null) OnPickableSightLost(pickable);
 		}
 		
 		public void RemoveNullNpc()
