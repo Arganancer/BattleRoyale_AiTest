@@ -38,6 +38,8 @@ namespace Playmode.Application
 		{
 			mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
+
+			isGamePaused = false;
 		}
 
 		private void OnEnable()
@@ -54,7 +56,7 @@ namespace Playmode.Application
 
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				if (Time.timeScale == 1.0f)
+				if (!isGamePaused)
 				{
 					isGamePaused = true;
 					PauseGame();
