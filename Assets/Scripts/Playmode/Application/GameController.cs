@@ -6,8 +6,10 @@ namespace Playmode.Application
 {
 	public class GameController : MonoBehaviour
 	{
-		private MainController mainController;
+		//private MainController mainController;
 		private NpcDeathEventChannel npcDeathEventChannel;
+
+		private GameObject[] pauseObjects;
 
 		private int numberOfNpcs;
 		private bool isGamePaused;
@@ -36,8 +38,14 @@ namespace Playmode.Application
 
 		private void Awake()
 		{
-			mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
+			//mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
+
+			isGamePaused = false;
+			
+			pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
+
+			UnpauseGame();
 		}
 
 		private void OnEnable()
@@ -47,14 +55,24 @@ namespace Playmode.Application
 
 		private void Update()
 		{
-			if (IsGameOver)
+			//TODO: game end condition
+			/*if (IsGameOver)
 			{
 				GameObject.FindGameObjectWithTag(Tags.MainController).GetComponent<MainController>().StopGame();
-			}
+			}*/
 
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				PauseGame();
+				if (!isGamePaused)
+				{
+					isGamePaused = true;
+					PauseGame();
+				}
+				else
+				{
+					isGamePaused = false;
+					UnpauseGame();
+				}
 			}
 		}
 
@@ -70,7 +88,22 @@ namespace Playmode.Application
 
 		private void PauseGame()
 		{
-			GameObject.FindGameObjectWithTag(Tags.MainController).GetComponent<MainController>().PauseGame();	
+			Time.timeScale = 0.0f;
+			
+			foreach(GameObject g in pauseObjects)
+			{
+				g.SetActive(true);
+			}
+		}
+
+		private void UnpauseGame()
+		{
+			Time.timeScale = 1.0f;
+			
+			foreach(GameObject g in pauseObjects)
+			{
+				g.SetActive(false);
+			}
 		}
 	}
 }
