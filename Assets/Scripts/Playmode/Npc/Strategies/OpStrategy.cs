@@ -21,6 +21,7 @@ namespace Playmode.Npc.Strategies
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
 			health, npcSensorSight, npcSensorSound)
 		{
+			HealthRetreatTolerance = 400;
 			retreatingMovementRoutine = new RetreatWhileDodgingMovementRoutine(Mover);
 			engagingMovementRoutine = new AdvanceWhileDodgingMovementRoutine(Mover);
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
