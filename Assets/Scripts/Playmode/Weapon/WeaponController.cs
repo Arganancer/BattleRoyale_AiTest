@@ -1,6 +1,7 @@
 ﻿using System;
 using Playmode.Bullet;
 using Playmode.Entity.Movement;
+using Playmode.Entity.Senses;
 using Playmode.Event;
 using Playmode.Pickable.TypePickable;
 using Playmode.Sound;
@@ -12,18 +13,38 @@ namespace Playmode.Weapon
 	public class WeaponController : MonoBehaviour
 	{
 		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
-		[SerializeField] private float fireDelayInSeconds = 0.3f;
+		[SerializeField] private float fireDelayInSeconds = 0.5f;
 		[SerializeField] private float angleBetweenBullet = 50f;
 		[SerializeField] private int nbOfShotgunBullets = 5;
 		private TypePickable weaponType = TypePickable.None;
+		private int bulletDamage = 6;
 
 		private ShootEventChannel shootEventChannel;
 
 		public TypePickable WeaponType
 		{
 			get { return weaponType; }
-			set { weaponType = value; }
+			set
+			{
+				weaponType = value;
+				switch (weaponType)
+				{
+					case TypePickable.Shotgun:
+						bulletDamage = 4;
+						fireDelayInSeconds = 0.8f;
+						break;
+					case TypePickable.Uzi:
+						bulletDamage = 5;
+						fireDelayInSeconds = 0.2f;
+						break;
+					default:
+						bulletDamage = 6;
+						fireDelayInSeconds = 0.5f;
+						break;
+				}
+			}
 		}
+
 		private float lastTimeShotInSeconds;
 
 		public float FireDelayInSeconds
@@ -55,7 +76,7 @@ namespace Playmode.Weapon
 		private void InitializeComponent()
 		{
 			lastTimeShotInSeconds = 0;
-			
+
 			shootEventChannel = GameObject.FindWithTag("GameController").GetComponent<ShootEventChannel>();
 		}
 
@@ -70,8 +91,8 @@ namespace Playmode.Weapon
 				else
 				{
 					ShootInLine();
-					
 				}
+
 				NotifyShot();
 
 				lastTimeShotInSeconds = Time.time;
@@ -85,7 +106,8 @@ namespace Playmode.Weapon
 
 		public void ShootInLine()
 		{
-			Instantiate(bulletPrefab, transform.position, transform.rotation);
+			Instantiate(bulletPrefab, transform.position, transform.rotation).GetComponentInChildren<HitStimulus>()
+				.HitPoints = bulletDamage;
 		}
 
 		public void ShootInCone()
@@ -93,7 +115,8 @@ namespace Playmode.Weapon
 			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
 				GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-				bullet.transform.Rotate(Vector3.forward*Random.Range(-4, 4),Space.Self);
+				bullet.GetComponentInChildren<HitStimulus>().HitPoints = bulletDamage;
+				bullet.transform.Rotate(Vector3.forward * Random.Range(-4, 4), Space.Self);
 				bullet.transform.GetComponentInChildren<AnchoredMover>().MaxSpeed *= Random.Range(1.1f, 1.2f);
 				bullet.transform.GetComponentInChildren<BulletController>().LifeSpanInSeconds = 0.5f;
 			}

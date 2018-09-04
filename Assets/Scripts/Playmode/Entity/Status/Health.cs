@@ -7,7 +7,7 @@ namespace Playmode.Entity.Status
 
 	public class Health : MonoBehaviour
 	{
-		[SerializeField] private int healthPoints = 100;
+		[SerializeField] private int healthPoints = 1000;
 
 		public event HealthEventHandler OnDeath;
 
@@ -38,10 +38,11 @@ namespace Playmode.Entity.Status
 			HealthPoints -= hitPoints;
 		}
 
-		public void Heal(int healPoint)
+		public void Heal(int healPoints)
 		{
-			HealthPoints += healPoint;
+			HealthPoints += healPoints;
 		}
+		
 		private void NotifyDeath()
 		{
 			if (OnDeath != null) OnDeath();

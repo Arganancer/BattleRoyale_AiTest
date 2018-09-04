@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Playmode.Entity.Senses
 {
-	public delegate void MidkitPickedEventHandler(int healthPoint);
+	public delegate void MedkitPickedEventHandler(int healthPoint);
 	public delegate void ShotgunPickedEventHandler();
 	public delegate void UziPickedEventHandler();
 	public delegate void HitSensorEventHandler(int hitPoints);
@@ -13,7 +13,7 @@ namespace Playmode.Entity.Senses
 	public class HitSensor : MonoBehaviour
 	{
 		public event PickableHitSensorEventHandler PickablePickedEventHandler;
-		public event MidkitPickedEventHandler onMedkitPick;
+		public event MedkitPickedEventHandler onMedkitPick;
 		public event ShotgunPickedEventHandler onShotgunPick;
 		public event UziPickedEventHandler onUziPick;
 		public event HitSensorEventHandler OnHit;
