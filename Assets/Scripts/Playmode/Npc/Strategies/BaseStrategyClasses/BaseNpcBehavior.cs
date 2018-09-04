@@ -33,7 +33,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected readonly Mover Mover;
 		protected readonly HandController HandController;
 		protected readonly NpcSensorSight NpcSensorSight;
-		protected readonly HitSensor HitSensor;
 		protected readonly Health Health;
 
 		protected float DistanceSwitchFromEngagingToAttacking = 8f;
@@ -46,6 +45,11 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected float TimeUntilStateSwitch = 0f;
 		protected bool IsOutsideOfZone = false;
 
+		public bool SetIsOutsideOfZone
+		{
+			set { IsOutsideOfZone = value; }
+		}
+
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentMedicalKitTarget;
 		protected PickableController CurrentShotgunTarget;
@@ -56,13 +60,12 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected const float MinRoamingTime = 1.2f;
 		protected const float MaxRoamingTime = 2.8f;
 
-		protected BaseNpcBehavior(Mover mover, HandController handController,
-			HitSensor hitSensor, Health health, NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
+		protected BaseNpcBehavior(Mover mover, HandController handController
+			,Health health, NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 		{
 			currentState = State.Idle;
 			Mover = mover;
 			HandController = handController;
-			HitSensor = hitSensor;
 			Health = health;
 			NpcSensorSight = npcSensorSight;
 			MovementDirection = new Vector3();

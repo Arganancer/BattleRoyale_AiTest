@@ -82,7 +82,6 @@ namespace Playmode.Npc
 			health = GetComponent<Health>();
 			mover = GetComponent<Mover>();
 			destroyer = GetComponent<RootDestroyer>();
-
 			var rootTransform = transform.root;
 			npcSensorSight = rootTransform.GetComponentInChildren<NpcSensorSight>();
 			npcSensorSound = rootTransform.GetComponentInChildren<NpcSensorSound>();
@@ -146,34 +145,34 @@ namespace Playmode.Npc
 					body.GetComponent<SpriteRenderer>().color = Color.cyan;
 					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
-					this.strategy = new CowboyBehavior(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new CowboyBehavior(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Careful:
 					body.GetComponent<SpriteRenderer>().color = Color.white;
 					sight.GetComponent<SpriteRenderer>().color = Color.white;
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CarefulBehavior(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new CarefulBehavior(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
 					body.GetComponent<SpriteRenderer>().color = Color.yellow;
 					sight.GetComponent<SpriteRenderer>().color = Color.yellow;
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
-					this.strategy = new CamperBehavior(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new CamperBehavior(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Normal:
 					body.GetComponent<SpriteRenderer>().color = Color.red;
 					sight.GetComponent<SpriteRenderer>().color = Color.red;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new NormalBehavior(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound);
+					this.strategy = new NormalBehavior(mover, handController, health, npcSensorSight, npcSensorSound);
 					break;
 				default:
 					body.GetComponent<SpriteRenderer>().color = Color.blue;
 					sight.GetComponent<SpriteRenderer>().color = Color.blue;
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
-					this.strategy = new OpStrategy(mover, handController, hitSensor, health, npcSensorSight,
+					this.strategy = new OpStrategy(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 			}
@@ -260,6 +259,17 @@ namespace Playmode.Npc
 		public void PickUzi()
 		{
 			OnPickUzi();
+		}
+		
+
+		public void UpdateNpcStateEnterZone()
+		{
+			strategy.SetIsOutsideOfZone = false;
+		}
+
+		public void UpdateNpcStateExitZone()
+		{
+			strategy.SetIsOutsideOfZone = true;
 		}
 	}
 }
