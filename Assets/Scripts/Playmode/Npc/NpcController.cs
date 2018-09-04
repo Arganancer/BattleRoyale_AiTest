@@ -39,7 +39,7 @@ namespace Playmode.Npc
 		private HitSensor hitSensor;
 		private HandController handController;
 
-		private INpcStrategy strategy;
+		private BaseNpcBehavior strategy;
 
 		private NpcDeathEventChannel npcDeathEventChannel;
 		private HitEventChannel hitEventChannel;
@@ -240,6 +240,11 @@ namespace Playmode.Npc
 		public int GetHealth()
 		{
 			return health.HealthPoints;
+		}
+
+		public string GetStateString()
+		{
+			return Enum.GetName(typeof(State), strategy.GetState());
 		}
 		
 		public void Heal(int healPoint)

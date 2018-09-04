@@ -34,6 +34,7 @@ namespace Playmode.Interface.VisualInterface
 			else
 			{
 				healthText.text = npcController.GetHealth().ToString();
+				stateText.text = npcController.GetStateString();
 				positionText.text = "x: " + (int)npcController.transform.position.x + ", y: " +
 				                    (int)npcController.transform.position.y;
 			}

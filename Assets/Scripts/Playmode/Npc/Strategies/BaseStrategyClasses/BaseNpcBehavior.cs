@@ -268,5 +268,10 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected abstract State EvaluateAttacking();
 
 		protected abstract State EvaluateRetreating();
+
+		public State GetState()
+		{
+			return currentState;
+		}
 	}
 }
