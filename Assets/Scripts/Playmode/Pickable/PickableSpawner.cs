@@ -33,7 +33,7 @@ namespace Playmode.Pickable
 		{
 			ValidateSerialisedFields();
 			zoneController = GameObject.Find(ZoneObjectName).GetComponentInChildren<ZoneController>();
-			worldSize = zoneController.CurrentRadius;
+			worldSize = zoneController.CurrentRadius*8;
 			timeLastSpawn = 0;
 		}
 
@@ -53,6 +53,7 @@ namespace Playmode.Pickable
 		{
 			if (Time.time - timeLastSpawn > timeToSpawn && zoneController.ZoneIsNotShrinking)
 			{
+				worldSize = zoneController.CurrentRadius*8;
 				//SelectNbOfPickableToSpawn();
 				SpawnPickables();
 				timeLastSpawn = Time.time;
