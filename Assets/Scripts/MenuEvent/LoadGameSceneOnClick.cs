@@ -2,7 +2,7 @@
 using Playmode.Util.Values;
 using UnityEngine;
 
-namespace Menu
+namespace MenuEvent
 {
 	public class LoadGameSceneOnClick : MonoBehaviour
 	{

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Menu
+namespace MenuEvent
 {
 	public class ExitOnClick : MonoBehaviour
 	{
