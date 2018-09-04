@@ -9,6 +9,7 @@ namespace Playmode.Pickable
 {
 	public class PickableController : MonoBehaviour
 	{
+		private const string zoneObjectName = "Zone";
 		[SerializeField] public Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
@@ -77,6 +78,11 @@ namespace Playmode.Pickable
 			{
 				bonusEffect.ApplyBonusEffect(npcController);
 			}
+		}
+
+		public void DestroyPickable()
+		{
+			Destroy(transform.root.gameObject);
 		}
 	}
 }
