@@ -27,7 +27,7 @@ namespace Playmode.Npc.Strategies
 		{
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
 			
-			HealthRetreatTolerance = 80;
+			HealthRetreatTolerance = 800;
 			DistanceSwitchFromAttackingToEngaging = 20f;
 			DistanceSwitchFromEngagingToAttacking = 17f;
 		}
