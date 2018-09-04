@@ -7,7 +7,7 @@ namespace Playmode.Sound
 {
 	public class SoundController : MonoBehaviour
 	{
-		private ShootEventChannel shootEventChannel;
+		/*private ShootEventChannel shootEventChannel;
 		private NpcDeathEventChannel npcDeathEventChannel;
 		private HitEventChannel hitEventChannel;
 
@@ -67,7 +67,7 @@ namespace Playmode.Sound
 		private void PlayHitSound()
 		{
 			hitSound.Play();
-		}
+		}*/
 
 		public void PlayAndStopAudio()
 		{

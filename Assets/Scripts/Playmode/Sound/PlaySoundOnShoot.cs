@@ -1,5 +1,4 @@
-﻿using System;
-using Playmode.Event;
+﻿using Playmode.Event;
 using Playmode.Pickable.TypePickable;
 using Playmode.Util.Values;
 using UnityEngine;
@@ -16,6 +15,7 @@ namespace Playmode.Sound
 		private void Awake()
 		{
 			shootEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<ShootEventChannel>();
+			
 			var aSource = GetComponents(typeof(AudioSource));
 			starterWeaponShootSounds = new[]
 			{
