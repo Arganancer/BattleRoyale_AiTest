@@ -29,7 +29,11 @@ namespace Playmode.Npc.BodyParts
 			{
 				heldGameObject.transform.parent = transform;
 				heldGameObject.transform.localPosition = Vector3.zero;
-
+				heldGameObject.transform.rotation = new Quaternion();
+				if (weapon != null)
+				{
+					DropWeapon();
+				}
 				weapon = heldGameObject.GetComponentInChildren<WeaponController>();
 			}
 			else

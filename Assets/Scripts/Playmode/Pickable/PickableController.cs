@@ -9,7 +9,7 @@ namespace Playmode.Pickable
 {
 	public class PickableController : MonoBehaviour
 	{
-		[SerializeField] private Sprite medicalKit;
+		[SerializeField] public Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
 
@@ -20,7 +20,7 @@ namespace Playmode.Pickable
 		
 		private void Awake()
 		{
-			visualComponent = GameObject.Find("Visual").GetComponent<SpriteRenderer>();
+			visualComponent = transform.root.GetComponentInChildren<SpriteRenderer>();
 			ValidateSerialisedFields();
 		}
 

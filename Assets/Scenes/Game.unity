@@ -361,7 +361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72432366c1b6064449b5f39cb18b4a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBufferToMoveZone: 120
+  timeBufferToMoveZone: 20
   startingRadiusZoneSize: 10
   minimunSizeShrink: 2
   maximumSizeShrink: 3
@@ -1550,7 +1550,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickablePrefab: {fileID: 1183028321534278, guid: ad8deac14a9ad93468cf153b528333b4,
     type: 2}
-  numberOfPickable: 1
 --- !u!4 &1414076108
 Transform:
   m_ObjectHideFlags: 0

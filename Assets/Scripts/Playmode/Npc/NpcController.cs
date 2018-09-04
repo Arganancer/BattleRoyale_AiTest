@@ -186,11 +186,6 @@ namespace Playmode.Npc
 			health.Hit(hitPoints);
 		}
 
-		public void OnHeal(int healPoint)
-		{
-			health.Heal(healPoint);
-		}
-
 		private void OnDeath()
 		{
 			NotifyDeath();
@@ -225,7 +220,6 @@ namespace Playmode.Npc
 
 		private void SwitchWeapon(GameObject weaponObject)
 		{
-			handController.DropWeapon();
 			handController.Hold(Instantiate(
 				weaponObject,
 				Vector3.zero,
