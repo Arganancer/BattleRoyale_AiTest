@@ -19,8 +19,8 @@ namespace Playmode.Npc.Strategies
 		private bool isCamping;
 		private PickableController campedMedKit;
 
-		public CamperBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
-			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+		public CamperBehavior(Mover mover, HandController handController, Health health,
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
 			health, npcSensorSight, npcSensorSound)
 		{
 			retreatingMovementRoutine = new RetreatWhileDodgingMovementRoutine(Mover);

@@ -4,18 +4,14 @@ using Playmode.Npc;
 using Playmode.Pickable;
 using UnityEngine;
 
-public delegate void ZoneSensorExitEventHandler(GameObject gameObject);
-
-public delegate void ZoneSensorEnterEventHandler(GameObject gameObject);
 public class ZoneSensor : MonoBehaviour
 {
-	public event ZoneSensorExitEventHandler onZoneExitSensor;
-	public event ZoneSensorEnterEventHandler onZoneEnterSensor;
 	private void OnTriggerExit2D(Collider2D other)
 	{
 		if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>())
 		{
-			NotifyObjectLeavingZone(other.gameObject);
+			NotifyObjectLeavingZone(other.gameObject.transform.root
+				.GetComponentInChildren<NpcController>());
 		}
 		else if (other.gameObject.transform.root?.GetComponentInChildren<PickableController>())
 		{
@@ -28,24 +24,19 @@ public class ZoneSensor : MonoBehaviour
 	{
 		if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>())
 		{
-			NotifyObjectEnteringZone(other.gameObject);
+			NotifyObjectEnteringZone(other.gameObject.transform.root
+				.GetComponentInChildren<NpcController>());
 		}
 	}
 
-	private void NotifyObjectLeavingZone(GameObject gameObject)
+	private void NotifyObjectLeavingZone(NpcController npcController)
 	{
-		if (onZoneExitSensor != null)
-		{
-			onZoneExitSensor(gameObject);
-		}
+		npcController.UpdateNpcStateExitZone();
 	}
 
-	private void NotifyObjectEnteringZone(GameObject gameObject)
+	private void NotifyObjectEnteringZone(NpcController npcController)
 	{
-		if (onZoneEnterSensor != null)
-		{
-			onZoneEnterSensor(gameObject);
-		}
+		npcController.UpdateNpcStateEnterZone();
 	}
 
 	private void DestroyOutOfZonePickable(PickableController pickableController)

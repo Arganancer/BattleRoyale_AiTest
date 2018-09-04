@@ -14,8 +14,8 @@ namespace Playmode.Npc.Strategies
 	{
 		private readonly SightRoutine noEnemySightRoutine;
 
-		public NormalBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
-			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+		public NormalBehavior(Mover mover, HandController handController,Health health,
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
 			health, npcSensorSight, npcSensorSound)
 		{
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
