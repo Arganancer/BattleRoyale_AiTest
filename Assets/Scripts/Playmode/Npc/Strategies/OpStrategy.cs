@@ -17,8 +17,8 @@ namespace Playmode.Npc.Strategies
 		private readonly MovementRoutine engagingMovementRoutine;
 		private readonly SightRoutine noEnemySightRoutine;
 		
-		public OpStrategy(Mover mover, HandController handController, HitSensor hitSensor, Health health,
-			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+		public OpStrategy(Mover mover, HandController handController, Health health,
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
 			health, npcSensorSight, npcSensorSound)
 		{
 			HealthRetreatTolerance = 400;

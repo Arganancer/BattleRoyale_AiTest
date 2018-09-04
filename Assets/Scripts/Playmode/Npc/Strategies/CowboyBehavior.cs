@@ -14,9 +14,9 @@ namespace Playmode.Npc.Strategies
 	{
 		private readonly SightRoutine noEnemySightRoutine;
 
-		public CowboyBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
+		public CowboyBehavior(Mover mover, HandController handController,Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
-			: base(mover, handController, hitSensor, health, npcSensorSight, npcSensorSound)
+			: base(mover, handController, health, npcSensorSight, npcSensorSound)
 		{
 			HealthRetreatTolerance = 0;
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);

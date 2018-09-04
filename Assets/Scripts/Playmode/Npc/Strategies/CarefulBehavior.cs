@@ -21,8 +21,8 @@ namespace Playmode.Npc.Strategies
 		private readonly SightRoutine noEnemySightRoutine;
 		private float distanceSwitchFromAttackingToRetreating = 14f;
 
-		public CarefulBehavior(Mover mover, HandController handController, HitSensor hitSensor, Health health,
-			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController, hitSensor,
+		public CarefulBehavior(Mover mover, HandController handController, Health health,
+			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
 			health, npcSensorSight, npcSensorSound)
 		{
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
