@@ -10,5 +10,6 @@
 		public const string Weapon = "Weapon";
 		public const string ShowOnPause = "ShowOnPause";
 		public const string ShowOnEnd = "ShowOnEnd";
+		public const string EndGameDetails = "EndGameDetails";
 	}
 }

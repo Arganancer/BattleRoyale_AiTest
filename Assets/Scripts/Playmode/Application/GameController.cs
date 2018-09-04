@@ -1,16 +1,23 @@
 ﻿using Playmode.Event;
+using Playmode.Interface;
+using Playmode.Interface.VisualInterface;
+using Playmode.Npc;
 using Playmode.Util.Values;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Playmode.Application
 {
 	public class GameController : MonoBehaviour
 	{
-		//private MainController mainController;
 		private NpcDeathEventChannel npcDeathEventChannel;
 
 		private GameObject[] pauseObjects;
 		private GameObject[] endGameObjects;
+		
+		//TODO: clean
+		private NpcController lastNpc;
+		private Text endGameDetails;
 
 		private int numberOfNpcs;
 		private bool isGamePaused;
@@ -39,7 +46,6 @@ namespace Playmode.Application
 
 		private void Awake()
 		{
-			//mainController = GameObject.FindWithTag(Tags.MainController).GetComponent<MainController>();
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
 
 			isGamePaused = false;
@@ -47,6 +53,13 @@ namespace Playmode.Application
 			
 			pauseObjects = GameObject.FindGameObjectsWithTag(Tags.ShowOnPause);
 			endGameObjects = GameObject.FindGameObjectsWithTag(Tags.ShowOnEnd);
+
+			//TODO: clean
+			//gameDetails = GameObject.FindGameObjectWithTag(Tags.ShowOnPause).GetComponent<Text>();
+			//endGameTextDetails = GameObject.FindWithTag(Tags.ShowOnEnd).GetComponent<EndGameTextDetails>();
+			//endGameDetails = GetComponentInChildren<Text>();
+
+			endGameDetails = GameObject.FindGameObjectWithTag(Tags.EndGameDetails).GetComponent<Text>();
 
 			UnpauseGame();
 			StartGame();
@@ -59,7 +72,6 @@ namespace Playmode.Application
 
 		private void Update()
 		{
-			//TODO: game end condition
 			if (IsGameOver)
 			{
 				EndGame();
@@ -121,11 +133,25 @@ namespace Playmode.Application
 		private void EndGame()
 		{
 			Time.timeScale = 0.0f;
-			
+
 			foreach(GameObject g in endGameObjects)
 			{
 				g.SetActive(true);
 			}
+
+			if (numberOfNpcs == 0)
+			{
+				endGameDetails.text = "No survivor !";
+			}
+			else
+			{
+				lastNpc = GameObject.FindGameObjectWithTag(Tags.Npc).GetComponentInChildren<NpcController>();
+
+				endGameDetails.text = lastNpc.GetHealth().ToString();
+			}
+			
+			//endGameDetails.text = lastNpc.GetComponentInChildren<NpcController>().GetHealth().ToString();
+			//endGameDetails.text = uiNpcCardController.lastNpcController.GetHealth().ToString();
 		}
 	}
 }

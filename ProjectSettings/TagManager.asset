@@ -10,6 +10,7 @@ TagManager:
   - Weapon
   - ShowOnPause
   - ShowOnEnd
+  - EndGameDetails
   layers:
   - Default
   - TransparentFX
