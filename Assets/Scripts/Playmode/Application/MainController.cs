@@ -20,6 +20,11 @@ namespace Playmode.Application
 			StartCoroutine(LoadGameSceneRoutine());
 		}
 
+		public void RestartGame()
+		{
+			StartCoroutine(ReloadGameSceneRoutine());
+		}
+
 		public void StopGame()
 		{
 			StartCoroutine(UnloadGameSceneRoutine());
@@ -61,6 +66,17 @@ namespace Playmode.Application
 				yield return SceneManager.LoadSceneAsync(Scenes.Menu, LoadSceneMode.Additive);
 
 			SceneManager.SetActiveScene(SceneManager.GetSceneByName(Scenes.Menu));
+		}
+
+		private static IEnumerator ReloadGameSceneRoutine()
+		{
+			if (SceneManager.GetSceneByName(Scenes.Game).isLoaded)
+				yield return SceneManager.UnloadSceneAsync(Scenes.Game);
+			
+			if (!SceneManager.GetSceneByName(Scenes.Game).isLoaded)
+				yield return SceneManager.LoadSceneAsync(Scenes.Game, LoadSceneMode.Additive);
+			
+			SceneManager.SetActiveScene(SceneManager.GetSceneByName(Scenes.Game));
 		}
 	}
 }

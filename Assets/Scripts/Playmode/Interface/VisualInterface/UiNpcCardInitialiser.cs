@@ -55,7 +55,6 @@ namespace Playmode.Interface.VisualInterface
 			newDetailedNpcCard.GetComponentInChildren<UiNpcCardController>()
 				.Configure(npcController);
 			newDetailedNpcCard.transform.parent = transform;
-
 		}
 	}
 }
