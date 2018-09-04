@@ -6,7 +6,7 @@ namespace Playmode.Entity.Senses
 {
 	public class HitStimulus : MonoBehaviour
 	{
-		[Header("Behaviour")] [SerializeField] private int hitPoints = 1;
+		public int HitPoints = 5;
 
 		private void Awake()
 		{
@@ -15,7 +15,7 @@ namespace Playmode.Entity.Senses
 
 		private void ValidateSerializeFields()
 		{
-			if (hitPoints < 0)
+			if (HitPoints < 0)
 				throw new ArgumentException("Hit points can't be less than 0.");
 		}
 
@@ -23,7 +23,7 @@ namespace Playmode.Entity.Senses
 		{
 			if (other.GetComponent<HitSensor>() != null)
 			{
-				other.GetComponent<HitSensor>().Hit(hitPoints);
+				other.GetComponent<HitSensor>().Hit(HitPoints);
 				transform.root.GetComponentInChildren<BulletController>().Hit();
 			}
 		}

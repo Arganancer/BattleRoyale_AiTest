@@ -15,7 +15,7 @@ namespace Playmode.Pickable.TypePickable
 
 		public override void ApplyBonusEffect(NpcController npcController)
 		{
-			npcController.Heal(10);
+			npcController.Heal(500);
 		}
 	}
 }
