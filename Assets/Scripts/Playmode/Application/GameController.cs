@@ -1,6 +1,4 @@
 ﻿using Playmode.Event;
-using Playmode.Interface;
-using Playmode.Interface.VisualInterface;
 using Playmode.Npc;
 using Playmode.Util.Values;
 using UnityEngine;
@@ -10,57 +8,30 @@ namespace Playmode.Application
 {
 	public class GameController : MonoBehaviour
 	{
-		private NpcDeathEventChannel npcDeathEventChannel;
-
-		private GameObject[] pauseObjects;
-		private GameObject[] endGameObjects;
+		private const string TextNoSurvivors = "No survivors !";
+		private const string TextSurvivorInfo = "Survivor's health points : ";
 		
-		//TODO: clean
+		private NpcDeathEventChannel npcDeathEventChannel;
+		private GameObject pauseObjects;
+		private GameObject endGameObjects;
 		private NpcController lastNpc;
 		private Text endGameDetails;
 
 		private int numberOfNpcs;
 		private bool isGamePaused;
-		
-		public int NumberOfNpcs
-		{
-			get { return numberOfNpcs; }
-			set
-			{
-				if (numberOfNpcs != value)
-					numberOfNpcs = value;
-			}
-		}
 
-		public bool IsGameOver => numberOfNpcs < 2;
-
-		public bool IsGamePaused
-		{
-			get { return isGamePaused; }
-			set
-			{
-				if (isGamePaused != value)
-					isGamePaused = value;
-			}
-		}
+		private bool IsGameOver => numberOfNpcs < 2;
 
 		private void Awake()
 		{
 			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
+			pauseObjects = GameObject.FindGameObjectWithTag(Tags.ShowOnPause);
+			endGameObjects = GameObject.FindGameObjectWithTag(Tags.ShowOnEnd);
+			endGameDetails = GameObject.FindGameObjectWithTag(Tags.EndGameDetails).GetComponent<Text>();
 
 			isGamePaused = false;
 			numberOfNpcs = GameValues.NbOfEnemies;
 			
-			pauseObjects = GameObject.FindGameObjectsWithTag(Tags.ShowOnPause);
-			endGameObjects = GameObject.FindGameObjectsWithTag(Tags.ShowOnEnd);
-
-			//TODO: clean
-			//gameDetails = GameObject.FindGameObjectWithTag(Tags.ShowOnPause).GetComponent<Text>();
-			//endGameTextDetails = GameObject.FindWithTag(Tags.ShowOnEnd).GetComponent<EndGameTextDetails>();
-			//endGameDetails = GetComponentInChildren<Text>();
-
-			endGameDetails = GameObject.FindGameObjectWithTag(Tags.EndGameDetails).GetComponent<Text>();
-
 			UnpauseGame();
 			StartGame();
 		}
@@ -106,52 +77,38 @@ namespace Playmode.Application
 		{
 			Time.timeScale = 0.0f;
 			
-			foreach(GameObject g in pauseObjects)
-			{
-				g.SetActive(true);
-			}
+			pauseObjects.SetActive(true);
 		}
 
 		private void UnpauseGame()
 		{
 			Time.timeScale = 1.0f;
 			
-			foreach(GameObject g in pauseObjects)
-			{
-				g.SetActive(false);
-			}
+			pauseObjects.SetActive(false);
 		}
 
 		private void StartGame()
 		{
-			foreach(GameObject g in endGameObjects)
-			{
-				g.SetActive(false);
-			}
+			endGameObjects.SetActive(false);
 		}
 
 		private void EndGame()
 		{
 			Time.timeScale = 0.0f;
 
-			foreach(GameObject g in endGameObjects)
-			{
-				g.SetActive(true);
-			}
+			endGameObjects.SetActive(true);
 
 			if (numberOfNpcs == 0)
 			{
-				endGameDetails.text = "No survivor !";
+				endGameDetails.text = TextNoSurvivors;
 			}
 			else
 			{
 				lastNpc = GameObject.FindGameObjectWithTag(Tags.Npc).GetComponentInChildren<NpcController>();
 
-				endGameDetails.text = lastNpc.GetHealth().ToString();
+				endGameDetails.text = TextSurvivorInfo;
+				endGameDetails.text += lastNpc.GetHealth().ToString();
 			}
-			
-			//endGameDetails.text = lastNpc.GetComponentInChildren<NpcController>().GetHealth().ToString();
-			//endGameDetails.text = uiNpcCardController.lastNpcController.GetHealth().ToString();
 		}
 	}
 }

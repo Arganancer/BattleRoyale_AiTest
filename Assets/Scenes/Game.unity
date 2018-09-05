@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 330986401}
   m_Layer: 5
   m_Name: PauseText
-  m_TagString: ShowOnPause
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -774,7 +774,7 @@ GameObject:
   - component: {fileID: 909700091}
   m_Layer: 5
   m_Name: ExitButton
-  m_TagString: ShowOnPause
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1040,11 +1040,11 @@ GameObject:
   - component: {fileID: 1110241600}
   m_Layer: 5
   m_Name: PauseMenu
-  m_TagString: Untagged
+  m_TagString: ShowOnPause
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1110241600
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2600,7 +2600,7 @@ GameObject:
   - component: {fileID: 1898428835}
   m_Layer: 5
   m_Name: MenuButton
-  m_TagString: ShowOnPause
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

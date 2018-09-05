@@ -1,10 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-#if UNITY_EDITOR
-
-#endif
-
 namespace Playmode.Util.Information
 {
 	public class Comment : MonoBehaviour

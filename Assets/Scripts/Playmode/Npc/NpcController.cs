@@ -7,6 +7,7 @@ using Playmode.Event;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
+using Playmode.Util.Values;
 using UnityEngine;
 
 namespace Playmode.Npc
@@ -88,8 +89,8 @@ namespace Playmode.Npc
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
 			handController = hand.GetComponent<HandController>();
 
-			npcDeathEventChannel = GameObject.FindWithTag("GameController").GetComponent<NpcDeathEventChannel>();
-			hitEventChannel = GameObject.FindWithTag("GameController").GetComponent<HitEventChannel>();
+			npcDeathEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<NpcDeathEventChannel>();
+			hitEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<HitEventChannel>();
 		}
 
 		private void CreateStartingWeapon()
