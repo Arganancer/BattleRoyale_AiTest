@@ -8,14 +8,14 @@ namespace Playmode.Entity.Movement
 {
 	public class Mover : MonoBehaviour
 	{
-		private Transform rootTransform;
-		public static readonly Vector3 Forward = Vector3.up;
-		public const float Clockwise = 1f;
-
 		[SerializeField] protected float Speed = 2f;
 		[SerializeField] protected float RotateSpeed = 90f;
-		protected Vector3 PositionLastFrame;
-		protected Vector3 PositionThisFrame;
+		
+		private Vector3 PositionLastFrame;
+		private Vector3 PositionThisFrame;
+		
+		private Transform rootTransform;
+
 
 		protected void Awake()
 		{
@@ -36,12 +36,7 @@ namespace Playmode.Entity.Movement
 			rootTransform = transform.root;
 		}
 
-		public void MoveRelativeToSelf(Vector3 direction)
-		{
-			rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.Self);
-		}
-
-		public void MoveRelativeToWorld(Vector3 direction)
+		private void MoveRelativeToWorld(Vector3 direction)
 		{
 			rootTransform.Translate(direction.normalized * Speed * Time.deltaTime, Space.World);
 		}
@@ -58,11 +53,6 @@ namespace Playmode.Entity.Movement
 		{
 			var desiredOrientation = Quaternion.LookRotation(Vector3.forward, target);
 			rootTransform.rotation = Quaternion.RotateTowards(rootTransform.rotation, desiredOrientation, RotateSpeed * Time.deltaTime);
-		}
-
-		public float GetSpeed()
-		{
-			return Speed;
 		}
 
 		public void UpdatePosition()

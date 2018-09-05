@@ -8,6 +8,7 @@ namespace Playmode.Entity.Senses
 	{
 		private const string BODY_OBJECT_NAME = "Body";
 		private const string SIGHT_OBJECT_NAME = "Sight";
+		
 		private void OnTriggerEnter2D(Collider2D other)
 		{
 			if (other.name == BODY_OBJECT_NAME)

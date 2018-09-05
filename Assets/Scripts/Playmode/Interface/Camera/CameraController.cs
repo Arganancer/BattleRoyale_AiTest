@@ -121,8 +121,13 @@ namespace Playmode.Interface.Camera
 		{
 			if ( zoneObject.radius<= MaxShrinkingSize)
 			{
-				mainCam.transform.position = new Vector3(zoneObject.offset.x*10,zoneObject.offset.y*10,-10);
+				ResetCameraPosition();
 			}
+		}
+
+		private void ResetCameraPosition()
+		{
+			mainCam.transform.position = new Vector3(zoneObject.offset.x*10,zoneObject.offset.y*10,-10);
 		}
 	}
 }

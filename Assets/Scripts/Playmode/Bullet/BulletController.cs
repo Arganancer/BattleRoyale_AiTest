@@ -1,6 +1,7 @@
 ﻿using System;
 using Playmode.Entity.Destruction;
 using Playmode.Entity.Movement;
+using Playmode.Entity.Senses;
 using UnityEngine;
 
 namespace Playmode.Bullet
@@ -9,11 +10,6 @@ namespace Playmode.Bullet
 	{
 		[Header("Behaviour")] [SerializeField] private float lifeSpanInSeconds = 5f;
 
-		public float LifeSpanInSeconds
-		{
-			get { return lifeSpanInSeconds; }
-			set { lifeSpanInSeconds = value; }
-		}
 
 		private AnchoredMover anchoredMover;
 		private Destroyer destroyer;
@@ -21,6 +17,11 @@ namespace Playmode.Bullet
 		private float currentPercentageDuration;
 		private float startDyingPercentageDuration = 0.7f;
 		private float dyingPercentageRemaining = 0.3f;
+		
+		private float LifeSpanInSeconds
+		{
+			set { lifeSpanInSeconds = value; }
+		}
 
 		private bool IsAlive => timeSinceSpawnedInSeconds < lifeSpanInSeconds;
 
@@ -82,6 +83,20 @@ namespace Playmode.Bullet
 			}
 			else
 				destroyer.Destroy();
+		}
+
+		public void ConfigureLineShoot(GameObject bullet,int bulletDamage)
+		{
+			bullet.GetComponentInChildren<HitStimulus>().HitPoints = bulletDamage;
+		}
+
+		public void ConfigureConeShoot(GameObject bullet,int bulletDamage)
+		{
+			
+			bullet.GetComponentInChildren<HitStimulus>().HitPoints = bulletDamage;
+			bullet.transform.Rotate(Vector3.forward * UnityEngine.Random.Range(-4, 4), Space.Self);
+			bullet.transform.GetComponentInChildren<AnchoredMover>().MaxSpeed *= UnityEngine.Random.Range(1.1f, 1.2f);
+			bullet.transform.GetComponentInChildren<BulletController>().LifeSpanInSeconds = 0.5f;
 		}
 	}
 }

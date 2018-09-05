@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Playmode.Npc;
+﻿using Playmode.Npc;
 using Playmode.Pickable;
 using UnityEngine;
 
