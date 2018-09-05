@@ -65,7 +65,7 @@ namespace Playmode.Npc.Strategies
 				}
 				else if (CurrentUziTarget != null)
 				{
-					movementTarget = CurrentShotgunTarget.transform.root.position;
+					movementTarget = CurrentUziTarget.transform.root.position;
 					rotationTarget = movementTarget;
 				}
 			}
@@ -74,7 +74,7 @@ namespace Playmode.Npc.Strategies
 			{
 				if (campedMedKit == null)
 					movementTarget = CurrentEnemyTarget.transform.root.position;
-				rotationTarget = CurrentEnemyTarget.transform.root.position;
+				rotationTarget = GetPredictiveAimDirection(CurrentEnemyTarget) + Mover.transform.root.position;
 			}
 
 			Mover.MoveTowardsPosition(movementTarget);
@@ -135,10 +135,14 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateEngaging()
 		{
+			// TODO: Redo logic
 			UpdateCampedMedicalKit();
 			if (isCamping)
+				if (Vector3.Distance(CurrentEnemyTarget.transform.root.position, campedMedKit.transform.root.position) <
+				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) ||
+				    Health.HealthPoints < HealthRetreatTolerance)
 				return Health.HealthPoints < HealthRetreatTolerance ? State.Engaging : State.Idle;
-			
+
 			if (!NpcSensorSight.NpcsInSight.Any() && !NpcSensorSight.PickablesInSight.Any())
 				return State.Idle;
 
@@ -154,15 +158,24 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateAttacking()
 		{
 			UpdateCampedMedicalKit();
+			if (isCamping)
+			{
+				if (CurrentEnemyTarget == null)
+					return State.Idle;
+				if (Vector3.Distance(CurrentEnemyTarget.transform.root.position, campedMedKit.transform.root.position) <
+				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) ||
+				    Health.HealthPoints < HealthRetreatTolerance)
+					return State.Engaging;
+				return State.Attacking;
+			}
+
 			if (!NpcSensorSight.NpcsInSight.Any())
 				return State.Idle;
 
 			if (Health.HealthPoints < HealthRetreatTolerance)
 				return State.Retreating;
 
-			return isCamping || DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking
-				? State.Attacking
-				: State.Engaging;
+			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()

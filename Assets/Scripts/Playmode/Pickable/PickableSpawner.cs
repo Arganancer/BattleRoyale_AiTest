@@ -17,7 +17,7 @@ namespace Playmode.Pickable
 		private float minDistanceBetween2Pickable = 10;
 		private int nbOfPickableToSpawn = 5;
 		
-		private float timeToSpawn = 100;
+		private float timeToSpawn = 10;
 		private float timeLastSpawn;
 
 		private static readonly TypePickable.TypePickable[] DefaultTypePickable =

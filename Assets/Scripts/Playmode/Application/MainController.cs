@@ -7,7 +7,7 @@ namespace Playmode.Application
 {
 	public class MainController : MonoBehaviour
 	{
-		[SerializeField] private static float TimeScale = 1.0f;
+		[SerializeField] private static float TimeScale = 0.6f;
 
 		private void Start()
 		{

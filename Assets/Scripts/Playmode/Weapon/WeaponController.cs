@@ -17,7 +17,7 @@ namespace Playmode.Weapon
 		[SerializeField] private float angleBetweenBullet = 50f;
 		[SerializeField] private int nbOfShotgunBullets = 5;
 		private TypePickable weaponType = TypePickable.None;
-		private int bulletDamage = 6;
+		private int bulletDamage = 20;
 
 		private ShootEventChannel shootEventChannel;
 
@@ -30,15 +30,15 @@ namespace Playmode.Weapon
 				switch (weaponType)
 				{
 					case TypePickable.Shotgun:
-						bulletDamage = 4;
+						bulletDamage = 16;
 						fireDelayInSeconds = 0.8f;
 						break;
 					case TypePickable.Uzi:
-						bulletDamage = 5;
+						bulletDamage = 12;
 						fireDelayInSeconds = 0.2f;
 						break;
 					default:
-						bulletDamage = 6;
+						bulletDamage = 20;
 						fireDelayInSeconds = 0.5f;
 						break;
 				}
