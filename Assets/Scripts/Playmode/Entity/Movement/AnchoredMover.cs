@@ -5,18 +5,20 @@ namespace Playmode.Entity.Movement
 {
 	public class AnchoredMover : MonoBehaviour
 	{
-		private Transform rootTransform;
-		public static readonly Vector3 Forward = Vector3.up;
 		[SerializeField] private float maxSpeed = 2f;
+		[SerializeField] protected float RotateSpeed = 90f;
+		
+		public static readonly Vector3 Forward = Vector3.up;
 
+		private float currentSpeed = 2f;
+		
 		public float MaxSpeed
 		{
 			get { return maxSpeed; }
 			set { maxSpeed = value; }
 		}
-
-		private float currentSpeed = 2f;
-		[SerializeField] protected float RotateSpeed = 90f;
+		
+		private Transform rootTransform;
 
 		protected void Awake()
 		{
@@ -38,23 +40,9 @@ namespace Playmode.Entity.Movement
 			currentSpeed = MaxSpeed;
 		}
 
-		public void Rotate(float direction)
-		{
-			transform.RotateAround(
-				rootTransform.position,
-				Vector3.forward,
-				(direction < 0 ? RotateSpeed : -RotateSpeed) * Time.deltaTime
-			);
-		}
-
 		public void MoveRelativeToSelf(Vector3 direction)
 		{
 			rootTransform.Translate(direction.normalized * MaxSpeed * Time.deltaTime, Space.Self);
-		}
-
-		public float GetCurrentSpeed()
-		{
-			return currentSpeed;
 		}
 
 		public void SetCurrentSpeed(float speed)

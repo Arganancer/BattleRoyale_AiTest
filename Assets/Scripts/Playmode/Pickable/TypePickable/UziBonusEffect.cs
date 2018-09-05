@@ -7,12 +7,6 @@ using UnityEngine;
 namespace Playmode.Pickable.TypePickable
 {
 	public class UziBonusEffect : PickableBonusEffect {
-
-
-		public UziBonusEffect()
-		{
-		}
-
 		public override void ApplyBonusEffect(NpcController npcController)
 		{
 			npcController.PickUzi();

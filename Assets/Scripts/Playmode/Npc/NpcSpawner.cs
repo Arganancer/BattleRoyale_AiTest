@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Playmode.Npc.Strategies;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Util.Collections;
 using Playmode.Util.Values;

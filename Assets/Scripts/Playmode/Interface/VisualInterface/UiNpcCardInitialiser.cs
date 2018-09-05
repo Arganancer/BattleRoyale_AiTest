@@ -10,6 +10,7 @@ namespace Playmode.Interface.VisualInterface
 	public class UiNpcCardInitialiser : MonoBehaviour
 	{
 		[SerializeField] private GameObject detailedNpcCard;
+		
 		private List<GameObject> npcs;
 
 		private void Awake()

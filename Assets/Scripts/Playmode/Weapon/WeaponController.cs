@@ -13,9 +13,10 @@ namespace Playmode.Weapon
 	public class WeaponController : MonoBehaviour
 	{
 		[Header("Behavior")] [SerializeField] private GameObject bulletPrefab;
+		
 		[SerializeField] private float fireDelayInSeconds = 0.5f;
-		[SerializeField] private float angleBetweenBullet = 50f;
 		[SerializeField] private int nbOfShotgunBullets = 5;
+		
 		private TypePickable weaponType = TypePickable.None;
 		private int bulletDamage = 20;
 
@@ -23,7 +24,6 @@ namespace Playmode.Weapon
 
 		public TypePickable WeaponType
 		{
-			get { return weaponType; }
 			set
 			{
 				weaponType = value;
@@ -49,13 +49,11 @@ namespace Playmode.Weapon
 
 		public float FireDelayInSeconds
 		{
-			get { return fireDelayInSeconds; }
 			set { fireDelayInSeconds = value; }
 		}
 
 		public int NbOfShotgunBullets
 		{
-			get { return nbOfShotgunBullets; }
 			set { nbOfShotgunBullets = value; }
 		}
 
@@ -104,13 +102,13 @@ namespace Playmode.Weapon
 			return bulletPrefab.GetComponentInChildren<AnchoredMover>().MaxSpeed;
 		}
 
-		public void ShootInLine()
+		private void ShootInLine()
 		{
 			GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
 			bullet.GetComponentInChildren<BulletController>().ConfigureLineShoot(bullet,bulletDamage);
 		}
 
-		public void ShootInCone()
+		private void ShootInCone()
 		{
 			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
