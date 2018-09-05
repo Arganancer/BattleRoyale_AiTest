@@ -1,4 +1,5 @@
-﻿using Playmode.Event;
+﻿using System;
+using Playmode.Event;
 using Playmode.Npc;
 using Playmode.Util.Values;
 using UnityEngine;
@@ -9,16 +10,19 @@ namespace Playmode.Application
 	public class GameController : MonoBehaviour
 	{
 		private const string TextNoSurvivors = "No survivors !";
-		private const string TextSurvivorInfo = "Survivor's health points : ";
+		private const string TextSurvivorInfo = "Survivor's health :";
+		private const string TextTimeTaken = "Time taken :";
 		
 		private NpcDeathEventChannel npcDeathEventChannel;
 		private GameObject pauseObjects;
 		private GameObject endGameObjects;
 		private NpcController lastNpc;
 		private Text endGameDetails;
-
+		
 		private int numberOfNpcs;
 		private bool isGamePaused;
+		private float timePassedInSeconds;
+		private string timePassed;
 
 		private bool IsGameOver => numberOfNpcs < 2;
 
@@ -31,6 +35,8 @@ namespace Playmode.Application
 
 			isGamePaused = false;
 			numberOfNpcs = GameValues.NbOfEnemies;
+			timePassedInSeconds = 0.0f;
+			timePassed = "";
 			
 			UnpauseGame();
 			StartGame();
@@ -43,6 +49,8 @@ namespace Playmode.Application
 
 		private void Update()
 		{
+			timePassedInSeconds += Time.deltaTime;
+			
 			if (IsGameOver)
 			{
 				EndGame();
@@ -95,20 +103,45 @@ namespace Playmode.Application
 		private void EndGame()
 		{
 			Time.timeScale = 0.0f;
+			ConvertTime();
 
 			endGameObjects.SetActive(true);
 
 			if (numberOfNpcs == 0)
 			{
-				endGameDetails.text = TextNoSurvivors;
+				GameDetailsNoSurvivors();
 			}
 			else
 			{
-				lastNpc = GameObject.FindGameObjectWithTag(Tags.Npc).GetComponentInChildren<NpcController>();
-
-				endGameDetails.text = TextSurvivorInfo;
-				endGameDetails.text += lastNpc.GetHealth().ToString();
+				GameDetailsSurvivor();
 			}
+		}
+
+		private void ConvertTime()
+		{
+			var seconds = Convert.ToInt32(timePassedInSeconds % 60).ToString("00");
+			var minutes = (Math.Floor(timePassedInSeconds / 60) % 60).ToString("00");
+
+			timePassed = minutes + "m " + seconds + "s";
+		}
+
+		private void GameDetailsNoSurvivors()
+		{
+			endGameDetails.text = TextNoSurvivors;
+			endGameDetails.text += Environment.NewLine;
+			endGameDetails.text += TextTimeTaken + " ";
+			endGameDetails.text += timePassed;
+		}
+
+		private void GameDetailsSurvivor()
+		{
+			lastNpc = GameObject.FindGameObjectWithTag(Tags.Npc).GetComponentInChildren<NpcController>();
+
+			endGameDetails.text = TextSurvivorInfo + " ";
+			endGameDetails.text += lastNpc.GetHealth();
+			endGameDetails.text += Environment.NewLine;
+			endGameDetails.text += TextTimeTaken + " ";
+			endGameDetails.text += timePassed;
 		}
 	}
 }
