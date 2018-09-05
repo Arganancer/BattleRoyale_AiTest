@@ -37,15 +37,20 @@ namespace Playmode.Entity.Senses
 			}
 			else
 			{
-				SetPickEventAction(npcController,pickableController);
+				SetPickEventAction(pickableController);
 				PickablePickedEventHandler(npcController);
+				RemovePickEventAction(pickableController);
 			}
 		}
 		
-		public void SetPickEventAction(NpcController npcController,
-			PickableController pickableController)
+		private void SetPickEventAction(PickableController pickableController)
 		{
 			PickablePickedEventHandler += pickableController.OnPickablePicked;
+		}
+
+		private void RemovePickEventAction(PickableController pickableController)
+		{
+			PickablePickedEventHandler -= pickableController.OnPickablePicked;
 		}
 	}
 }
