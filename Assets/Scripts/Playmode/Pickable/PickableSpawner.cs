@@ -40,13 +40,13 @@ namespace Playmode.Pickable
 		private void ValidateSerialisedFields()
 		{
 			if (pickablePrefab == null)
-				throw new ArgumentException("Can't spawn null ennemy prefab.");
+				throw new ArgumentException("Can't spawn null pickable prefab.");
 		}
 
 		private void Start()
 		{
-			//SelectNbOfPickableToSpawn();
 			SpawnPickables();
+			nbOfPickableToSpawn = 1;
 		}
 
 		private void Update()
@@ -54,7 +54,6 @@ namespace Playmode.Pickable
 			if (Time.time - timeLastSpawn > timeToSpawn && zoneController.ZoneIsNotShrinking)
 			{
 				worldSize = zoneController.CurrentRadius*8;
-				//SelectNbOfPickableToSpawn();
 				SpawnPickables();
 				timeLastSpawn = Time.time;
 			}
@@ -75,36 +74,30 @@ namespace Playmode.Pickable
 		private Vector2 CreateRandomCoordonate()
 		{
 			int nbOfTry = 0;
+			
 			 Vector2 currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize),
 				UnityEngine.Random.Range(0, worldSize));
+			
 			while (Math.Abs(currentPickableCoordonate.x - lastPickableCoordonate.x) < minDistanceBetween2Pickable &&
 			       Math.Abs(currentPickableCoordonate.y - lastPickableCoordonate.y) < minDistanceBetween2Pickable || 
 			       nbOfTry <5)
 			{
 				currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(-worldSize, worldSize),
 					UnityEngine.Random.Range(-worldSize, worldSize));
+				
 				nbOfTry++;
 			}
 
 			lastPickableCoordonate = currentPickableCoordonate;
+			
 			return currentPickableCoordonate;
 		}
 
 		private void CreatePickable(Vector3 position, TypePickable.TypePickable strategy)
 		{
-			#if UNITY_EDITOR
-			//position = transform.position;
-			//strategy = TypePickable.TypePickable.Uzi;
-			#endif
-			
 			GameObject test = Instantiate(pickablePrefab, position, Quaternion.identity);
 				test.GetComponentInChildren<PickableController>()
 				.Configure(strategy);
-		}
-
-		private void SelectNbOfPickableToSpawn()
-		{
-			nbOfPickableToSpawn = UnityEngine.Random.Range(1, 3);
 		}
 	}
 }

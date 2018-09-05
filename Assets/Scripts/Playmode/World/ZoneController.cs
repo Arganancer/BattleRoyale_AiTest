@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ZoneController : MonoBehaviour
 {
@@ -72,6 +69,7 @@ public class ZoneController : MonoBehaviour
 	void ShrinkZone()
 	{
 		zoneCollider2D.radius -= sizeReduction/MAX_SHRINK_SPEED_BUFFER;
+		
 		ChangeSpriteScale();
 		ChangeSpritePosition();
 	}

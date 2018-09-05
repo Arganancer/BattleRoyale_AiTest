@@ -10,6 +10,7 @@ namespace Playmode.Entity.Senses
 	{
 		[SerializeField] private float timeUntilSoundInfoOutdated = 5.5f;
 		[SerializeField] private float maxDistanceToSoundPosition = 40f;
+		
 		private SortedDictionary<float, Vector3> soundsInformations;
 		private List<NpcController> npcControllers;
 		public IReadOnlyDictionary<float, Vector3> SoundsInformations => soundsInformations;
