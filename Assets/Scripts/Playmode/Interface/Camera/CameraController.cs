@@ -17,6 +17,12 @@ namespace Playmode.Interface.Camera
 		private int sizeOfCamera = 90;
 		private float cameraHeightAdjuster = 5f;
 		private Vector2 movement;
+		private bool canZoom = true;
+
+		public bool CanZoom
+		{
+			set { canZoom = value; }
+		}
 	
 		private void Awake()
 		{
@@ -86,12 +92,12 @@ namespace Playmode.Interface.Camera
 				movement.x = -cameraMovementSpeed*Time.deltaTime;
 			}
 
-			if (Input.GetAxis(MouseWheel) > 0f && mainCam.orthographicSize >0)
+			if (Input.GetAxis(MouseWheel) > 0f && mainCam.orthographicSize >0 && canZoom)
 			{
 				if (mainCam.orthographicSize - cameraHeightAdjuster >0)
 				mainCam.orthographicSize -= cameraHeightAdjuster;
 			}
-			else if (Input.GetAxis(MouseWheel) < 0f)
+			else if (Input.GetAxis(MouseWheel) < 0f && canZoom)
 			{
 				mainCam.orthographicSize += cameraHeightAdjuster;
 			}
