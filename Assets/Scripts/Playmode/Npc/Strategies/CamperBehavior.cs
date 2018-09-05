@@ -44,9 +44,7 @@ namespace Playmode.Npc.Strategies
 		{
 			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
 			if (!isCamping)
-			{
 				Mover.MoveTowardsDirection(MovementDirection);
-			}
 
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
@@ -56,18 +54,15 @@ namespace Playmode.Npc.Strategies
 			var movementTarget = new Vector3();
 			var rotationTarget = new Vector3();
 
-			if (NpcSensorSight.PickablesInSight.Any())
+			if (campedMedKit != null)
 			{
-				if (campedMedKit != null)
-				{
-					movementTarget = campedMedKit.transform.root.position;
-					rotationTarget = movementTarget;
-				}
-				else if (CurrentUziTarget != null)
-				{
-					movementTarget = CurrentUziTarget.transform.root.position;
-					rotationTarget = movementTarget;
-				}
+				movementTarget = campedMedKit.transform.root.position;
+				rotationTarget = movementTarget;
+			}
+			else if (CurrentUziTarget != null)
+			{
+				movementTarget = CurrentUziTarget.transform.root.position;
+				rotationTarget = movementTarget;
 			}
 
 			if (CurrentEnemyTarget != null)
@@ -110,7 +105,7 @@ namespace Playmode.Npc.Strategies
 				return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : State.Idle;
 			}
 
-			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
+			if (CurrentUziTarget != null || campedMedKit != null || NpcSensorSight.NpcsInSight.Any())
 				return State.Engaging;
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
@@ -118,30 +113,44 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateRoaming()
 		{
 			UpdateCampedMedicalKit();
-			if (NpcSensorSight.PickablesInSight.Any() || NpcSensorSight.NpcsInSight.Any())
-				return State.Engaging;
+			if (isCamping)
+				return State.Idle;
 
+			if (CurrentUziTarget != null || campedMedKit != null || NpcSensorSight.NpcsInSight.Any())
+				return State.Engaging;
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()
 		{
 			UpdateCampedMedicalKit();
-			if (NpcSensorSight.NpcsInSight.Any())
-				return isCamping ? State.Attacking : State.Engaging;
+			if (isCamping)
+			{
+				if (NpcSensorSight.NpcsInSight.Any())
+					return State.Attacking;
+				return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
+			}
 
+			if (campedMedKit != null || CurrentUziTarget != null || CurrentEnemyTarget != null)
+				return State.Engaging;
 			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
 		{
-			// TODO: Redo logic
 			UpdateCampedMedicalKit();
 			if (isCamping)
-				if (Vector3.Distance(CurrentEnemyTarget.transform.root.position, campedMedKit.transform.root.position) <
-				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) ||
-				    Health.HealthPoints < HealthRetreatTolerance)
-				return Health.HealthPoints < HealthRetreatTolerance ? State.Engaging : State.Idle;
+			{
+				if (Health.HealthPoints < HealthRetreatTolerance)
+					if(CurrentEnemyTarget != null &&
+				    Vector3.Distance(
+					    CurrentEnemyTarget.transform.root.position,
+					    campedMedKit.transform.root.position) + 5 <
+				    Vector3.Distance(Mover.transform.root.position,
+					    campedMedKit.transform.root.position))
+						return State.Engaging;
+				return State.Idle;
+			}
 
 			if (!NpcSensorSight.NpcsInSight.Any() && !NpcSensorSight.PickablesInSight.Any())
 				return State.Idle;
@@ -162,7 +171,8 @@ namespace Playmode.Npc.Strategies
 			{
 				if (CurrentEnemyTarget == null)
 					return State.Idle;
-				if (Vector3.Distance(CurrentEnemyTarget.transform.root.position, campedMedKit.transform.root.position) <
+				if (Vector3.Distance(NpcSensorSight.GetClosestNpc().transform.root.position, campedMedKit.transform.root.position) - 3
+				     <
 				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) ||
 				    Health.HealthPoints < HealthRetreatTolerance)
 					return State.Engaging;
@@ -190,14 +200,9 @@ namespace Playmode.Npc.Strategies
 		{
 			if (campedMedKit == null && CurrentMedicalKitTarget != null)
 				campedMedKit = CurrentMedicalKitTarget;
-			if (campedMedKit != null)
-			{
-				if (!isCamping &&
-				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) <= 3)
-				{
-					isCamping = true;
-				}
-			}
+			if (campedMedKit != null &&
+			    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) <= 3)
+				isCamping = true;
 			else
 				isCamping = false;
 		}

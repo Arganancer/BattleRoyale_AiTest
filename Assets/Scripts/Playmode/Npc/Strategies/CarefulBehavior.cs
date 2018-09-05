@@ -19,17 +19,17 @@ namespace Playmode.Npc.Strategies
 	public class CarefulBehavior : BaseNpcBehavior
 	{
 		private readonly SightRoutine noEnemySightRoutine;
-		private float distanceSwitchFromAttackingToRetreating = 14f;
+		private float distanceSwitchFromAttackingToRetreating = 18f;
 
 		public CarefulBehavior(Mover mover, HandController handController, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
 			health, npcSensorSight, npcSensorSound)
 		{
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
-			
+
 			HealthRetreatTolerance = 800;
 			DistanceSwitchFromAttackingToEngaging = 20f;
-			DistanceSwitchFromEngagingToAttacking = 17f;
+			DistanceSwitchFromEngagingToAttacking = 19f;
 		}
 
 		protected override void DoIdle()
@@ -46,8 +46,12 @@ namespace Playmode.Npc.Strategies
 		protected override void DoInvestigating()
 		{
 			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
-			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
-			Mover.MoveTowardsDirection(MovementDirection);
+			
+			Mover.RotateTowardsDirection(MovementDirection);
+			if (Health.HealthPoints < HealthRetreatTolerance)
+				Mover.MoveTowardsDirection(-MovementDirection);
+			else
+				Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()
@@ -60,7 +64,7 @@ namespace Playmode.Npc.Strategies
 			}
 			else if (CurrentEnemyTarget != null)
 			{
-				Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
+				Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 				Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
 				HandController.Use();
 			}
@@ -86,94 +90,78 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateIdle()
 		{
-			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
-			{
+			if (CurrentMedicalKitTarget != null && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Engaging;
-			}
+			if (NpcSensorSight.NpcsInSight.Any() || CurrentUziTarget != null)
+				return State.Engaging;
 
-			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
+			return NpcSensorSound.SoundsInformations.Any()
+				? State.Investigating
+				: base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
 		{
-			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
-			{
+			if (CurrentMedicalKitTarget != null && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Engaging;
-			}
+			if (NpcSensorSight.NpcsInSight.Any() || CurrentUziTarget != null)
+				return State.Engaging;
 
-			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
+			return NpcSensorSound.SoundsInformations.Any()
+				? State.Investigating
+				: base.EvaluateRoaming();
 		}
 
 		protected override State EvaluateInvestigating()
 		{
-			if (NpcSensorSight.NpcsInSight.Any() || NpcSensorSight.PickablesInSight.Any())
-			{
+			if (CurrentMedicalKitTarget != null && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Engaging;
-			}
+			if (NpcSensorSight.NpcsInSight.Any() || CurrentUziTarget != null)
+				return State.Engaging;
 
-			if (!NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Idle;
-			}
-
-			return State.Investigating;
+			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
 		{
-			if (Health.HealthPoints < HealthRetreatTolerance && CurrentMedicalKitTarget == null)
+			if (NpcSensorSight.NpcsInSight.Any())
 			{
-				return State.Retreating;
-			}
-
-			if (NpcSensorSight.PickablesInSight.Any())
-			{
-				return State.Engaging;
+				if (Health.HealthPoints < HealthRetreatTolerance)
+					return CurrentMedicalKitTarget != null ? State.Engaging : State.Retreating;
+				return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 			}
 			
-			if (!NpcSensorSight.NpcsInSight.Any())
-			{
-				return State.Idle;
-			}
+			if (Health.HealthPoints >= HealthRetreatTolerance && CurrentUziTarget != null)
+				return State.Engaging;
+			
+			if (Health.HealthPoints < HealthRetreatTolerance && CurrentMedicalKitTarget != null)
+				return State.Engaging;
 
-			return DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
+			return State.Idle;
 		}
 
 		protected override State EvaluateAttacking()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			if (Health.HealthPoints < HealthRetreatTolerance ||
 			    DistanceToCurrentEnemy < distanceSwitchFromAttackingToRetreating)
-			{
 				return State.Retreating;
-			}
 
-			return DistanceToCurrentEnemy < DistanceSwitchFromAttackingToEngaging ? State.Attacking : State.Engaging;
+			return DistanceToCurrentEnemy > DistanceSwitchFromAttackingToEngaging ? State.Engaging : State.Attacking;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			if (Health.HealthPoints > HealthRetreatTolerance ||
-			    DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking)
-			{
-				return State.Attacking;
-			}
-
-			if (Health.HealthPoints >= HealthRetreatTolerance || CurrentMedicalKitTarget != null)
-			{
-				return State.Engaging;
-			}
-
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{			
 				return State.Idle;
-			}
+			
+			if (Health.HealthPoints >= HealthRetreatTolerance &&
+			    DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking)
+				return State.Attacking;
 
-			return State.Retreating;
+			return CurrentMedicalKitTarget != null ? State.Engaging : State.Retreating;
 		}
 	}
 }

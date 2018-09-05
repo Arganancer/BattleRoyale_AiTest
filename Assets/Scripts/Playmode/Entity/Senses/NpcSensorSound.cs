@@ -8,7 +8,7 @@ namespace Playmode.Entity.Senses
 {
 	public class NpcSensorSound : MonoBehaviour
 	{
-		[SerializeField] private float timeUntilSoundInfoOutdated = 5.5f;
+		[SerializeField] private float timeUntilSoundInfoOutdated = 7.5f;
 		[SerializeField] private float maxDistanceToSoundPosition = 40f;
 		
 		private SortedDictionary<float, Vector3> soundsInformations;
@@ -50,6 +50,10 @@ namespace Playmode.Entity.Senses
 				// Remove sound information as it has now been investigated
 				else if (Vector3.Angle(npcCurrentRotation, soundInformation.Value - npcCurrentPosition) < 10f &&
 				         Vector3.Magnitude(soundInformation.Value - npcCurrentPosition) < 10f)
+				{
+					outdatedSoundInformation.Add(soundInformation.Key, soundInformation.Value);
+				}
+				else if (Vector3.Distance(soundInformation.Value, npcCurrentPosition) < 2f)
 				{
 					outdatedSoundInformation.Add(soundInformation.Key, soundInformation.Value);
 				}
