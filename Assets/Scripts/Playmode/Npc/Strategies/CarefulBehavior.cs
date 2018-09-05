@@ -19,7 +19,7 @@ namespace Playmode.Npc.Strategies
 	public class CarefulBehavior : BaseNpcBehavior
 	{
 		private readonly SightRoutine noEnemySightRoutine;
-		private float distanceSwitchFromAttackingToRetreating = 20f;
+		private float distanceSwitchFromAttackingToRetreating = 18f;
 
 		public CarefulBehavior(Mover mover, HandController handController, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
@@ -28,8 +28,8 @@ namespace Playmode.Npc.Strategies
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
 
 			HealthRetreatTolerance = 800;
-			DistanceSwitchFromAttackingToEngaging = 22f;
-			DistanceSwitchFromEngagingToAttacking = 21f;
+			DistanceSwitchFromAttackingToEngaging = 20f;
+			DistanceSwitchFromEngagingToAttacking = 19f;
 		}
 
 		protected override void DoIdle()
@@ -45,12 +45,13 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoInvestigating()
 		{
+			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
+			
+			Mover.RotateTowardsDirection(MovementDirection);
 			if (Health.HealthPoints < HealthRetreatTolerance)
-				MovementDirection = -(NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position);
+				Mover.MoveTowardsDirection(-MovementDirection);
 			else
-				MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
-			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
-			Mover.MoveTowardsDirection(MovementDirection);
+				Mover.MoveTowardsDirection(MovementDirection);
 		}
 
 		protected override void DoEngaging()

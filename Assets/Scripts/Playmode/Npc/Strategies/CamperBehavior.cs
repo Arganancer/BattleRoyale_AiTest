@@ -171,8 +171,8 @@ namespace Playmode.Npc.Strategies
 			{
 				if (CurrentEnemyTarget == null)
 					return State.Idle;
-				if (Vector3.Distance(CurrentEnemyTarget.transform.root.position, campedMedKit.transform.root.position) +
-				    5 <
+				if (Vector3.Distance(NpcSensorSight.GetClosestNpc().transform.root.position, campedMedKit.transform.root.position) - 3
+				     <
 				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) ||
 				    Health.HealthPoints < HealthRetreatTolerance)
 					return State.Engaging;
