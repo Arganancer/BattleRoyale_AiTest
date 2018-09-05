@@ -7,11 +7,8 @@ namespace Playmode.Application
 {
 	public class MainController : MonoBehaviour
 	{
-		[SerializeField] private static float TimeScale = 0.6f;
-
 		private void Start()
 		{
-			SetTimeScale();
 			StartCoroutine(LoadMenuSceneRoutine());
 		}
 
@@ -28,14 +25,6 @@ namespace Playmode.Application
 		public void StopGame()
 		{
 			StartCoroutine(UnloadGameSceneRoutine());
-		}
-
-		private static void SetTimeScale()
-		{
-			// TODO: Remove this function.
-			// Used to slow down global game time for testing purposes.
-			// Regular timeScale for normal speed is 1.0f;
-			Time.timeScale = TimeScale;
 		}
 
 		private static IEnumerator LoadGameSceneRoutine()

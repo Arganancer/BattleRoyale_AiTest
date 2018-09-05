@@ -9,13 +9,15 @@ namespace Playmode.Application
 	public class GameController : MonoBehaviour
 	{
 		private const string TextNoSurvivors = "No survivors !";
-		private const string TextSurvivorInfo = "Survivor's health points : ";
+		private const string TextSurvivorInfo = "Survivor's remaining health points : ";
 		
 		private NpcDeathEventChannel npcDeathEventChannel;
 		private GameObject pauseObjects;
 		private GameObject endGameObjects;
 		private NpcController lastNpc;
 		private Text endGameDetails;
+		private const float RegularTimeSpeed = 0.5f; // TODO: Change to 1.0f for final push;
+		private const float PausedTimeSpeed = 0.0f;
 
 		private int numberOfNpcs;
 		private bool isGamePaused;
@@ -75,14 +77,14 @@ namespace Playmode.Application
 
 		private void PauseGame()
 		{
-			Time.timeScale = 0.0f;
+			Time.timeScale = PausedTimeSpeed;
 			
 			pauseObjects.SetActive(true);
 		}
 
 		private void UnpauseGame()
 		{
-			Time.timeScale = 1.0f;
+			Time.timeScale = RegularTimeSpeed;
 			
 			pauseObjects.SetActive(false);
 		}
@@ -94,7 +96,7 @@ namespace Playmode.Application
 
 		private void EndGame()
 		{
-			Time.timeScale = 0.0f;
+			Time.timeScale = PausedTimeSpeed;
 
 			endGameObjects.SetActive(true);
 
