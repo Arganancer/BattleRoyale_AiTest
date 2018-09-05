@@ -410,6 +410,7 @@ GameObject:
   - component: {fileID: 613927905}
   - component: {fileID: 613927908}
   - component: {fileID: 613927907}
+  - component: {fileID: 613927909}
   m_Layer: 5
   m_Name: DetailedNpcList
   m_TagString: Untagged
@@ -513,6 +514,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
+--- !u!114 &613927909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 613927903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82a3774991030be4e9ec612d9d0dd46c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &642054842
 GameObject:
   m_ObjectHideFlags: 0

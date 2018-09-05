@@ -11,14 +11,16 @@ namespace Playmode.Entity.Senses
 		
 		private void OnTriggerEnter2D(Collider2D other)
 		{
-			if (other.name == BODY_OBJECT_NAME)
+			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
+			    && other.name == BODY_OBJECT_NAME)
 			{
 				other.gameObject.transform.root.GetComponentInChildren<HitSensor>()?
 					.PickPickable(other.gameObject.transform.root.GetComponentInChildren<NpcController>(),
 						transform.root.GetComponentInChildren<PickableController>());
 				Destroy(transform.root.gameObject);
 			}
-			else if (other.name == SIGHT_OBJECT_NAME)
+			else if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
+			         && other.name == SIGHT_OBJECT_NAME)
 			{
 				other.gameObject.transform.root.
 					GetComponentInChildren<NpcSensorSight>()?.
@@ -28,7 +30,8 @@ namespace Playmode.Entity.Senses
 
 		private void OnTriggerExit2D(Collider2D other)
 		{
-			if (other.name == SIGHT_OBJECT_NAME)
+			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
+			    && other.name == SIGHT_OBJECT_NAME)
 			{
 				other.gameObject.transform.root.
 					GetComponentInChildren<NpcSensorSight>()?.
