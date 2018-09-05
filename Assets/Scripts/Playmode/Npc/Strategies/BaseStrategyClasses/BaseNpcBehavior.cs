@@ -174,6 +174,8 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		/// </summary>
 		protected Vector3 GetPredictiveAimDirection(NpcController npc)
 		{
+			if(npc == null)
+				return new Vector3();
 			var bulletSpeed = HandController.GetProjectileSpeed();
 			var bulletSpeedSq = bulletSpeed * bulletSpeed;
 			var bulletOrigin = HandController.GetWeaponPosition();

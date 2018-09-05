@@ -36,6 +36,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
+			if (IsOutsideOfZone)
+				MovementDirection = -Mover.transform.parent.root.position;
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
