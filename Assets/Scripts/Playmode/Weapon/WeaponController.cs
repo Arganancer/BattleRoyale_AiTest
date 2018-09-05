@@ -106,8 +106,8 @@ namespace Playmode.Weapon
 
 		public void ShootInLine()
 		{
-			Instantiate(bulletPrefab, transform.position, transform.rotation).GetComponentInChildren<HitStimulus>()
-				.HitPoints = bulletDamage;
+			GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+			bullet.GetComponentInChildren<BulletController>().ConfigureLineShoot(bullet,bulletDamage);
 		}
 
 		public void ShootInCone()
@@ -115,10 +115,7 @@ namespace Playmode.Weapon
 			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
 				GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-				bullet.GetComponentInChildren<HitStimulus>().HitPoints = bulletDamage;
-				bullet.transform.Rotate(Vector3.forward * Random.Range(-4, 4), Space.Self);
-				bullet.transform.GetComponentInChildren<AnchoredMover>().MaxSpeed *= Random.Range(1.1f, 1.2f);
-				bullet.transform.GetComponentInChildren<BulletController>().LifeSpanInSeconds = 0.5f;
+				bullet.GetComponentInChildren<BulletController>().ConfigureConeShoot(bullet,bulletDamage);
 			}
 		}
 
