@@ -7,7 +7,6 @@ namespace Playmode.World
 		private const float SpriteScaleSize = 0.0625f;
 		private const int MaxShrinkingSize = 2;
 		private const int MaxShrinkSpeedBuffer = 100;
-		private const string ZoneRendererObject = "ZoneRenderer";
 		
 		[SerializeField] private float timeBufferToMoveZone = 30;
 		[SerializeField] private float startingRadiusZoneSize = 10;

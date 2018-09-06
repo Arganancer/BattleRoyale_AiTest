@@ -1,12 +1,9 @@
 ﻿using System;
 using Playmode.Bullet;
 using Playmode.Entity.Movement;
-using Playmode.Entity.Senses;
 using Playmode.Event;
 using Playmode.Pickable.TypePickable;
-using Playmode.Sound;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Playmode.Weapon
 {

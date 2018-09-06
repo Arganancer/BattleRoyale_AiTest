@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Playmode.Entity.Senses;
 using Playmode.Npc;
 using Playmode.Pickable.TypePickable;

@@ -5,8 +5,6 @@ using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Npc.Strategies.Routines.SightRoutines;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {

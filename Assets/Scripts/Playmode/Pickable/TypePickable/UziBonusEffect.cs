@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Playmode.Entity.Senses;
-using Playmode.Npc;
-using UnityEngine;
+﻿using Playmode.Npc;
 
 namespace Playmode.Pickable.TypePickable
 {

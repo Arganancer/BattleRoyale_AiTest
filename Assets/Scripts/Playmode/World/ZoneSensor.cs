@@ -2,43 +2,46 @@
 using Playmode.Pickable;
 using UnityEngine;
 
-public class ZoneSensor : MonoBehaviour
+namespace Playmode.World
 {
-	private void OnTriggerExit2D(Collider2D other)
+	public class ZoneSensor : MonoBehaviour
 	{
-		if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>())
+		private void OnTriggerExit2D(Collider2D other)
 		{
-			NotifyObjectLeavingZone(other.gameObject.transform.root
-				.GetComponentInChildren<NpcController>());
+			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>())
+			{
+				NotifyObjectLeavingZone(other.gameObject.transform.root
+					.GetComponentInChildren<NpcController>());
+			}
+			else if (other.gameObject.transform.root?.GetComponentInChildren<PickableController>())
+			{
+				DestroyOutOfZonePickable(other.gameObject.transform.root
+					.GetComponentInChildren<PickableController>());
+			}
 		}
-		else if (other.gameObject.transform.root?.GetComponentInChildren<PickableController>())
+
+		private void OnTriggerEnter2D(Collider2D other)
 		{
-			DestroyOutOfZonePickable(other.gameObject.transform.root
-				.GetComponentInChildren<PickableController>());
+			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>())
+			{
+				NotifyObjectEnteringZone(other.gameObject.transform.root
+					.GetComponentInChildren<NpcController>());
+			}
 		}
-	}
 
-	private void OnTriggerEnter2D(Collider2D other)
-	{
-		if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>())
+		private void NotifyObjectLeavingZone(NpcController npcController)
 		{
-			NotifyObjectEnteringZone(other.gameObject.transform.root
-				.GetComponentInChildren<NpcController>());
+			npcController.UpdateNpcStateExitZone();
 		}
-	}
 
-	private void NotifyObjectLeavingZone(NpcController npcController)
-	{
-		npcController.UpdateNpcStateExitZone();
-	}
+		private void NotifyObjectEnteringZone(NpcController npcController)
+		{
+			npcController.UpdateNpcStateEnterZone();
+		}
 
-	private void NotifyObjectEnteringZone(NpcController npcController)
-	{
-		npcController.UpdateNpcStateEnterZone();
-	}
-
-	private void DestroyOutOfZonePickable(PickableController pickableController)
-	{
-		pickableController.DestroyPickable();
+		private void DestroyOutOfZonePickable(PickableController pickableController)
+		{
+			pickableController.DestroyPickable();
+		}
 	}
 }
