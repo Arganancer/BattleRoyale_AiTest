@@ -31,6 +31,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (IsOutsideOfZone)
 				MovementDirection = -Mover.transform.parent.root.position;
+			
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}

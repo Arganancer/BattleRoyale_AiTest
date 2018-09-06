@@ -10,13 +10,14 @@ namespace Playmode.Bullet
 	{
 		[Header("Behaviour")] [SerializeField] private float lifeSpanInSeconds = 5f;
 
-
-		private AnchoredMover anchoredMover;
-		private Destroyer destroyer;
-		private float timeSinceSpawnedInSeconds;
-		private float currentPercentageDuration;
 		private const float StartDyingPercentageDuration = 0.7f;
 		private const float DyingPercentageRemaining = 0.3f;
+		
+		private AnchoredMover anchoredMover;
+		private Destroyer destroyer;
+		
+		private float timeSinceSpawnedInSeconds;
+		private float currentPercentageDuration;
 
 		private float LifeSpanInSeconds
 		{
@@ -56,6 +57,7 @@ namespace Playmode.Bullet
 		{
 			timeSinceSpawnedInSeconds += Time.deltaTime;
 			currentPercentageDuration = timeSinceSpawnedInSeconds / lifeSpanInSeconds;
+			
 			if (currentPercentageDuration > StartDyingPercentageDuration)
 			{
 				UpdateBulletDying();

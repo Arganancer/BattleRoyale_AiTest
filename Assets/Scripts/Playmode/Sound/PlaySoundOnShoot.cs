@@ -17,17 +17,20 @@ namespace Playmode.Sound
 			shootEventChannel = GameObject.FindWithTag(Tags.GameController).GetComponent<ShootEventChannel>();
 			
 			var aSource = GetComponents(typeof(AudioSource));
+			
 			starterWeaponShootSounds = new[]
 			{
 				(AudioSource) aSource[0],
 				(AudioSource) aSource[1],
 				(AudioSource) aSource[2]
 			};
+			
 			uziShootSounds = new[]
 			{
 				(AudioSource) aSource[3],
 				(AudioSource) aSource[4]
 			};
+			
 			shotgunShootSound = (AudioSource) aSource[5];
 		}
 

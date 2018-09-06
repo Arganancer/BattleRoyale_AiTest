@@ -1,5 +1,4 @@
-﻿using Playmode.Entity.Movement;
-using Playmode.Pickable.TypePickable;
+﻿using Playmode.Pickable.TypePickable;
 using Playmode.Weapon;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ namespace Playmode.Npc.BodyParts
 	public class HandController : MonoBehaviour
 	{
 		public event WeaponFiredEventHandler OnWeaponFired;
-		//private AnchoredMover mover;
+		
 		private WeaponController weapon;
 
 		private void Awake()
@@ -18,9 +17,8 @@ namespace Playmode.Npc.BodyParts
 			InitializeComponent();
 		}
 
-		private void InitializeComponent()
+		private static void InitializeComponent()
 		{
-			//mover = GetComponent<AnchoredMover>();
 		}
 
 		public void Hold(GameObject heldGameObject)
@@ -29,6 +27,7 @@ namespace Playmode.Npc.BodyParts
 			{
 				DropWeapon();
 			}
+			
 			if (heldGameObject != null)
 			{
 				heldGameObject.transform.parent = transform;
@@ -41,16 +40,6 @@ namespace Playmode.Npc.BodyParts
 				weapon = null;
 			}
 		}
-
-		/*public float AimTowardsPoint(Vector3 point)
-		{
-			return Vector3.Dot(point - mover.transform.root.position, transform.right);
-		}*/
-
-		/*public static float AimTowardsDirection(Mover mainMover, Vector3 movementDirection)
-		{
-			return Vector3.Dot(movementDirection, mainMover.transform.right);
-		}*/
 
 		public void Use()
 		{

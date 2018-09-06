@@ -67,7 +67,9 @@ namespace Playmode.Npc.Strategies
 		{
 			if(!IsOutsideOfZone)
 				retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
+			
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			
 			HandController.Use();
 		}
 
@@ -87,6 +89,7 @@ namespace Playmode.Npc.Strategies
 		{	
 			if (IsOutsideOfZone)
 				MovementDirection = -Mover.transform.parent.root.position;
+			
 			if (NpcSensorSight.NpcsInSight.Any())
 				return State.Engaging;
 
@@ -126,7 +129,9 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateRetreating()
 		{
 			if (NpcSensorSight.NpcsInSight.Any()) return State.Retreating;
+			
 			TimeUntilStateSwitch = MaxRoamingTime;
+			
 			return State.Roaming;
 		}
 

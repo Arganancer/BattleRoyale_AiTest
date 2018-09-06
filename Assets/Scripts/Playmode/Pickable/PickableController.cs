@@ -8,8 +8,6 @@ namespace Playmode.Pickable
 {
 	public class PickableController : MonoBehaviour
 	{
-		private const string zoneObjectName = "Zone";
-		
 		[SerializeField] public Sprite medicalKit;
 		[SerializeField] private Sprite shotgun;
 		[SerializeField] private Sprite uzi;
@@ -44,9 +42,9 @@ namespace Playmode.Pickable
 			}
 		}
 
-		public void Configure(TypePickable.TypePickable typePickable)
+		public void Configure(TypePickable.TypePickable typeOfPickable)
 		{
-			switch (typePickable)
+			switch (typeOfPickable)
 			{
 				case TypePickable.TypePickable.Medicalkit:
 					bonusEffect = new MedkitBonusEffect();
@@ -64,9 +62,9 @@ namespace Playmode.Pickable
 					break;
 				
 				default:
-					throw new ArgumentOutOfRangeException(nameof(typePickable), typePickable, null);
+					throw new ArgumentOutOfRangeException(nameof(typeOfPickable), typeOfPickable, null);
 			}
-			this.typePickable = typePickable;
+			this.typePickable = typeOfPickable;
 		}
 
 		public TypePickable.TypePickable GetPickableType()

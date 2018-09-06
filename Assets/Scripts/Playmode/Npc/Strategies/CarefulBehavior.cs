@@ -4,10 +4,7 @@ using Playmode.Entity.Senses;
 using Playmode.Entity.Status;
 using Playmode.Npc.BodyParts;
 using Playmode.Npc.Strategies.BaseStrategyClasses;
-using Playmode.Npc.Strategies.Routines.MovementRoutines;
 using Playmode.Npc.Strategies.Routines.SightRoutines;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies
 {
@@ -18,8 +15,9 @@ namespace Playmode.Npc.Strategies
 	/// </summary>
 	public class CarefulBehavior : BaseNpcBehavior
 	{
+		private const float DistanceSwitchFromAttackingToRetreating = 18f;
+		
 		private readonly SightRoutine noEnemySightRoutine;
-		private float distanceSwitchFromAttackingToRetreating = 18f;
 
 		public CarefulBehavior(Mover mover, HandController handController, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound) : base(mover, handController,
@@ -41,6 +39,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (IsOutsideOfZone)
 				MovementDirection = -Mover.transform.parent.root.position;
+			
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
@@ -48,9 +47,10 @@ namespace Playmode.Npc.Strategies
 		protected override void DoInvestigating()
 		{
 			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
-			
 			Mover.RotateTowardsDirection(MovementDirection);
+			
 			if (!(Health.HealthPoints < HealthRetreatTolerance)) return;
+			
 			if(!IsOutsideOfZone)
 				Mover.MoveTowardsDirection(-MovementDirection);
 			else
@@ -87,8 +87,10 @@ namespace Playmode.Npc.Strategies
 		protected override void DoRetreating()
 		{
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			
 			if(!IsOutsideOfZone)
 				Mover.MoveAwayFromPosition(CurrentEnemyTarget.transform.root.position);
+			
 			HandController.Use();
 		}
 
@@ -96,6 +98,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (CurrentMedicalKitTarget != null && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Engaging;
+			
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentUziTarget != null)
 				return State.Engaging;
 
@@ -108,6 +111,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (CurrentMedicalKitTarget != null && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Engaging;
+			
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentUziTarget != null)
 				return State.Engaging;
 
@@ -120,6 +124,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (CurrentMedicalKitTarget != null && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Engaging;
+			
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentUziTarget != null)
 				return State.Engaging;
 
@@ -132,6 +137,7 @@ namespace Playmode.Npc.Strategies
 			{
 				if (Health.HealthPoints < HealthRetreatTolerance)
 					return CurrentMedicalKitTarget != null ? State.Engaging : State.Retreating;
+				
 				return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 			}
 			
@@ -150,7 +156,7 @@ namespace Playmode.Npc.Strategies
 				return State.Idle;
 
 			if (Health.HealthPoints < HealthRetreatTolerance ||
-			    DistanceToCurrentEnemy < distanceSwitchFromAttackingToRetreating)
+			    DistanceToCurrentEnemy < DistanceSwitchFromAttackingToRetreating)
 				return State.Retreating;
 
 			return DistanceToCurrentEnemy > DistanceSwitchFromAttackingToEngaging ? State.Engaging : State.Attacking;

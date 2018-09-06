@@ -11,9 +11,10 @@ namespace Playmode.Entity.Senses
 		[SerializeField] private float timeUntilSoundInfoOutdated = 7.5f;
 		[SerializeField] private float maxDistanceToSoundPosition = 40f;
 		
+		public IReadOnlyDictionary<float, Vector3> SoundsInformations => soundsInformations;
+		
 		private SortedDictionary<float, Vector3> soundsInformations;
 		private List<NpcController> npcControllers;
-		public IReadOnlyDictionary<float, Vector3> SoundsInformations => soundsInformations;
 
 		private void Awake()
 		{
@@ -64,22 +65,6 @@ namespace Playmode.Entity.Senses
 				soundsInformations.Remove(outdatedSound.Key);
 			}
 		}
-		
-		/*public Vector3 GetClosestSoundPosition()
-		{
-			var closestSoundDistance = float.MaxValue;
-			var closestSoundPosition = new Vector3();
-			foreach (var soundValue in SoundsInformations)
-			{
-				if (Vector3.Magnitude(soundValue.Value - transform.root.position) < closestSoundDistance)
-				{
-					closestSoundDistance = Vector3.Magnitude(soundValue.Value - transform.root.position);
-					closestSoundPosition = soundValue.Value;
-				}
-			}
-
-			return closestSoundPosition;
-		}*/
 
 		public Vector3 GetNewestSoundPosition()
 		{
@@ -101,6 +86,7 @@ namespace Playmode.Entity.Senses
 		private void OnDisable()
 		{
 			npcControllers.RemoveAll(npcController => npcController == null);
+			
 			foreach (var npcController in npcControllers)
 			{
 				npcController.transform.root.GetComponentInChildren<HandController>().OnWeaponFired -= OnWeaponFired;
@@ -110,6 +96,7 @@ namespace Playmode.Entity.Senses
 		private void OnWeaponFired(Vector3 positionWhenFired)
 		{
 			var adjustedTime = Time.time;
+			
 			while (soundsInformations.ContainsKey(adjustedTime))
 			{
 				adjustedTime += 0.0001f;

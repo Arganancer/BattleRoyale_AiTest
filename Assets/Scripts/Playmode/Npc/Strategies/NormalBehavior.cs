@@ -31,6 +31,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (IsOutsideOfZone)
 				MovementDirection = -Mover.transform.parent.root.position;
+			
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
@@ -41,7 +42,6 @@ namespace Playmode.Npc.Strategies
 				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-
 			Mover.MoveTowardsPosition(CurrentEnemyTarget.transform.root.position);
 
 			HandController.Use();
@@ -59,7 +59,9 @@ namespace Playmode.Npc.Strategies
 		{
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
+			
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+			
 			HandController.Use();
 		}
 
@@ -88,6 +90,7 @@ namespace Playmode.Npc.Strategies
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
 				return State.Engaging;
+			
 			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 

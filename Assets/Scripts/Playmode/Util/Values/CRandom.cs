@@ -13,6 +13,7 @@
 		{
 			const float startAffector = 1000f;
 			const float endAffector = 0.001f;
+			
 			var adjustedMinValue = (int)(minValue * startAffector);
 			var adjustedMaxValue = (int)(maxValue * startAffector);
 

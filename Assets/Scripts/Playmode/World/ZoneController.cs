@@ -34,7 +34,7 @@ namespace Playmode.World
 			CurrentRadius = nextRadius;
 	
 			zoneRenderer = transform.root.GetComponentInChildren<SpriteRenderer>().transform.gameObject;
-			zoneRenderer.transform.localScale = new Vector3(1.26f,1.26f,0);
+			zoneRenderer.transform.localScale = new Vector3(1.26f, 1.26f, 0);
 			
 			DistanceOffSet = new Vector2();
 		}
@@ -55,7 +55,7 @@ namespace Playmode.World
 				timeOfLastShrink = Time.time;
 			}
 			else if (GetCurrentZoneRadius() > nextRadius && zoneRenderer.transform.localScale.x > SpriteScaleSize
-					 && GetCurrentZoneRadius() - sizeReduction >1) //the 1 is there to make sure the radius doesn't go negative after the reduction.
+					 && GetCurrentZoneRadius() - sizeReduction > 1) //the 1 is there to make sure the radius doesn't go negative after the reduction.
 			{
 				ShrinkZone();
 				ZoneIsNotShrinking = false;
@@ -81,7 +81,6 @@ namespace Playmode.World
 			zoneCollider2D.offset = offset;
 		}
 	
-	
 		private float GetCurrentZoneRadius()
 		{
 			return zoneCollider2D.radius;
@@ -95,8 +94,7 @@ namespace Playmode.World
 			var y = (int)Random.Range(1, maxOffset);
 			var x = (int)Random.Range(1, maxOffset);
 			
-			return new Vector2(x,y);
-	
+			return new Vector2(x, y);
 		}
 	
 		private int GetRandomZoneRadiusSize()
@@ -113,8 +111,8 @@ namespace Playmode.World
 		{
 			zoneRenderer.transform.localScale = 
 				new Vector3(
-					GetCurrentZoneSpriteScale()- SpriteScaleSize/MaxShrinkSpeedBuffer,
-					GetCurrentZoneSpriteScale()- SpriteScaleSize/MaxShrinkSpeedBuffer,
+					GetCurrentZoneSpriteScale() - SpriteScaleSize / MaxShrinkSpeedBuffer,
+					GetCurrentZoneSpriteScale() - SpriteScaleSize / MaxShrinkSpeedBuffer,
 					0);
 		}
 	

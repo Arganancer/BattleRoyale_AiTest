@@ -11,9 +11,7 @@ namespace Playmode.Entity.Movement
 		
 		private Vector3 positionLastFrame;
 		private Vector3 positionThisFrame;
-		
 		private Transform rootTransform;
-
 
 		protected void Awake()
 		{
@@ -25,6 +23,7 @@ namespace Playmode.Entity.Movement
 		{
 			if (Speed < 0)
 				throw new ArgumentException("Speed can't be lower than 0.");
+			
 			if (RotateSpeed < 0)
 				throw new ArgumentException("RotateSpeed can't be lower than 0.");
 		}
@@ -63,8 +62,10 @@ namespace Playmode.Entity.Movement
 		{
 			if(positionLastFrame == positionThisFrame)
 				return new Vector3(0, 0, 0);
+			
 			var directionalVector = (positionThisFrame - positionLastFrame).normalized;
 			var velocityVector = directionalVector * Speed;
+			
 			return velocityVector;
 		}
 		
@@ -88,6 +89,7 @@ namespace Playmode.Entity.Movement
 			var directionTowardsPosition = position - transform.parent.position;
 			var perpendicularDirection =
 				new Vector3(directionTowardsPosition.y, -directionTowardsPosition.x, directionTowardsPosition.z);
+			
 			MoveRelativeToWorld(perpendicularDirection);
 		}
 
@@ -96,6 +98,7 @@ namespace Playmode.Entity.Movement
 			var directionTowardsPosition = position - transform.parent.position;
 			var perpendicularDirection =
 				new Vector3(-directionTowardsPosition.y, directionTowardsPosition.x, directionTowardsPosition.z);
+			
 			MoveRelativeToWorld(perpendicularDirection);
 		}
 

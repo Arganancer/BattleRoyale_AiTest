@@ -11,16 +11,16 @@ namespace Playmode.Entity.Senses
 
 	public class NpcSensorSight : MonoBehaviour
 	{
-		private HashSet<NpcController> npcsInSight;
-		private HashSet<PickableController> pickablesInSight;
-
 		public event NpcSensorEventHandler OnNpcSeen;
 		public event NpcSensorEventHandler OnNpcSightLost;
 		public event PickableViewSensorEventHandler OnPickableSeen;
 		public event PickableViewSensorEventHandler OnPickableSightLost;
-
+		
 		public IEnumerable<NpcController> NpcsInSight => npcsInSight;
 		public IEnumerable<PickableController> PickablesInSight => pickablesInSight;
+		
+		private HashSet<NpcController> npcsInSight;
+		private HashSet<PickableController> pickablesInSight;
 
 		private void Awake()
 		{
@@ -94,6 +94,7 @@ namespace Playmode.Entity.Senses
 		{
 			NpcController closestNpc = null;
 			var distance = float.MaxValue;
+			
 			foreach (var npc in npcsInSight)
 			{
 				if (closestNpc == null)
@@ -113,6 +114,7 @@ namespace Playmode.Entity.Senses
 					}
 				}
 			}
+			
 			return closestNpc;
 		}
 		
@@ -120,9 +122,11 @@ namespace Playmode.Entity.Senses
 		{
 			PickableController closestPickable = null;
 			var distance = float.MaxValue;
+			
 			foreach (var pickable in pickablesInSight)
 			{
 				if (pickable.GetPickableType() != typePickable) continue;
+				
 				if (closestPickable == null)
 				{
 					closestPickable = pickable;
@@ -133,6 +137,7 @@ namespace Playmode.Entity.Senses
 				{
 					var currentPickableDistance =
 						Vector3.Distance(closestPickable.transform.position, pickable.transform.position);
+					
 					if (distance > currentPickableDistance)
 					{
 						distance = currentPickableDistance;

@@ -29,17 +29,17 @@ namespace Playmode.World
 			}
 		}
 
-		private void NotifyObjectLeavingZone(NpcController npcController)
+		private static void NotifyObjectLeavingZone(NpcController npcController)
 		{
 			npcController.UpdateNpcStateExitZone();
 		}
 
-		private void NotifyObjectEnteringZone(NpcController npcController)
+		private static void NotifyObjectEnteringZone(NpcController npcController)
 		{
 			npcController.UpdateNpcStateEnterZone();
 		}
 
-		private void DestroyOutOfZonePickable(PickableController pickableController)
+		private static void DestroyOutOfZonePickable(PickableController pickableController)
 		{
 			pickableController.DestroyPickable();
 		}

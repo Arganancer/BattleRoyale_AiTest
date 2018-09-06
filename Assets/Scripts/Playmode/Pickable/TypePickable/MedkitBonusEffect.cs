@@ -2,11 +2,13 @@
 
 namespace Playmode.Pickable.TypePickable
 {
-	public class MedkitBonusEffect : PickableBonusEffect 
+	public class MedkitBonusEffect : PickableBonusEffect
 	{
+		private const int HealthBonus = 500;
+		
 		public override void ApplyBonusEffect(NpcController npcController)
 		{
-			npcController.Heal(500);
+			npcController.Heal(HealthBonus);
 		}
 	}
 }

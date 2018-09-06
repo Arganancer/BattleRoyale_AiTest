@@ -39,6 +39,9 @@ namespace Playmode.Npc
 			new Color32(224, 42, 11, 255)
 		};
 
+		private NpcDeathEventChannel npcDeathEventChannel;
+		private HitEventChannel hitEventChannel;
+		
 		private Health health;
 		private Mover mover;
 		private Destroyer destroyer;
@@ -46,12 +49,9 @@ namespace Playmode.Npc
 		private NpcSensorSound npcSensorSound;
 		private HitSensor hitSensor;
 		private HandController handController;
-
 		private BaseNpcBehavior strategy;
+		
 		private string strategyName;
-
-		private NpcDeathEventChannel npcDeathEventChannel;
-		private HitEventChannel hitEventChannel;
 
 		private void Awake()
 		{
@@ -64,24 +64,34 @@ namespace Playmode.Npc
 		{
 			if (body == null)
 				throw new ArgumentException("Body parts must be provided. Body is missing.");
+			
 			if (hand == null)
 				throw new ArgumentException("Body parts must be provided. Hand is missing.");
+			
 			if (sight == null)
 				throw new ArgumentException("Body parts must be provided. Sight is missing.");
+			
 			if (typeSign == null)
 				throw new ArgumentException("Body parts must be provided. TypeSign is missing.");
+			
 			if (normalSprite == null)
 				throw new ArgumentException("Type sprites must be provided. Normal is missing.");
+			
 			if (carefulSprite == null)
 				throw new ArgumentException("Type sprites must be provided. Careful is missing.");
+			
 			if (cowboySprite == null)
 				throw new ArgumentException("Type sprites must be provided. Cowboy is missing.");
+			
 			if (camperSprite == null)
 				throw new ArgumentException("Type sprites must be provided. Camper is missing.");
+			
 			if (startingWeaponPrefab == null)
 				throw new ArgumentException("StartingWeapon prefab must be provided.");
+			
 			if (uziWeapon == null)
 				throw new ArgumentException("UziWeapon prefab must be provided.");
+			
 			if (shotgunWeapon == null)
 				throw new ArgumentException("ShotgunWeapon prefab must be provided.");
 		}
@@ -91,7 +101,9 @@ namespace Playmode.Npc
 			health = GetComponent<Health>();
 			mover = GetComponent<Mover>();
 			destroyer = GetComponent<RootDestroyer>();
+			
 			var rootTransform = transform.root;
+			
 			npcSensorSight = rootTransform.GetComponentInChildren<NpcSensorSight>();
 			npcSensorSound = rootTransform.GetComponentInChildren<NpcSensorSound>();
 			hitSensor = rootTransform.GetComponentInChildren<HitSensor>();
@@ -142,10 +154,11 @@ namespace Playmode.Npc
 			health.OnDeath -= OnDeath;
 		}
 
-		public void Configure(NpcStrategy strategy)
+		public void Configure(NpcStrategy strategyToAssign)
 		{
-			strategyName = Enum.GetName(typeof(NpcStrategy), strategy);
-			switch (strategy)
+			strategyName = Enum.GetName(typeof(NpcStrategy), strategyToAssign);
+			
+			switch (strategyToAssign)
 			{
 				case NpcStrategy.Cowboy:
 					body.GetComponent<SpriteRenderer>().color = colors[2];
@@ -182,7 +195,7 @@ namespace Playmode.Npc
 						npcSensorSound);
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
+					throw new ArgumentOutOfRangeException(nameof(strategyToAssign), strategyToAssign, null);
 			}
 		}
 

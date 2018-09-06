@@ -7,10 +7,12 @@ namespace Playmode.Npc.Strategies.Routines.SightRoutines
 {
 	public abstract class SightRoutine : Routine
 	{
-		protected SightSubRoutineType CurrenSightSubRoutineType;
 		private const float MinSightRoutineDelay = 0.2f;
 		private const float MaxSightRoutineDelay = 1.1f;
 		private const float LookAngleTolerance = 70f;
+		
+		protected SightSubRoutineType CurrenSightSubRoutineType;
+		
 		protected float CurrentSightRoutineDelay;
 		
 		protected SightRoutine(Mover mover) : base(mover)

@@ -106,7 +106,6 @@ namespace Playmode.Application
 		{
 			Time.timeScale = PausedTimeSpeed;
 			ConvertTime();
-
 			endGameObjects.SetActive(true);
 
 			if (numberOfNpcs == 0)

@@ -10,6 +10,8 @@ namespace Playmode.Npc
 {
 	public class NpcSpawner : MonoBehaviour
 	{
+		[SerializeField] private GameObject npcPrefab;
+		
 		private static readonly NpcStrategy[] DefaultStrategies =
 		{
 			NpcStrategy.Normal,
@@ -18,8 +20,6 @@ namespace Playmode.Npc
 			NpcStrategy.Camper,
 			NpcStrategy.Op
 		};
-
-		[SerializeField] private GameObject npcPrefab;
 
 		private void Awake()
 		{
@@ -52,6 +52,7 @@ namespace Playmode.Npc
 		private static List<Vector3> GenerateSpawnPoints()
 		{
 			var spawnPoints = new List<Vector3>();
+			
 			const float maxDistanceFromMapCenter = 100f;
 			const float minDistanceBetweenNpcs = 30f;
 
@@ -62,16 +63,19 @@ namespace Playmode.Npc
 			{
 				var j = 0;
 				var positionTooClose = false;
+				
 				do
 				{
 					j += 1;
 					positionTooClose = false;
 					currentSpawnPoint = GeneratePointWithinPlayableArea(maxDistanceFromMapCenter);
+					
 					foreach (var spawnPoint in spawnPoints)
 					{
 						if (!(Vector3.Distance(spawnPoint, currentSpawnPoint) < minDistanceBetweenNpcs)) continue;
 						positionTooClose = true;
 					}
+					
 				} while (positionTooClose && j < 100);
 
 				spawnPoints.Add(currentSpawnPoint);
@@ -83,6 +87,7 @@ namespace Playmode.Npc
 		private static Vector3 GeneratePointWithinPlayableArea(float maxDistanceFromMapCenter)
 		{
 			Vector3 position = Random.insideUnitCircle;
+			
 			return position * CRandom.Nextf(0f, maxDistanceFromMapCenter);
 		}
 

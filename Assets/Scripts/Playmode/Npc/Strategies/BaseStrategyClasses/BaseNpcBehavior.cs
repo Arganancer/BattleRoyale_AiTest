@@ -26,38 +26,38 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 
 	public abstract class BaseNpcBehavior : INpcStrategy
 	{
-		private State currentState;
-
+		protected const float MaxRoamingTime = 2.8f;
+		
+		private const float MinIdleTime = 0.2f;
+		private const float MaxIdleTime = 0.5f;
+		private const float MinRoamingTime = 1.2f;
+		
 		protected readonly NpcSensorSound NpcSensorSound;
 		protected readonly Mover Mover;
 		protected readonly HandController HandController;
 		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly Health Health;
-
-		protected float DistanceSwitchFromEngagingToAttacking = 8f;
-		protected float DistanceSwitchFromAttackingToEngaging = 15f;
-		protected float DistanceToCurrentEnemy;
-		protected Vector3 MovementDirection;
-		protected float RotationOrientation;
-
-		protected float HealthRetreatTolerance;
-		protected float TimeUntilStateSwitch = 0f;
-		protected bool IsOutsideOfZone = false;
-
-		public bool SetIsOutsideOfZone
-		{
-			set { IsOutsideOfZone = value; }
-		}
-
+		
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentMedicalKitTarget;
 		protected PickableController CurrentShotgunTarget;
 		protected PickableController CurrentUziTarget;
 
-		private const float MinIdleTime = 0.2f;
-		private const float MaxIdleTime = 0.5f;
-		private const float MinRoamingTime = 1.2f;
-		protected const float MaxRoamingTime = 2.8f;
+		protected Vector3 MovementDirection;
+		protected float DistanceSwitchFromEngagingToAttacking = 8f;
+		protected float DistanceSwitchFromAttackingToEngaging = 15f;
+		protected float DistanceToCurrentEnemy;
+		protected float RotationOrientation;
+		protected float HealthRetreatTolerance;
+		protected float TimeUntilStateSwitch = 0f;
+		protected bool IsOutsideOfZone = false;
+		
+		private State currentState;
+
+		public bool SetIsOutsideOfZone
+		{
+			set { IsOutsideOfZone = value; }
+		}
 
 		protected BaseNpcBehavior(Mover mover, HandController handController
 			,Health health, NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
@@ -175,6 +175,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		{
 			if(npc == null)
 				return new Vector3();
+			
 			var bulletSpeed = HandController.GetProjectileSpeed();
 			var bulletSpeedSq = bulletSpeed * bulletSpeed;
 			var bulletOrigin = HandController.GetWeaponPosition();

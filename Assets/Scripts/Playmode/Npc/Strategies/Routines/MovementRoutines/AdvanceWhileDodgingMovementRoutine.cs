@@ -21,6 +21,7 @@ namespace Playmode.Npc.Strategies.Routines.MovementRoutines
 			{
 				var chanceOfRetreatingRoutine = CRandom.Next(1, 4);
 				SubRoutineTimeRemaining = CRandom.Nextf(0.3f, 0.7f);
+				
 				if (chanceOfRetreatingRoutine <= 1)
 				{
 					CurrenMovementSubRoutineType = MovementSubRoutineType.MovingLeft;

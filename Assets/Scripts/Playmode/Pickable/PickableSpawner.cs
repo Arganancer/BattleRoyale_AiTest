@@ -7,17 +7,17 @@ namespace Playmode.Pickable
 {
 	public class PickableSpawner : MonoBehaviour
 	{
+		[SerializeField] private GameObject pickablePrefab;
+		
 		private const string ZoneObjectName = "Zone";
+		private const float TimeToSpawn = 7;
+		private const float MinDistanceBetween2Pickable = 10;
 		
 		private ZoneController zoneController;
 
 		private Vector2 worldSize;
-		
 		private Vector2 lastPickableCoordonate;
-		private float minDistanceBetween2Pickable = 10;
 		private int nbOfPickableToSpawn = 5;
-		
-		private float timeToSpawn = 7;
 		private float timeLastSpawn;
 
 		private static readonly TypePickable.TypePickable[] DefaultTypePickable =
@@ -27,12 +27,11 @@ namespace Playmode.Pickable
 			TypePickable.TypePickable.Uzi
 		};
 
-		[SerializeField] private GameObject pickablePrefab;
-
 		private void Awake()
 		{
 			ValidateSerialisedFields();
 			zoneController = GameObject.Find(ZoneObjectName).GetComponentInChildren<ZoneController>();
+			
 			if (zoneController.DistanceOffSet.x > 0)
 			{
 				worldSize = zoneController.DistanceOffSet*zoneController.CurrentRadius*7;
@@ -41,6 +40,7 @@ namespace Playmode.Pickable
 			{
 				worldSize = new Vector2(zoneController.CurrentRadius*7,zoneController.CurrentRadius*7);
 			}
+			
 			timeLastSpawn = 0;
 		}
 
@@ -58,7 +58,7 @@ namespace Playmode.Pickable
 
 		private void Update()
 		{
-			if (Time.time - timeLastSpawn > timeToSpawn && zoneController.ZoneIsNotShrinking)
+			if (Time.time - timeLastSpawn > TimeToSpawn && zoneController.ZoneIsNotShrinking)
 			{
 				if (zoneController.DistanceOffSet.x > 0)
 				{
@@ -68,6 +68,7 @@ namespace Playmode.Pickable
 				{
 					worldSize = new Vector2(zoneController.CurrentRadius*7,zoneController.CurrentRadius*7);
 				}
+				
 				SpawnPickables();
 				timeLastSpawn = Time.time;
 			}
@@ -76,6 +77,7 @@ namespace Playmode.Pickable
 		private void SpawnPickables()
 		{
 			var pickableTypeProvider = new LoopingEnumerator<TypePickable.TypePickable>(DefaultTypePickable);
+			
 			for (int i = 0; i < nbOfPickableToSpawn; ++i)
 			{
 				CreatePickable(
@@ -89,11 +91,11 @@ namespace Playmode.Pickable
 		{
 			int nbOfTry = 0;
 			
-			 Vector2 currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize.x),
+			Vector2 currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize.x),
 				UnityEngine.Random.Range(0, worldSize.x));
 			
-			while (Math.Abs(currentPickableCoordonate.x - lastPickableCoordonate.x) < minDistanceBetween2Pickable &&
-			       Math.Abs(currentPickableCoordonate.y - lastPickableCoordonate.y) < minDistanceBetween2Pickable || 
+			while (Math.Abs(currentPickableCoordonate.x - lastPickableCoordonate.x) < MinDistanceBetween2Pickable &&
+			       Math.Abs(currentPickableCoordonate.y - lastPickableCoordonate.y) < MinDistanceBetween2Pickable || 
 			       nbOfTry <5)
 			{
 				currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(-worldSize.x, worldSize.x),

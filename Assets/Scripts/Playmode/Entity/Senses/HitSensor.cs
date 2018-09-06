@@ -27,7 +27,6 @@ namespace Playmode.Entity.Senses
 		{
 			if (OnHit != null) OnHit(hitPoints);
 		}
-		
 
 		public void PickPickable(NpcController npcController,PickableController pickableController)
 		{

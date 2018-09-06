@@ -14,16 +14,21 @@ namespace Playmode.Weapon
 		[SerializeField] private float fireDelayInSeconds = 0.5f;
 		[SerializeField] private int nbOfShotgunBullets = 5;
 		
-		private TypePickable weaponType = TypePickable.None;
-		private int bulletDamage = 20;
-
 		private ShootEventChannel shootEventChannel;
+		
+		private TypePickable weaponType = TypePickable.None;
+		
+		private int bulletDamage = 20;
+		private float lastTimeShotInSeconds;
+		
+		private bool CanShoot => Time.time - lastTimeShotInSeconds > fireDelayInSeconds;
 
 		public TypePickable WeaponType
 		{
 			set
 			{
 				weaponType = value;
+				
 				switch (weaponType)
 				{
 					case TypePickable.Shotgun:
@@ -42,8 +47,6 @@ namespace Playmode.Weapon
 			}
 		}
 
-		private float lastTimeShotInSeconds;
-
 		public float FireDelayInSeconds
 		{
 			set { fireDelayInSeconds = value; }
@@ -53,8 +56,6 @@ namespace Playmode.Weapon
 		{
 			set { nbOfShotgunBullets = value; }
 		}
-
-		private bool CanShoot => Time.time - lastTimeShotInSeconds > fireDelayInSeconds;
 
 		private void Awake()
 		{

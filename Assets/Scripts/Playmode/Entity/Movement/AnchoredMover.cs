@@ -10,6 +10,8 @@ namespace Playmode.Entity.Movement
 		
 		public static readonly Vector3 Forward = Vector3.up;
 
+		private Transform rootTransform;
+		
 		private float currentSpeed;
 		
 		public float MaxSpeed
@@ -17,8 +19,6 @@ namespace Playmode.Entity.Movement
 			get { return maxSpeed; }
 			set { maxSpeed = value; }
 		}
-		
-		private Transform rootTransform;
 
 		protected void Awake()
 		{
@@ -30,6 +30,7 @@ namespace Playmode.Entity.Movement
 		{
 			if (MaxSpeed < 0)
 				throw new ArgumentException("Speed can't be lower than 0.");
+			
 			if (RotateSpeed < 0)
 				throw new ArgumentException("RotateSpeed can't be lower than 0.");
 		}
