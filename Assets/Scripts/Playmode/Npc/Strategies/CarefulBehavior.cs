@@ -50,7 +50,8 @@ namespace Playmode.Npc.Strategies
 			MovementDirection = NpcSensorSound.GetNewestSoundPosition() - Mover.transform.root.position;
 			
 			Mover.RotateTowardsDirection(MovementDirection);
-			if (Health.HealthPoints < HealthRetreatTolerance)
+			if (!(Health.HealthPoints < HealthRetreatTolerance)) return;
+			if(!IsOutsideOfZone)
 				Mover.MoveTowardsDirection(-MovementDirection);
 			else
 				Mover.MoveTowardsDirection(MovementDirection);
@@ -86,7 +87,8 @@ namespace Playmode.Npc.Strategies
 		protected override void DoRetreating()
 		{
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			Mover.MoveAwayFromPosition(CurrentEnemyTarget.transform.root.position);
+			if(!IsOutsideOfZone)
+				Mover.MoveAwayFromPosition(CurrentEnemyTarget.transform.root.position);
 			HandController.Use();
 		}
 

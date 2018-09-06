@@ -86,7 +86,8 @@ namespace Playmode.Npc.Strategies
 		protected override void DoRetreating()
 		{
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-			retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
+			if(!IsOutsideOfZone)
+				retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
 			HandController.Use();
 		}
 

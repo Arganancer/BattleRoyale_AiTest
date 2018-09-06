@@ -4,12 +4,12 @@ namespace Playmode.World
 {
 	public class ZoneController : MonoBehaviour
 	{
-		private const float SPRITE_SCALE_SIZE = 0.0625f;
-		private const int MAX_SHRINKING_SIZE = 2;
-		private const int MAX_SHRINK_SPEED_BUFFER = 100;
-		private const string ZONE_RENDERER_OBJECT = "ZoneRenderer";
+		private const float SpriteScaleSize = 0.0625f;
+		private const int MaxShrinkingSize = 2;
+		private const int MaxShrinkSpeedBuffer = 100;
+		private const string ZoneRendererObject = "ZoneRenderer";
 		
-		[SerializeField] private float timeBufferToMoveZone = 120f;
+		[SerializeField] private float timeBufferToMoveZone = 15f;
 		[SerializeField] private int startingRadiusZoneSize = 10;
 		[SerializeField] private int minimunSizeShrink = 2;
 		[SerializeField] private int maximumSizeShrink = 3;
@@ -47,11 +47,12 @@ namespace Playmode.World
 		{
 			if (Time.time - timeOfLastShrink > timeBufferToMoveZone && GetCurrentZoneRadius() <= nextRadius)
 			{
-				if (GetCurrentZoneRadius() > MAX_SHRINKING_SIZE) ChangeZoneColliderOffset();
+				if (GetCurrentZoneRadius() > MaxShrinkingSize) 
+					ChangeZoneColliderOffset();
 	
 				timeOfLastShrink = Time.time;
 			}
-			else if (GetCurrentZoneRadius() > nextRadius && zoneRenderer.transform.localScale.x > SPRITE_SCALE_SIZE
+			else if (GetCurrentZoneRadius() > nextRadius && zoneRenderer.transform.localScale.x > SpriteScaleSize
 					 && GetCurrentZoneRadius() - sizeReduction >1) //the 1 is there to make sure the radius doesn't go negative after the reduction.
 			{
 				ShrinkZone();
@@ -110,8 +111,8 @@ namespace Playmode.World
 		{
 			zoneRenderer.transform.localScale = 
 				new Vector3(
-					GetCurrentZoneSpriteScale()- SPRITE_SCALE_SIZE/MAX_SHRINK_SPEED_BUFFER,
-					GetCurrentZoneSpriteScale()- SPRITE_SCALE_SIZE/MAX_SHRINK_SPEED_BUFFER,
+					GetCurrentZoneSpriteScale()- SpriteScaleSize/MaxShrinkSpeedBuffer,
+					GetCurrentZoneSpriteScale()- SpriteScaleSize/MaxShrinkSpeedBuffer,
 					0);
 		}
 	
