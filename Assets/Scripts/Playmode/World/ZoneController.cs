@@ -7,7 +7,6 @@ namespace Playmode.World
 		private const float SpriteScaleSize = 0.0625f;
 		private const int MaxShrinkingSize = 2;
 		private const int MaxShrinkSpeedBuffer = 100;
-		private const string ZoneRendererObject = "ZoneRenderer";
 		
 		[SerializeField] private float timeBufferToMoveZone = 15f;
 		[SerializeField] private int startingRadiusZoneSize = 10;
@@ -71,7 +70,7 @@ namespace Playmode.World
 	
 		private void ShrinkZone()
 		{
-			zoneCollider2D.radius -= sizeReduction/MAX_SHRINK_SPEED_BUFFER;
+			zoneCollider2D.radius -= sizeReduction/MaxShrinkSpeedBuffer;
 			
 			ChangeSpriteScale();
 			ChangeSpritePosition();

@@ -1,6 +1,4 @@
 ﻿using System;
-using Playmode.Npc;
-using Playmode.Pickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
