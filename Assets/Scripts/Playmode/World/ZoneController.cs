@@ -71,7 +71,7 @@ namespace Playmode.World
 	
 		private void ShrinkZone()
 		{
-			zoneCollider2D.radius -= sizeReduction/MAX_SHRINK_SPEED_BUFFER;
+			zoneCollider2D.radius -= sizeReduction/MaxShrinkSpeedBuffer;
 			
 			ChangeSpriteScale();
 			ChangeSpritePosition();
