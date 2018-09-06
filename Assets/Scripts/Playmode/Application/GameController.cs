@@ -12,7 +12,7 @@ namespace Playmode.Application
 		private const string TextNoSurvivors = "No survivors !";
 		private const string TextSurvivorInfo = "Survivor's remaining HP : ";
 		private const string TextTimeTaken = "Time taken :";
-		private const float RegularTimeSpeed = 0.5f; // TODO: Change to 1.0f for final push;
+		private const float RegularTimeSpeed = 1.0f;
 		private const float PausedTimeSpeed = 0.0f;
 
 		private NpcDeathEventChannel npcDeathEventChannel;

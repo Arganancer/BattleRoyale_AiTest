@@ -51,9 +51,6 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-
 			engagingMovementRoutine.UpdateMovementRoutine(CurrentEnemyTarget.transform.root.position);
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
@@ -62,9 +59,6 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoAttacking()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-
 			Mover.MoveRightAroundPosition(CurrentEnemyTarget.transform.root.position);
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 
@@ -73,12 +67,9 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRetreating()
 		{
-			if (CurrentEnemyTarget == null)
-				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-
-			retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
+			if(!IsOutsideOfZone)
+				retreatingMovementRoutine.UpdateMovementRoutine(NpcSensorSight.GetClosestNpc().transform.root.position);
 			Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
-
 			HandController.Use();
 		}
 
