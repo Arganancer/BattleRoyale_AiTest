@@ -43,15 +43,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1554042272123124
+--- !u!1 &1423478482898320
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4401618893151570}
-  - component: {fileID: 114317884660298010}
+  - component: {fileID: 4472189551515252}
+  - component: {fileID: 114529887271373878}
   m_Layer: 0
   m_Name: ZoneController
   m_TagString: Untagged
@@ -86,7 +86,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4314049089858002}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4314049089858002
 Transform:
@@ -98,24 +98,24 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children:
-  - {fileID: 4401618893151570}
   - {fileID: 4020364177145738}
   - {fileID: 4513484190329772}
+  - {fileID: 4472189551515252}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4401618893151570
+--- !u!4 &4472189551515252
 Transform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1554042272123124}
+  m_GameObject: {fileID: 1423478482898320}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4314049089858002}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4513484190329772
 Transform:
@@ -128,7 +128,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 4314049089858002}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &58835971602828102
 CircleCollider2D:
@@ -145,18 +145,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 10
---- !u!114 &114317884660298010
+--- !u!114 &114529887271373878
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1554042272123124}
+  m_GameObject: {fileID: 1423478482898320}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72432366c1b6064449b5f39cb18b4a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBufferToMoveZone: 20
+  timeBufferToMoveZone: 120
   startingRadiusZoneSize: 10
   minimunSizeShrink: 2
   maximumSizeShrink: 3
