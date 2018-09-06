@@ -6,13 +6,13 @@ namespace Playmode.Entity.Senses
 {
 	public class PickableStimulus : MonoBehaviour
 	{
-		private const string BODY_OBJECT_NAME = "Body";
-		private const string SIGHT_OBJECT_NAME = "Sight";
+		private const string BodyObjectName = "Body";
+		private const string SightObjectName = "Sight";
 		
 		private void OnTriggerEnter2D(Collider2D other)
 		{
 			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
-			    && other.name == BODY_OBJECT_NAME)
+			    && other.name == BodyObjectName)
 			{
 				other.gameObject.transform.root.GetComponentInChildren<HitSensor>()?
 					.PickPickable(other.gameObject.transform.root.GetComponentInChildren<NpcController>(),
@@ -20,7 +20,7 @@ namespace Playmode.Entity.Senses
 				Destroy(transform.root.gameObject);
 			}
 			else if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
-			         && other.name == SIGHT_OBJECT_NAME)
+			         && other.name == SightObjectName)
 			{
 				other.gameObject.transform.root.
 					GetComponentInChildren<NpcSensorSight>()?.
@@ -31,7 +31,7 @@ namespace Playmode.Entity.Senses
 		private void OnTriggerExit2D(Collider2D other)
 		{
 			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
-			    && other.name == SIGHT_OBJECT_NAME)
+			    && other.name == SightObjectName)
 			{
 				other.gameObject.transform.root.
 					GetComponentInChildren<NpcSensorSight>()?.
