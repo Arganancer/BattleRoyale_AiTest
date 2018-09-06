@@ -11,7 +11,7 @@ namespace Playmode.Pickable
 		
 		private ZoneController zoneController;
 
-		private float worldSize;
+		private Vector2 worldSize;
 		
 		private Vector2 lastPickableCoordonate;
 		private float minDistanceBetween2Pickable = 10;
@@ -33,7 +33,14 @@ namespace Playmode.Pickable
 		{
 			ValidateSerialisedFields();
 			zoneController = GameObject.Find(ZoneObjectName).GetComponentInChildren<ZoneController>();
-			worldSize = zoneController.CurrentRadius*8;
+			if (zoneController.DistanceOffSet.x > 0)
+			{
+				worldSize = zoneController.DistanceOffSet*zoneController.CurrentRadius*7;
+			}
+			else
+			{
+				worldSize = new Vector2(zoneController.CurrentRadius*7,zoneController.CurrentRadius*7);
+			}
 			timeLastSpawn = 0;
 		}
 
@@ -53,7 +60,14 @@ namespace Playmode.Pickable
 		{
 			if (Time.time - timeLastSpawn > timeToSpawn && zoneController.ZoneIsNotShrinking)
 			{
-				worldSize = zoneController.CurrentRadius*8;
+				if (zoneController.DistanceOffSet.x > 0)
+				{
+					worldSize = zoneController.DistanceOffSet*zoneController.CurrentRadius*7;
+				}
+				else
+				{
+					worldSize = new Vector2(zoneController.CurrentRadius*7,zoneController.CurrentRadius*7);
+				}
 				SpawnPickables();
 				timeLastSpawn = Time.time;
 			}
@@ -75,15 +89,15 @@ namespace Playmode.Pickable
 		{
 			int nbOfTry = 0;
 			
-			 Vector2 currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize),
-				UnityEngine.Random.Range(0, worldSize));
+			 Vector2 currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(0, worldSize.x),
+				UnityEngine.Random.Range(0, worldSize.x));
 			
 			while (Math.Abs(currentPickableCoordonate.x - lastPickableCoordonate.x) < minDistanceBetween2Pickable &&
 			       Math.Abs(currentPickableCoordonate.y - lastPickableCoordonate.y) < minDistanceBetween2Pickable || 
 			       nbOfTry <5)
 			{
-				currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(-worldSize, worldSize),
-					UnityEngine.Random.Range(-worldSize, worldSize));
+				currentPickableCoordonate = new Vector2(UnityEngine.Random.Range(-worldSize.x, worldSize.x),
+					UnityEngine.Random.Range(-worldSize.x, worldSize.x));
 				
 				nbOfTry++;
 			}

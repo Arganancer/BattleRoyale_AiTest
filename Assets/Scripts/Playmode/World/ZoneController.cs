@@ -22,7 +22,9 @@ namespace Playmode.World
 		private float timeOfLastShrink;
 		private float currentRadius;
 		private bool zoneIsNotShrinking = true;
-	
+		private Vector2 distanceOffSet;
+
+		public Vector2 DistanceOffSet => distanceOffSet;
 		public float CurrentRadius => currentRadius;
 		public bool ZoneIsNotShrinking => zoneIsNotShrinking;
 		
@@ -35,6 +37,8 @@ namespace Playmode.World
 	
 			zoneRenderer = transform.root.GetComponentInChildren<SpriteRenderer>().transform.gameObject;
 			zoneRenderer.transform.localScale = new Vector3(1.26f,1.26f,0);
+			
+			distanceOffSet = new Vector2();
 		}
 	
 		private void Update()
@@ -66,7 +70,7 @@ namespace Playmode.World
 	
 		private void ShrinkZone()
 		{
-			//zoneCollider2D.radius -= sizeReduction/MAX_SHRINK_SPEED_BUFFER;
+			zoneCollider2D.radius -= sizeReduction/MAX_SHRINK_SPEED_BUFFER;
 			
 			ChangeSpriteScale();
 			ChangeSpritePosition();
@@ -117,6 +121,7 @@ namespace Playmode.World
 	
 		private void ChangeSpritePosition()
 		{
+			distanceOffSet = zoneCollider2D.offset;
 			zoneRenderer.transform.localPosition =
 				zoneCollider2D.offset;
 		}
