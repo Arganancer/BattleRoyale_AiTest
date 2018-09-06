@@ -9,8 +9,8 @@ namespace Playmode.World
 		private const int MaxShrinkSpeedBuffer = 100;
 		private const string ZoneRendererObject = "ZoneRenderer";
 		
-		[SerializeField] private float timeBufferToMoveZone = 15f;
-		[SerializeField] private int startingRadiusZoneSize = 10;
+		[SerializeField] private float timeBufferToMoveZone = 30;
+		[SerializeField] private float startingRadiusZoneSize = 10;
 		[SerializeField] private int minimunSizeShrink = 2;
 		[SerializeField] private int maximumSizeShrink = 3;
 		[SerializeField] private float sizeReduction = 0.5f;
@@ -18,23 +18,26 @@ namespace Playmode.World
 		private CircleCollider2D zoneCollider2D;
 		private GameObject zoneRenderer;
 		
-		private float nextRadius =0f;
+		private float nextRadius;
 		private float timeOfLastShrink;
-		private float currentRadius;
-		private bool zoneIsNotShrinking = true;
-	
-		public float CurrentRadius => currentRadius;
-		public bool ZoneIsNotShrinking => zoneIsNotShrinking;
-		
+
+		public Vector2 DistanceOffSet { get; private set; }
+
+		public float CurrentRadius { get; private set; }
+
+		public bool ZoneIsNotShrinking { get; private set; } = true;
+
 		private void Awake()
 		{
 			zoneCollider2D = transform.root.GetComponentInChildren<CircleCollider2D>();
 			zoneCollider2D.radius = startingRadiusZoneSize;
 			nextRadius = startingRadiusZoneSize;
-			currentRadius = nextRadius;
+			CurrentRadius = nextRadius;
 	
 			zoneRenderer = transform.root.GetComponentInChildren<SpriteRenderer>().transform.gameObject;
 			zoneRenderer.transform.localScale = new Vector3(1.26f,1.26f,0);
+			
+			DistanceOffSet = new Vector2();
 		}
 	
 		private void Update()
@@ -56,18 +59,18 @@ namespace Playmode.World
 					 && GetCurrentZoneRadius() - sizeReduction >1) //the 1 is there to make sure the radius doesn't go negative after the reduction.
 			{
 				ShrinkZone();
-				zoneIsNotShrinking = false;
+				ZoneIsNotShrinking = false;
 			}
 			else
 			{
-				currentRadius = nextRadius;
-				zoneIsNotShrinking = true;
+				CurrentRadius = nextRadius;
+				ZoneIsNotShrinking = true;
 			}
 		}
 	
 		private void ShrinkZone()
 		{
-			//zoneCollider2D.radius -= sizeReduction/MAX_SHRINK_SPEED_BUFFER;
+			zoneCollider2D.radius -= sizeReduction/MaxShrinkSpeedBuffer;
 			
 			ChangeSpriteScale();
 			ChangeSpritePosition();
@@ -118,6 +121,7 @@ namespace Playmode.World
 	
 		private void ChangeSpritePosition()
 		{
+			DistanceOffSet = zoneCollider2D.offset;
 			zoneRenderer.transform.localPosition =
 				zoneCollider2D.offset;
 		}
