@@ -17,7 +17,6 @@ public class ZoneController : MonoBehaviour
 	private GameObject zoneRenderer;
 	
 	private float nextRadius;
-	private int shrinkSpeedBuffer = 0;
 	private float timeOfLastShrink;
 	private float currentRadius;
 	private bool zoneIsNotShrinking = true;
