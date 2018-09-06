@@ -14,23 +14,30 @@ namespace Playmode.Npc
 {
 	public class NpcController : MonoBehaviour
 	{
-		[Header("Body Parts")] [SerializeField]
-		private GameObject body;
-
+		[Header("Body Parts")] 
+		[SerializeField]private GameObject body;
 		[SerializeField] private GameObject hand;
 		[SerializeField] private GameObject sight;
 		[SerializeField] private GameObject typeSign;
 
-		[Header("Type Images")] [SerializeField]
-		private Sprite normalSprite;
-
+		[Header("Type Images")] 
+		[SerializeField]private Sprite normalSprite;
 		[SerializeField] private Sprite carefulSprite;
 		[SerializeField] private Sprite cowboySprite;
 		[SerializeField] private Sprite camperSprite;
 
-		[Header("Behaviour")] [SerializeField] private GameObject startingWeaponPrefab;
+		[Header("Behaviour")] 
+		[SerializeField] private GameObject startingWeaponPrefab;
 		[SerializeField] private GameObject uziWeapon;
 		[SerializeField] private GameObject shotgunWeapon;
+
+		private readonly Color[] colors = {
+			new Color32(255, 142, 24, 255),
+			new Color32(37, 255, 35, 255), 
+			Color.white,
+			new Color32(16, 193, 232, 255),
+			new Color32(224, 42, 11, 255)
+		};
 
 		private Health health;
 		private Mover mover;
@@ -104,8 +111,6 @@ namespace Playmode.Npc
 
 		private void OnEnable()
 		{
-			npcSensorSight.OnNpcSeen += OnNpcSeen;
-			npcSensorSight.OnNpcSightLost += OnNpcSightLost;
 			hitSensor.OnHit += OnHit;
 			health.OnDeath += OnDeath;
 			hitSensor.onUziPick += OnPickUzi;
@@ -132,50 +137,50 @@ namespace Playmode.Npc
 
 		private void OnDisable()
 		{
-			npcSensorSight.OnNpcSeen -= OnNpcSeen;
-			npcSensorSight.OnNpcSightLost -= OnNpcSightLost;
 			hitSensor.OnHit -= OnHit;
 			health.OnDeath -= OnDeath;
 		}
 
-		public void Configure(NpcStrategy strategy, Color color)
+		public void Configure(NpcStrategy strategy)
 		{
 			switch (strategy)
 			{
 				case NpcStrategy.Cowboy:
-					body.GetComponent<SpriteRenderer>().color = Color.cyan;
-					sight.GetComponent<SpriteRenderer>().color = Color.cyan;
+					body.GetComponent<SpriteRenderer>().color = colors[2];
+					sight.GetComponent<SpriteRenderer>().color = colors[2];
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;
 					this.strategy = new CowboyBehavior(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Careful:
-					body.GetComponent<SpriteRenderer>().color = Color.white;
-					sight.GetComponent<SpriteRenderer>().color = Color.white;
+					body.GetComponent<SpriteRenderer>().color = colors[0];
+					sight.GetComponent<SpriteRenderer>().color = colors[0];
 					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
 					this.strategy = new CarefulBehavior(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Camper:
-					body.GetComponent<SpriteRenderer>().color = Color.yellow;
-					sight.GetComponent<SpriteRenderer>().color = Color.yellow;
-					typeSign.GetComponent<SpriteRenderer>().sprite = carefulSprite;
+					body.GetComponent<SpriteRenderer>().color = colors[1];
+					sight.GetComponent<SpriteRenderer>().color = colors[1];
+					typeSign.GetComponent<SpriteRenderer>().sprite = camperSprite;
 					this.strategy = new CamperBehavior(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
 				case NpcStrategy.Normal:
-					body.GetComponent<SpriteRenderer>().color = Color.red;
-					sight.GetComponent<SpriteRenderer>().color = Color.red;
+					body.GetComponent<SpriteRenderer>().color = colors[3];
+					sight.GetComponent<SpriteRenderer>().color = colors[3];
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
 					this.strategy = new NormalBehavior(mover, handController, health, npcSensorSight, npcSensorSound);
 					break;
-				default:
-					body.GetComponent<SpriteRenderer>().color = Color.blue;
-					sight.GetComponent<SpriteRenderer>().color = Color.blue;
+				case NpcStrategy.Op:
+					body.GetComponent<SpriteRenderer>().color = colors[4];
+					sight.GetComponent<SpriteRenderer>().color = colors[4];
 					typeSign.GetComponent<SpriteRenderer>().sprite = normalSprite;
 					this.strategy = new OpStrategy(mover, handController, health, npcSensorSight,
 						npcSensorSound);
 					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
 			}
 		}
 
@@ -193,29 +198,21 @@ namespace Playmode.Npc
 			destroyer.Destroy();
 		}
 
-		public void OnPickMedKit(int healPoint)
+		private void OnPickMedKit(int healPoint)
 		{
 			health.Heal(healPoint);
 		}
 
-		public void OnPickShotgun()
+		private void OnPickShotgun()
 		{
 			SwitchWeapon(shotgunWeapon);
 			handController.AdjustWeaponNbOfBullet();
 		}
 
-		public void OnPickUzi()
+		private void OnPickUzi()
 		{
 			SwitchWeapon(uziWeapon);
 			handController.AdjustWeaponSpeed();
-		}
-
-		private void OnNpcSeen(NpcController npc)
-		{
-		}
-
-		private void OnNpcSightLost(NpcController npc)
-		{
 		}
 
 		private void SwitchWeapon(GameObject weaponObject)
@@ -246,7 +243,7 @@ namespace Playmode.Npc
 		{
 			return Enum.GetName(typeof(State), strategy.GetState());
 		}
-		
+
 		public void Heal(int healPoint)
 		{
 			OnPickMedKit(healPoint);
@@ -261,7 +258,6 @@ namespace Playmode.Npc
 		{
 			OnPickUzi();
 		}
-		
 
 		public void UpdateNpcStateEnterZone()
 		{
