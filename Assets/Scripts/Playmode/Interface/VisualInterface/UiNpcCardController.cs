@@ -43,8 +43,7 @@ namespace Playmode.Interface.VisualInterface
 		public void Configure(NpcController npcController)
 		{
 			this.npcController = npcController;
-			behaviorText.text = "PH_Behavior";
-			stateText.text = "PH_State";
+			behaviorText.text = npcController.GetStrategyString();
 		}
 	}
 }

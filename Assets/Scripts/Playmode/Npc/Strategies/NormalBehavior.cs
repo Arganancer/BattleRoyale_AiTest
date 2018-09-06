@@ -20,8 +20,8 @@ namespace Playmode.Npc.Strategies
 		{
 			HealthRetreatTolerance = 0;
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
-			DistanceSwitchFromAttackingToEngaging = 4f;
-			DistanceSwitchFromEngagingToAttacking = 3f;
+			DistanceSwitchFromAttackingToEngaging = 6f;
+			DistanceSwitchFromEngagingToAttacking = 5f;
 		}
 
 		protected override void DoIdle()
@@ -31,6 +31,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
+			if (IsOutsideOfZone)
+				MovementDirection = -Mover.transform.parent.root.position;
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
@@ -71,9 +73,7 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateIdle()
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
 
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
@@ -81,9 +81,7 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateRoaming()
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
 
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
@@ -91,18 +89,14 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateInvestigating()
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
 			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
@@ -110,9 +104,7 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateAttacking()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			return DistanceToCurrentEnemy > DistanceSwitchFromAttackingToEngaging ? State.Engaging : State.Attacking;
 		}

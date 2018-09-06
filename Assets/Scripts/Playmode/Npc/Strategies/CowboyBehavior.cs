@@ -14,12 +14,14 @@ namespace Playmode.Npc.Strategies
 	{
 		private readonly SightRoutine noEnemySightRoutine;
 
-		public CowboyBehavior(Mover mover, HandController handController,Health health,
+		public CowboyBehavior(Mover mover, HandController handController, Health health,
 			NpcSensorSight npcSensorSight, NpcSensorSound npcSensorSound)
 			: base(mover, handController, health, npcSensorSight, npcSensorSound)
 		{
 			HealthRetreatTolerance = 0;
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
+			DistanceSwitchFromAttackingToEngaging = 6f;
+			DistanceSwitchFromEngagingToAttacking = 5f;
 		}
 
 		protected override void DoIdle()
@@ -29,6 +31,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
+			if (IsOutsideOfZone)
+				MovementDirection = -Mover.transform.parent.root.position;
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
@@ -62,11 +66,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoAttacking()
 		{
-			if (CurrentEnemyTarget != null)
-			{
-				Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
-				HandController.Use();
-			}
+			Mover.RotateTowardsPosition(CurrentEnemyTarget.transform.root.position);
+			HandController.Use();
 		}
 
 		protected override void DoRetreating()
@@ -77,9 +78,7 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateIdle()
 		{
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
-			{
 				return State.Engaging;
-			}
 
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
@@ -87,9 +86,7 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateRoaming()
 		{
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
-			{
 				return State.Engaging;
-			}
 
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
@@ -97,9 +94,7 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateInvestigating()
 		{
 			if (NpcSensorSight.NpcsInSight.Any() || CurrentShotgunTarget != null || CurrentUziTarget != null)
-			{
 				return State.Engaging;
-			}
 
 			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
@@ -107,14 +102,10 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateEngaging()
 		{
 			if (CurrentShotgunTarget != null || CurrentUziTarget != null)
-			{
 				return State.Engaging;
-			}
 
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			return DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
@@ -122,14 +113,10 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateAttacking()
 		{
 			if (CurrentShotgunTarget != null || CurrentUziTarget != null)
-			{
 				return State.Engaging;
-			}
 
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}

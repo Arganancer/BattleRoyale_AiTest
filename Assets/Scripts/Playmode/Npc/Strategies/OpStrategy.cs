@@ -89,19 +89,17 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateIdle()
 		{	
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
 			
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
 
 		protected override State EvaluateRoaming()
 		{	
+			if (IsOutsideOfZone)
+				MovementDirection = -Mover.transform.parent.root.position;
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
 
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateRoaming();
 		}
@@ -109,29 +107,18 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateInvestigating()
 		{
 			if (NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Engaging;
-			}
 			
-			if (!NpcSensorSound.SoundsInformations.Any())
-			{
-				return State.Idle;
-			}
-
-			return State.Investigating;
+			return !NpcSensorSound.SoundsInformations.Any() ? State.Idle : State.Investigating;
 		}
 
 		protected override State EvaluateEngaging()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			if (Health.HealthPoints < 50)
-			{
 				return State.Retreating;
-			}
 
 			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
@@ -139,27 +126,19 @@ namespace Playmode.Npc.Strategies
 		protected override State EvaluateAttacking()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
-			{
 				return State.Idle;
-			}
 
 			if (Health.HealthPoints < 80)
-			{
 				return State.Retreating;
-			}
 
 			return DistanceToCurrentEnemy < DistanceSwitchFromEngagingToAttacking ? State.Attacking : State.Engaging;
 		}
 
 		protected override State EvaluateRetreating()
 		{
-			if (!NpcSensorSight.NpcsInSight.Any())
-			{
-				TimeUntilStateSwitch = MaxRoamingTime;
-				return State.Roaming;
-			}
-
-			return State.Retreating;
+			if (NpcSensorSight.NpcsInSight.Any()) return State.Retreating;
+			TimeUntilStateSwitch = MaxRoamingTime;
+			return State.Roaming;
 		}
 
 		#endregion

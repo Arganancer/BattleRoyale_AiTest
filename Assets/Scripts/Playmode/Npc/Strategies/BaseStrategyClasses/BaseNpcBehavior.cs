@@ -136,10 +136,10 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		
 		private void UpdateTargetInformation()
 		{
-			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
-			{
+			if (!NpcSensorSight.NpcsInSight.Any())
+				CurrentEnemyTarget = null;
+			else if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-			}
 
 			if (NpcSensorSight.PickablesInSight.Any() && CurrentMedicalKitTarget == null)
 			{
@@ -174,6 +174,8 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		/// </summary>
 		protected Vector3 GetPredictiveAimDirection(NpcController npc)
 		{
+			if(npc == null)
+				return new Vector3();
 			var bulletSpeed = HandController.GetProjectileSpeed();
 			var bulletSpeedSq = bulletSpeed * bulletSpeed;
 			var bulletOrigin = HandController.GetWeaponPosition();

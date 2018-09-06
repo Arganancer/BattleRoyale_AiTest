@@ -1,7 +1,7 @@
 ﻿using System;
 using Playmode.Util.Collections;
+using Playmode.World;
 using UnityEngine;
-using Random = System.Random;
 
 namespace Playmode.Pickable
 {
@@ -17,7 +17,7 @@ namespace Playmode.Pickable
 		private float minDistanceBetween2Pickable = 10;
 		private int nbOfPickableToSpawn = 5;
 		
-		private float timeToSpawn = 10;
+		private float timeToSpawn = 7;
 		private float timeLastSpawn;
 
 		private static readonly TypePickable.TypePickable[] DefaultTypePickable =

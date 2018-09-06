@@ -36,6 +36,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRoaming()
 		{
+			if (IsOutsideOfZone)
+				MovementDirection = -Mover.transform.parent.root.position;
 			Mover.MoveTowardsDirection(MovementDirection);
 			noEnemySightRoutine.UpdateSightRoutine(MovementDirection);
 		}
@@ -51,31 +53,26 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
-			var movementTarget = new Vector3();
-			var rotationTarget = new Vector3();
-
 			if (campedMedKit != null)
 			{
-				movementTarget = campedMedKit.transform.root.position;
-				rotationTarget = movementTarget;
+				Mover.MoveTowardsPosition(campedMedKit.transform.root.position);
+				if (CurrentEnemyTarget != null)
+				{
+					Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
+					HandController.Use();
+				}
+				else
+					Mover.RotateTowardsPosition(campedMedKit.transform.root.position);
 			}
 			else if (CurrentUziTarget != null)
 			{
-				movementTarget = CurrentUziTarget.transform.root.position;
-				rotationTarget = movementTarget;
+				Mover.MoveTowardsPosition(CurrentUziTarget.transform.root.position);
+				Mover.RotateTowardsPosition(CurrentUziTarget.transform.root.position);
 			}
-
-			if (CurrentEnemyTarget != null)
+			else if (CurrentEnemyTarget != null)
 			{
-				if (campedMedKit == null)
-					movementTarget = CurrentEnemyTarget.transform.root.position;
-				rotationTarget = GetPredictiveAimDirection(CurrentEnemyTarget) + Mover.transform.root.position;
-			}
-
-			Mover.MoveTowardsPosition(movementTarget);
-			Mover.RotateTowardsPosition(rotationTarget);
-			if (CurrentEnemyTarget != null)
-			{
+				Mover.MoveRightAroundPosition(CurrentEnemyTarget.transform.root.position);
+				Mover.RotateTowardsDirection(GetPredictiveAimDirection(CurrentEnemyTarget));
 				HandController.Use();
 			}
 		}
@@ -105,7 +102,7 @@ namespace Playmode.Npc.Strategies
 				return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : State.Idle;
 			}
 
-			if (CurrentUziTarget != null || campedMedKit != null || NpcSensorSight.NpcsInSight.Any())
+			if (CurrentUziTarget != null || campedMedKit != null || CurrentEnemyTarget != null)
 				return State.Engaging;
 			return NpcSensorSound.SoundsInformations.Any() ? State.Investigating : base.EvaluateIdle();
 		}
@@ -161,6 +158,9 @@ namespace Playmode.Npc.Strategies
 			if (NpcSensorSight.NpcsInSight.Any() && Health.HealthPoints < HealthRetreatTolerance)
 				return State.Retreating;
 
+			if (CurrentUziTarget != null)
+				return State.Engaging;
+
 			return DistanceToCurrentEnemy > DistanceSwitchFromEngagingToAttacking ? State.Engaging : State.Attacking;
 		}
 
@@ -171,8 +171,8 @@ namespace Playmode.Npc.Strategies
 			{
 				if (CurrentEnemyTarget == null)
 					return State.Idle;
-				if (Vector3.Distance(CurrentEnemyTarget.transform.root.position, campedMedKit.transform.root.position) +
-				    5 <
+				if (Vector3.Distance(NpcSensorSight.GetClosestNpc().transform.root.position, campedMedKit.transform.root.position) - 3
+				     <
 				    Vector3.Distance(Mover.transform.root.position, campedMedKit.transform.root.position) ||
 				    Health.HealthPoints < HealthRetreatTolerance)
 					return State.Engaging;
