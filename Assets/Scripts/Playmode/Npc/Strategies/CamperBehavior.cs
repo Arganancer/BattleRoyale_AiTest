@@ -7,7 +7,6 @@ using Playmode.Npc.Strategies.BaseStrategyClasses;
 using Playmode.Npc.Strategies.Routines.MovementRoutines;
 using Playmode.Npc.Strategies.Routines.SightRoutines;
 using Playmode.Pickable;
-using Playmode.Pickable.TypePickable;
 using UnityEngine;
 
 namespace Playmode.Npc.Strategies

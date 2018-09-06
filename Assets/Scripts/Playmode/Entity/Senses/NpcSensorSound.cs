@@ -65,7 +65,7 @@ namespace Playmode.Entity.Senses
 			}
 		}
 		
-		public Vector3 GetClosestSoundPosition()
+		/*public Vector3 GetClosestSoundPosition()
 		{
 			var closestSoundDistance = float.MaxValue;
 			var closestSoundPosition = new Vector3();
@@ -79,7 +79,7 @@ namespace Playmode.Entity.Senses
 			}
 
 			return closestSoundPosition;
-		}
+		}*/
 
 		public Vector3 GetNewestSoundPosition()
 		{

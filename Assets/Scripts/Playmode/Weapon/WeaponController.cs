@@ -105,7 +105,7 @@ namespace Playmode.Weapon
 		private void ShootInLine()
 		{
 			GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-			bullet.GetComponentInChildren<BulletController>().ConfigureLineShoot(bullet,bulletDamage);
+			BulletController.ConfigureLineShoot(bullet,bulletDamage);
 		}
 
 		private void ShootInCone()
@@ -113,7 +113,7 @@ namespace Playmode.Weapon
 			for (int i = 0; i < nbOfShotgunBullets; ++i)
 			{
 				GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-				bullet.GetComponentInChildren<BulletController>().ConfigureConeShoot(bullet,bulletDamage);
+				BulletController.ConfigureConeShoot(bullet,bulletDamage);
 			}
 		}
 

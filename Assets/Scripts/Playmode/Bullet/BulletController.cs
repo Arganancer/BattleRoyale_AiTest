@@ -15,9 +15,9 @@ namespace Playmode.Bullet
 		private Destroyer destroyer;
 		private float timeSinceSpawnedInSeconds;
 		private float currentPercentageDuration;
-		private float startDyingPercentageDuration = 0.7f;
-		private float dyingPercentageRemaining = 0.3f;
-		
+		private const float StartDyingPercentageDuration = 0.7f;
+		private const float DyingPercentageRemaining = 0.3f;
+
 		private float LifeSpanInSeconds
 		{
 			set { lifeSpanInSeconds = value; }
@@ -56,7 +56,7 @@ namespace Playmode.Bullet
 		{
 			timeSinceSpawnedInSeconds += Time.deltaTime;
 			currentPercentageDuration = timeSinceSpawnedInSeconds / lifeSpanInSeconds;
-			if (currentPercentageDuration > startDyingPercentageDuration)
+			if (currentPercentageDuration > StartDyingPercentageDuration)
 			{
 				UpdateBulletDying();
 			}
@@ -64,7 +64,7 @@ namespace Playmode.Bullet
 
 		private void UpdateBulletDying()
 		{
-			var percentageModifier = 1f - (currentPercentageDuration - startDyingPercentageDuration) / dyingPercentageRemaining;
+			var percentageModifier = 1f - (currentPercentageDuration - StartDyingPercentageDuration) / DyingPercentageRemaining;
 			transform.root.localScale = new Vector3(0.5f, 0.5f, 1) * percentageModifier;
 			anchoredMover.SetCurrentSpeed(anchoredMover.MaxSpeed * percentageModifier);
 			
@@ -85,12 +85,12 @@ namespace Playmode.Bullet
 				destroyer.Destroy();
 		}
 
-		public void ConfigureLineShoot(GameObject bullet,int bulletDamage)
+		public static void ConfigureLineShoot(GameObject bullet,int bulletDamage)
 		{
 			bullet.GetComponentInChildren<HitStimulus>().HitPoints = bulletDamage;
 		}
 
-		public void ConfigureConeShoot(GameObject bullet,int bulletDamage)
+		public static void ConfigureConeShoot(GameObject bullet,int bulletDamage)
 		{
 			
 			bullet.GetComponentInChildren<HitStimulus>().HitPoints = bulletDamage;

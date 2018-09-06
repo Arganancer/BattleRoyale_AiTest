@@ -49,9 +49,8 @@ namespace Playmode.Npc
 				);
 		}
 
-		private List<Vector3> GenerateSpawnPoints()
+		private static List<Vector3> GenerateSpawnPoints()
 		{
-			// TODO: Get radius from world information.
 			var spawnPoints = new List<Vector3>();
 			const float maxDistanceFromMapCenter = 100f;
 			const float minDistanceBetweenNpcs = 30f;
@@ -59,7 +58,6 @@ namespace Playmode.Npc
 			var currentSpawnPoint = GeneratePointWithinPlayableArea(maxDistanceFromMapCenter);
 			spawnPoints.Add(currentSpawnPoint);
 
-			// TODO: Clean the fuck out of this, it is so ugly.
 			for (var i = 0; i < GameValues.NbOfEnemies - 1; i++)
 			{
 				var j = 0;
@@ -82,7 +80,7 @@ namespace Playmode.Npc
 			return spawnPoints;
 		}
 
-		private Vector3 GeneratePointWithinPlayableArea(float maxDistanceFromMapCenter)
+		private static Vector3 GeneratePointWithinPlayableArea(float maxDistanceFromMapCenter)
 		{
 			Vector3 position = Random.insideUnitCircle;
 			return position * CRandom.Nextf(0f, maxDistanceFromMapCenter);

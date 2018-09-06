@@ -1,8 +1,8 @@
 ﻿namespace Playmode.Npc.Strategies.Routines.MovementRoutines
 {
-	public enum MovementRoutineType
+	/*public enum MovementRoutineType
 	{
 		RetreatWhileDodging,
 		AdvanceWhileDodging,
-	}
+	}*/
 }

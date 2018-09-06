@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Playmode.Entity.Movement;
 using Playmode.Entity.Senses;
@@ -55,9 +54,9 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected PickableController CurrentShotgunTarget;
 		protected PickableController CurrentUziTarget;
 
-		protected const float MinIdleTime = 0.2f;
-		protected const float MaxIdleTime = 0.5f;
-		protected const float MinRoamingTime = 1.2f;
+		private const float MinIdleTime = 0.2f;
+		private const float MaxIdleTime = 0.5f;
+		private const float MinRoamingTime = 1.2f;
 		protected const float MaxRoamingTime = 2.8f;
 
 		protected BaseNpcBehavior(Mover mover, HandController handController
@@ -195,8 +194,6 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			//C is distance traveled by bullet until impact (bulletSpeed * t (time))
 			var cosTheta = Vector3.Dot(enemyToBulletDirection, enemyVelocityDirection);
 
-			float time;
-
 			var a = bulletSpeedSq - enemySpeedSq;
 			var b = 2.0f * enemyToBulletDistance * enemySpeed * cosTheta;
 			var c = -enemyToBulletDistanceSq;
@@ -206,7 +203,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			var t0 = 0.5f * (-b + uglyNumber) / a;
 			var t1 = 0.5f * (-b - uglyNumber) / a;
 
-			time = Mathf.Min(t0, t1);
+			var time = Mathf.Min(t0, t1);
 			if (time < Mathf.Epsilon)
 			{
 				time = Mathf.Max(t0, t1);

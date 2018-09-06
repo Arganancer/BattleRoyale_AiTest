@@ -1,6 +1,4 @@
 ﻿using System;
-using Playmode.Npc;
-using Playmode.Pickable;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,8 +9,8 @@ namespace Playmode.Entity.Movement
 		[SerializeField] protected float Speed = 2f;
 		[SerializeField] protected float RotateSpeed = 90f;
 		
-		private Vector3 PositionLastFrame;
-		private Vector3 PositionThisFrame;
+		private Vector3 positionLastFrame;
+		private Vector3 positionThisFrame;
 		
 		private Transform rootTransform;
 
@@ -57,15 +55,15 @@ namespace Playmode.Entity.Movement
 
 		public void UpdatePosition()
 		{
-			PositionLastFrame = PositionThisFrame;
-			PositionThisFrame = rootTransform.position;
+			positionLastFrame = positionThisFrame;
+			positionThisFrame = rootTransform.position;
 		}
 
 		public Vector3 GetVelocity()
 		{
-			if(PositionLastFrame == PositionThisFrame)
+			if(positionLastFrame == positionThisFrame)
 				return new Vector3(0, 0, 0);
-			var directionalVector = (PositionThisFrame - PositionLastFrame).normalized;
+			var directionalVector = (positionThisFrame - positionLastFrame).normalized;
 			var velocityVector = directionalVector * Speed;
 			return velocityVector;
 		}

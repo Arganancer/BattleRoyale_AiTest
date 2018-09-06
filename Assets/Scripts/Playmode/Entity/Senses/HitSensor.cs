@@ -38,7 +38,7 @@ namespace Playmode.Entity.Senses
 			else
 			{
 				SetPickEventAction(pickableController);
-				PickablePickedEventHandler(npcController);
+				PickablePickedEventHandler?.Invoke(npcController);
 				RemovePickEventAction(pickableController);
 			}
 		}

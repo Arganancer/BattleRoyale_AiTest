@@ -10,7 +10,7 @@ namespace Playmode.Npc.BodyParts
 	public class HandController : MonoBehaviour
 	{
 		public event WeaponFiredEventHandler OnWeaponFired;
-		private AnchoredMover mover;
+		//private AnchoredMover mover;
 		private WeaponController weapon;
 
 		private void Awake()
@@ -20,7 +20,7 @@ namespace Playmode.Npc.BodyParts
 
 		private void InitializeComponent()
 		{
-			mover = GetComponent<AnchoredMover>();
+			//mover = GetComponent<AnchoredMover>();
 		}
 
 		public void Hold(GameObject heldGameObject)
@@ -42,15 +42,15 @@ namespace Playmode.Npc.BodyParts
 			}
 		}
 
-		public float AimTowardsPoint(Vector3 point)
+		/*public float AimTowardsPoint(Vector3 point)
 		{
 			return Vector3.Dot(point - mover.transform.root.position, transform.right);
-		}
+		}*/
 
-		public static float AimTowardsDirection(Mover mainMover, Vector3 movementDirection)
+		/*public static float AimTowardsDirection(Mover mainMover, Vector3 movementDirection)
 		{
 			return Vector3.Dot(movementDirection, mainMover.transform.right);
-		}
+		}*/
 
 		public void Use()
 		{
@@ -71,7 +71,7 @@ namespace Playmode.Npc.BodyParts
 			return weapon.GetComponentInChildren<WeaponController>().transform.position;
 		}
 
-		public void DropWeapon()
+		private void DropWeapon()
 		{
 			Destroy(weapon.transform.parent.gameObject);
 		}

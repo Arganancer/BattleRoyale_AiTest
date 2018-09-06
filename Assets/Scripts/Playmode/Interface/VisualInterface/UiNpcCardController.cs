@@ -40,10 +40,10 @@ namespace Playmode.Interface.VisualInterface
 			}
 		}
 
-		public void Configure(NpcController npcController)
+		public void Configure(NpcController npcControllerToConfigure)
 		{
-			this.npcController = npcController;
-			behaviorText.text = npcController.GetStrategyString();
+			this.npcController = npcControllerToConfigure;
+			behaviorText.text = npcControllerToConfigure.GetStrategyString();
 		}
 	}
 }
