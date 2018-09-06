@@ -10,22 +10,16 @@ namespace Playmode.Npc
 {
 	public class NpcSpawner : MonoBehaviour
 	{
-		private static readonly Color[] DefaultColors =
-		{
-			Color.white, Color.black, Color.blue, Color.cyan, Color.green,
-			Color.magenta, Color.red, Color.yellow, new Color(255, 125, 0, 255)
-		};
-
 		private static readonly NpcStrategy[] DefaultStrategies =
 		{
 			NpcStrategy.Normal,
 			NpcStrategy.Careful,
 			NpcStrategy.Cowboy,
-			NpcStrategy.Camper
+			NpcStrategy.Camper,
+			NpcStrategy.Op
 		};
 
 		[SerializeField] private GameObject npcPrefab;
-		[SerializeField] private Color[] colors = DefaultColors;
 
 		private void Awake()
 		{
@@ -41,21 +35,17 @@ namespace Playmode.Npc
 		{
 			if (npcPrefab == null)
 				throw new ArgumentException("Can't spawn null ennemy prefab.");
-			if (colors == null || colors.Length == 0)
-				throw new ArgumentException("Ennemies needs colors to be spawned.");
 		}
 
 		private void SpawnNpcs()
 		{
 			var stragegyProvider = new LoopingEnumerator<NpcStrategy>(DefaultStrategies);
-			var colorProvider = new LoopingEnumerator<Color>(colors);
 			var spawnsPoints = GenerateSpawnPoints();
 
 			for (var i = 0; i < GameValues.NbOfEnemies; i++)
 				SpawnNpc(
 					spawnsPoints[i],
-					stragegyProvider.Next(),
-					colorProvider.Next()
+					stragegyProvider.Next()
 				);
 		}
 
@@ -98,11 +88,11 @@ namespace Playmode.Npc
 			return position * CRandom.Nextf(0f, maxDistanceFromMapCenter);
 		}
 
-		private void SpawnNpc(Vector3 position, NpcStrategy strategy, Color color)
+		private void SpawnNpc(Vector3 position, NpcStrategy strategy)
 		{
 			Instantiate(npcPrefab, position, Quaternion.identity)
 				.GetComponentInChildren<NpcController>()
-				.Configure(strategy, color);
+				.Configure(strategy);
 		}
 	}
 }

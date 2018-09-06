@@ -10,6 +10,7 @@
 		Normal,
 		Careful,
 		Cowboy,
-		Camper
+		Camper,
+		Op
 	}
 }
