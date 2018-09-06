@@ -48,6 +48,7 @@ namespace Playmode.Npc
 		private HandController handController;
 
 		private BaseNpcBehavior strategy;
+		private string strategyName;
 
 		private NpcDeathEventChannel npcDeathEventChannel;
 		private HitEventChannel hitEventChannel;
@@ -143,6 +144,7 @@ namespace Playmode.Npc
 
 		public void Configure(NpcStrategy strategy)
 		{
+			strategyName = Enum.GetName(typeof(NpcStrategy), strategy);
 			switch (strategy)
 			{
 				case NpcStrategy.Cowboy:
@@ -242,6 +244,11 @@ namespace Playmode.Npc
 		public string GetStateString()
 		{
 			return Enum.GetName(typeof(State), strategy.GetState());
+		}
+
+		public string GetStrategyString()
+		{
+			return strategyName;
 		}
 
 		public void Heal(int healPoint)

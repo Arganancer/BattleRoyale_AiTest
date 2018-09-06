@@ -136,10 +136,10 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		
 		private void UpdateTargetInformation()
 		{
-			if (NpcSensorSight.NpcsInSight.Any() && CurrentEnemyTarget == null)
-			{
+			if (!NpcSensorSight.NpcsInSight.Any())
+				CurrentEnemyTarget = null;
+			else if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
-			}
 
 			if (NpcSensorSight.PickablesInSight.Any() && CurrentMedicalKitTarget == null)
 			{
