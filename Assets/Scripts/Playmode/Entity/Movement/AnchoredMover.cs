@@ -10,7 +10,7 @@ namespace Playmode.Entity.Movement
 		
 		public static readonly Vector3 Forward = Vector3.up;
 
-		private float currentSpeed = 2f;
+		private float currentSpeed;
 		
 		public float MaxSpeed
 		{
@@ -42,7 +42,7 @@ namespace Playmode.Entity.Movement
 
 		public void MoveRelativeToSelf(Vector3 direction)
 		{
-			rootTransform.Translate(direction.normalized * MaxSpeed * Time.deltaTime, Space.Self);
+			rootTransform.Translate(direction.normalized * currentSpeed * Time.deltaTime, Space.Self);
 		}
 
 		public void SetCurrentSpeed(float speed)
