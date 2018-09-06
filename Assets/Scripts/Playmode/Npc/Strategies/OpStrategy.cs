@@ -96,6 +96,8 @@ namespace Playmode.Npc.Strategies
 
 		protected override State EvaluateRoaming()
 		{	
+			if (IsOutsideOfZone)
+				MovementDirection = -Mover.transform.parent.root.position;
 			if (NpcSensorSight.NpcsInSight.Any())
 				return State.Engaging;
 

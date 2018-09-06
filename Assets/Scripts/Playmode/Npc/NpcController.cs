@@ -32,11 +32,11 @@ namespace Playmode.Npc
 		[SerializeField] private GameObject shotgunWeapon;
 
 		private readonly Color[] colors = {
-			new Color(255, 142, 24),
-			new Color(37, 255, 35), 
+			new Color32(255, 142, 24, 255),
+			new Color32(37, 255, 35, 255), 
 			Color.white,
-			new Color(16, 193, 232),
-			new Color(153, 7, 0)
+			new Color32(16, 193, 232, 255),
+			new Color32(224, 42, 11, 255)
 		};
 
 		private Health health;
