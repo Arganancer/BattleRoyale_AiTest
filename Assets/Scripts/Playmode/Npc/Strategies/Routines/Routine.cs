@@ -9,7 +9,7 @@ namespace Playmode.Npc.Strategies.Routines
 		
 		protected readonly Mover Mover;
 		
-		protected float SubRoutineTimeRemaining;
+		protected float SubRoutineTimeRemaining; //BEN_CORRECTION : Ça veut dire quoi ça ?
 		
 		protected Routine(Mover mover)
 		{

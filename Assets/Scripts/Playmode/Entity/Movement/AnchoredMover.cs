@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Playmode.Entity.Movement
 {
+	//BEN_CORRECTION : Rendu là, fusionnez donc ça avec Mover.
 	public class AnchoredMover : MonoBehaviour
 	{
 		[SerializeField] private float maxSpeed = 2f;

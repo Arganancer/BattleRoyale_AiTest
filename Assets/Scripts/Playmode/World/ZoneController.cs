@@ -4,6 +4,7 @@ namespace Playmode.World
 {
 	public class ZoneController : MonoBehaviour
 	{
+		//BEN_CORRECTION : Pourquoi ce n'est pas dans un SerializeField ?
 		private const float SpriteScaleSize = 0.0625f;
 		private const int MaxShrinkingSize = 2;
 		private const int MaxShrinkSpeedBuffer = 100;
@@ -20,10 +21,12 @@ namespace Playmode.World
 		private float nextRadius;
 		private float timeOfLastShrink;
 
+		//BEN_CORRECTION : "CenterOffset" (ou juste "Offset") aurait été plus clair non ?
 		public Vector2 DistanceOffSet { get; private set; }
 
 		public float CurrentRadius { get; private set; }
 
+		//BEN_REVIWE : Évitez les négations dans les noms. "ZoneIsShrinking".
 		public bool ZoneIsNotShrinking { get; private set; } = true;
 
 		private void Awake()

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace MenuEvent
 {
+	//BEN_REVIEW : Le DropDown est toujours réinitialisé à 12 ? C'est vraiment ce que vous vouliez ?
 	public class DropdownEventHandler : MonoBehaviour
 	{
 		private Dropdown dropdown;

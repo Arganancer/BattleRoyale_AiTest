@@ -26,6 +26,7 @@ namespace Playmode.Interface.VisualInterface
 		{
 			if (npcController == null)
 			{
+				//BEN_CORRECTION : SerializeFields.
 				healthText.text = "0";
 				stateText.text = "dead";
 				stateText.color = Color.red;

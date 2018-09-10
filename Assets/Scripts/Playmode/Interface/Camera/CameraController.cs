@@ -4,6 +4,7 @@ namespace Playmode.Interface.Camera
 {
 	public class CameraController : MonoBehaviour
 	{
+		//BEN_CORRECTION : Nombre de constantes ici auraient du être des SerializeFields.
 		private const int MaxShrinkingSize = 2;
 		private const string MouseWheel = "Mouse ScrollWheel";
 		private const int SizeOfCamera = 90;
@@ -49,6 +50,7 @@ namespace Playmode.Interface.Camera
 			CheckAndMoveCameraIfNeeded();
 		}
 
+		//BEN_CORRECTION : Nommage.
 		private void CheckKey()
 		{
 			movement.x = 0;

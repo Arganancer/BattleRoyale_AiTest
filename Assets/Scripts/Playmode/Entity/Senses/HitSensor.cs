@@ -12,10 +12,10 @@ namespace Playmode.Entity.Senses
 
 	public class HitSensor : MonoBehaviour
 	{
-		public event PickableHitSensorEventHandler PickablePickedEventHandler;
-		public event MedkitPickedEventHandler onMedkitPick;
+		public event PickableHitSensorEventHandler PickablePickedEventHandler; //BEN_CORRECTION : Mal nommé. Que représente cet événement ?
+		public event MedkitPickedEventHandler onMedkitPick; //BEN_CORRECTION : Devraient débuter par une majuscule.
 		public event ShotgunPickedEventHandler onShotgunPick;
-		public event UziPickedEventHandler onUziPick;
+		public event UziPickedEventHandler onUziPick; //BEN_CORRECTION : Code mort. C'est jamais utilisé ça...
 		public event HitSensorEventHandler OnHit;
 
 		public void Hit(int hitPoints)

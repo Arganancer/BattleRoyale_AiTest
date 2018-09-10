@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Playmode.Npc.Strategies.Routines.MovementRoutines
 {
+	//BEN_CORRECTION : Très (trop ?) similaire à AdvanceWhileDodgingMovementRoutine.
 	public class RetreatWhileDodgingMovementRoutine : MovementRoutine
 	{
 		public RetreatWhileDodgingMovementRoutine(Mover mover) : 

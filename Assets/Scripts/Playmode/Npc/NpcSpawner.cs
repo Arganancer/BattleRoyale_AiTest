@@ -53,9 +53,17 @@ namespace Playmode.Npc
 		{
 			var spawnPoints = new List<Vector3>();
 			
+			//BEN_CORRECTION : Valeures magiques. Devraient être en SerializedField.
+			//				   Aussi, en général, constantes sont en haut de fichier.
 			const float maxDistanceFromMapCenter = 100f;
 			const float minDistanceBetweenNpcs = 30f;
 
+			//BEN_REVIEW : C'est pas élégant comme algo. Vous auriez pu utiliser un algorithme de "Noise" pour faire à peu
+			//près la même chose, mais beaucoup plus rapidement et ... plus élégant.
+			
+			//BEN_CORRECTION : J'aurais sorti cet algorithme dans une fonction statique.
+			//				   Ex : public static List<Vector3> GenerateEvenlyDistributedPositions(Vector3 center, float radius);
+			
 			var currentSpawnPoint = GeneratePointWithinPlayableArea(maxDistanceFromMapCenter);
 			spawnPoints.Add(currentSpawnPoint);
 

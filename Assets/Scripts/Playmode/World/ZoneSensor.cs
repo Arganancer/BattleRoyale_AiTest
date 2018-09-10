@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Playmode.World
 {
+	//BEN_CORRECTION : Pas un véritable sensor. Où sont les événements ? Directement dépendant de NPCController, ce
+	//				   qui ne devrait pas être le cas.
+	//
+	//				   En plus, dépend de PickableController. Autrement dit, ce composant est "zéro" réutilisable.
+	
 	public class ZoneSensor : MonoBehaviour
 	{
 		private void OnTriggerExit2D(Collider2D other)
@@ -45,3 +50,6 @@ namespace Playmode.World
 		}
 	}
 }
+
+//BEN_REVIEW : Oooofff.....ENFIN, fini de corriger votre code!!! J'ai jamais vu quelque chose d'aussi compliqué pour
+//			   si peu.

@@ -6,6 +6,90 @@ namespace Playmode.Entity.Senses
 {
 	public class HitStimulus : MonoBehaviour
 	{
+		//BEN_CORRECTION : Pourquoi avez vous enlevé le "SerializeField" ?
+		//
+		//				   Ne jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais jamais 
+		//				   jamais jamais jamais jamais jamais utiliser d'attribut public. C'est du niveau de 2e
+		//				   session.
 		public int HitPoints = 5;
 
 		private void Awake()

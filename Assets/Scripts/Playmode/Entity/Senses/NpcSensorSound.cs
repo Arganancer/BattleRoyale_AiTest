@@ -11,6 +11,7 @@ namespace Playmode.Entity.Senses
 		[SerializeField] private float timeUntilSoundInfoOutdated = 7.5f;
 		[SerializeField] private float maxDistanceToSoundPosition = 40f;
 		
+		//BEN_REVIEW : Une liste aurait pas fait l'affaire ? Une liste de struct ?
 		public IReadOnlyDictionary<float, Vector3> SoundsInformations => soundsInformations;
 		
 		private SortedDictionary<float, Vector3> soundsInformations;
@@ -27,6 +28,7 @@ namespace Playmode.Entity.Senses
 			npcControllers = new List<NpcController>();
 		}
 
+		//BEN_CORRECTION : Pourquoi est-ce qu'il ne s'update pas tout seul ?
 		public void UpdateSoundSensor(Vector3 npcCurrentPosition, Vector3 npcCurrentRotation)
 		{
 			UpdateSoundInformation(npcCurrentPosition, npcCurrentRotation);
@@ -34,6 +36,7 @@ namespace Playmode.Entity.Senses
 
 		private void UpdateSoundInformation(Vector3 npcCurrentPosition, Vector3 npcCurrentRotation)
 		{
+			//BEN_REVIEW : Aussi faisable avec "RemoveWhere" ou une reverse for loop.
 			var outdatedSoundInformation = new Dictionary<float, Vector3>();
 
 			foreach (var soundInformation in soundsInformations)
@@ -73,6 +76,7 @@ namespace Playmode.Entity.Senses
 
 		public void EnterSoundRange(NpcController npc)
 		{
+			//BEN_CORRECTION : Wrong data flow. Tel que mentionné dans le code review.
 			npc.transform.root.GetComponentInChildren<HandController>().OnWeaponFired += OnWeaponFired;
 			npcControllers.Add(npc);
 		}

@@ -32,16 +32,16 @@ namespace Playmode.Weapon
 				switch (weaponType)
 				{
 					case TypePickable.Shotgun:
-						bulletDamage = 16;
-						fireDelayInSeconds = 0.8f;
+						bulletDamage = 16; //BEN_CORRECTION : Valeur magique.
+						fireDelayInSeconds = 0.8f; //BEN_CORRECTION : Valeur magique.
 						break;
 					case TypePickable.Uzi:
-						bulletDamage = 12;
-						fireDelayInSeconds = 0.2f;
+						bulletDamage = 12; //BEN_CORRECTION : Valeur magique.
+						fireDelayInSeconds = 0.2f; //BEN_CORRECTION : Valeur magique.
 						break;
 					default:
-						bulletDamage = 20;
-						fireDelayInSeconds = 0.5f;
+						bulletDamage = 20; //BEN_CORRECTION : Valeur magique.
+						fireDelayInSeconds = 0.5f; //BEN_CORRECTION : Valeur magique.
 						break;
 				}
 			}
@@ -73,6 +73,7 @@ namespace Playmode.Weapon
 		{
 			lastTimeShotInSeconds = 0;
 
+			//BEN_CORRECTION : Valeur magique devrait être en constante. Voir classe "Tags".
 			shootEventChannel = GameObject.FindWithTag("GameController").GetComponent<ShootEventChannel>();
 		}
 

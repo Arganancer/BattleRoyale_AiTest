@@ -9,6 +9,9 @@ namespace Playmode.Application
 {
 	public class GameController : MonoBehaviour
 	{
+		//BEN_CORRECTION : Devrait être en "SerializedFields" pour être modifiables dans l'éditeur.
+		//				   Tout ce qui est "Game Data" devrait être modifiable dans l'éditeur (vitesse des ennemis,
+		//				   textes, etc...)
 		private const string TextNoSurvivors = "No survivors !";
 		private const string TextSurvivorInfo = "Survivor's remaining HP : ";
 		private const string TextTimeTaken = "Time taken :";
@@ -19,12 +22,12 @@ namespace Playmode.Application
 		private GameObject pauseObjects;
 		private GameObject endGameObjects;
 		private NpcController lastNpc;
-		private Text endGameDetails;
+		private Text endGameDetails; //BEN_CORRECTION : UI ne devrait pas être géré par le GameController.
 
 		private int numberOfNpcs;
 		private bool isGamePaused;
 		private float timePassedInSeconds;
-		private string timePassed;
+		private string timePassed; //BEN_CORRECTION : Il n'y a aucune raison pour laquelle cet attribut n'est pas juste une variable. Overdesign.
 
 		private bool IsGameOver => numberOfNpcs < 2;
 
@@ -87,6 +90,9 @@ namespace Playmode.Application
 		{
 			Time.timeScale = PausedTimeSpeed;
 			
+			//BEN_CORRECTION : Je peux comprendre que le GameController puisse mettre le jeu en pause, mais je ne vois
+			//				   pourquoi c'est sa responsabilité d'afficher le menu. Le menu devrait s'afficher de lui même
+			//				   lorsque le jeu devient en pause.
 			pauseObjects.SetActive(true);
 		}
 
@@ -123,11 +129,13 @@ namespace Playmode.Application
 			var seconds = Convert.ToInt32(timePassedInSeconds % 60).ToString("00");
 			var minutes = (Math.Floor(timePassedInSeconds / 60) % 60).ToString("00");
 
+			//BEN_REVIEW : Utilisez "string.format" SVP.
 			timePassed = minutes + "m " + seconds + "s";
 		}
 
 		private void GameDetailsNoSurvivors()
 		{
+			//BEN_REVIEW : Utilisez "string.format" SVP.
 			endGameDetails.text = TextNoSurvivors;
 			endGameDetails.text += Environment.NewLine;
 			endGameDetails.text += TextTimeTaken + " ";
@@ -138,6 +146,7 @@ namespace Playmode.Application
 		{
 			lastNpc = GameObject.FindGameObjectWithTag(Tags.Npc).GetComponentInChildren<NpcController>();
 
+			//BEN_REVIEW : Utilisez "string.format" SVP.
 			endGameDetails.text = TextSurvivorInfo + " ";
 			endGameDetails.text += lastNpc.GetHealth();
 			endGameDetails.text += Environment.NewLine;

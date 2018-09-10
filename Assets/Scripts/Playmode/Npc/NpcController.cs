@@ -161,6 +161,11 @@ namespace Playmode.Npc
 			switch (strategyToAssign)
 			{
 				case NpcStrategy.Cowboy:
+					//BEN_CORRECTION : Rendu là, j'aurais créé un "SerializedField" pour les couleurs de chaque.
+					//
+					//				   EX: [SerializeField] private Color cowboyColor;
+					//
+					//				   Sinon, ça vous donne des "valeurs magiques".
 					body.GetComponent<SpriteRenderer>().color = colors[2];
 					sight.GetComponent<SpriteRenderer>().color = colors[2];
 					typeSign.GetComponent<SpriteRenderer>().sprite = cowboySprite;

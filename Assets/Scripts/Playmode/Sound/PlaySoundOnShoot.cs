@@ -18,6 +18,7 @@ namespace Playmode.Sound
 			
 			var aSource = GetComponents(typeof(AudioSource));
 			
+			//BEN_CORRECTION : Valeurs hardcodées. Ordre non garanti par Unity.
 			starterWeaponShootSounds = new[]
 			{
 				(AudioSource) aSource[0],

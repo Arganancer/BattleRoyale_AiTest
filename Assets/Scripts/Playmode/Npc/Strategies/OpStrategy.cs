@@ -25,6 +25,8 @@ namespace Playmode.Npc.Strategies
 			noEnemySightRoutine = new LookAroundSightRoutine(Mover);
 		}
 
+		//BEN_REVIEW : Soudainement, des #region. Standardisez votre code svp.
+		
 		#region DoTheStuff
 
 		protected override void DoIdle()

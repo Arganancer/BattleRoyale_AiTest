@@ -6,6 +6,7 @@ namespace Playmode.Entity.Movement
 {
 	public class Mover : MonoBehaviour
 	{
+		//BEN_REVIEW : Ne suivez pas les conseil de Rider sur le nomamge des variables protected. Commencez les par une minuscule.
 		[SerializeField] protected float Speed = 2f;
 		[SerializeField] protected float RotateSpeed = 90f;
 		
@@ -58,6 +59,7 @@ namespace Playmode.Entity.Movement
 			positionThisFrame = rootTransform.position;
 		}
 
+		//BEN_REVIEW : Devrait être une propriété.
 		public Vector3 GetVelocity()
 		{
 			if(positionLastFrame == positionThisFrame)

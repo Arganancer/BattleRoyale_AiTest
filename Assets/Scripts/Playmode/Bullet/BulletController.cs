@@ -19,6 +19,8 @@ namespace Playmode.Bullet
 		private float timeSinceSpawnedInSeconds;
 		private float currentPercentageDuration;
 
+		//BEN_CORRECTION : Propriété me semble inutile. Un attribut suffirait (vous utilisez l'attribut dans 90% des
+		//				   cas de toute façon).
 		private float LifeSpanInSeconds
 		{
 			set { lifeSpanInSeconds = value; }
@@ -52,7 +54,7 @@ namespace Playmode.Bullet
 
 			Act();
 		}
-
+		
 		private void UpdateLifeSpan()
 		{
 			timeSinceSpawnedInSeconds += Time.deltaTime;
@@ -64,6 +66,9 @@ namespace Playmode.Bullet
 			}
 		}
 
+		//BEN_REVIEW : Avec tout ça, je pense qu'une coroutine aurait été plus claire.
+		//
+		//			   Je comprends ce que cela fait, mais était-ce vraiment nécessaire ?
 		private void UpdateBulletDying()
 		{
 			var percentageModifier = 1f - (currentPercentageDuration - StartDyingPercentageDuration) / DyingPercentageRemaining;
@@ -72,6 +77,9 @@ namespace Playmode.Bullet
 			
 		}
 
+		//BEN_CORRECTION : Intrusion de responsabilité. BulletController aurait du s'abonner à un événement de
+		//				   "HitStimulus". HitStimulus ne devrait pas connaitre "BulletController". Qui dit qu'un
+		//				   "HitStimulus" ne pourrait pas être placé sur autre chose.
 		public void Hit()
 		{
 			timeSinceSpawnedInSeconds = lifeSpanInSeconds;

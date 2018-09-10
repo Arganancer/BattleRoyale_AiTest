@@ -92,9 +92,11 @@ namespace Playmode.Entity.Senses
 		
 		public NpcController GetClosestNpc()
 		{
+			//BEN_CORRECTION : Il y a du code qui aurait pu être réutilisé ici (exemple, dans GetClosestPickable).
+
 			NpcController closestNpc = null;
 			var distance = float.MaxValue;
-			
+						
 			foreach (var npc in npcsInSight)
 			{
 				if (closestNpc == null)

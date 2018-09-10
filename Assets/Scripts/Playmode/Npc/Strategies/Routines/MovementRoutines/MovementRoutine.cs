@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Playmode.Npc.Strategies.Routines.MovementRoutines
 {
+	//BEN_CORRECTION : C'est une classe abstraite, je m'attendais donc à du polymorphisme, mais non, j'ai eu
+	//				   un "Switch Case".
+	//
+	//				   Une classe ne devrait jamais dépendre de ses enfants. Pourtant, c'est le cas ici.
 	public abstract class MovementRoutine : Routine
 	{
 		protected MovementSubRoutineType CurrenMovementSubRoutineType;

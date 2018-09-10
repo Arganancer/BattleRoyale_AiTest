@@ -11,6 +11,8 @@ namespace Playmode.Entity.Senses
 		
 		private void OnTriggerEnter2D(Collider2D other)
 		{
+			//BEN_CORRECTION : La même ligne (other.gameObject.transform.root?.GetComponentInChildren<NpcController>()), deux
+			//				   fois de suite. Perte de performances.
 			if (other.gameObject.transform.root?.GetComponentInChildren<NpcController>() 
 			    && other.name == BodyObjectName)
 			{

@@ -11,6 +11,9 @@ using Random = UnityEngine.Random;
 
 namespace Playmode.Npc.Strategies.BaseStrategyClasses
 {
+	//BEN_CORRECTION : Cela veut dire que toutes les stratégies doivent avoir tous ces états.
+	//				   Et si une stratégie n'a pas besoin d'un état ? Et si "Retreating" n'était
+	//				   pas une option pour "NormalBehavior" par exemple ?
 	/// <summary>
 	/// An NPC will change their current state depending on their behavior as well as current situation:
 	/// </summary>
@@ -38,6 +41,11 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		protected readonly NpcSensorSight NpcSensorSight;
 		protected readonly Health Health;
 		
+		//BEN_REVIEW : Vous avez fait un "mini" blackboard sans vous en rendre compte.
+		//			   Pour que ce soit un vrai "Blackboard", il aurait fallut avoir une classe
+		//			   dont le seul but est de décortiquer l'information des senseur (information de base niveau)
+		//			   pour créer des informations de haut niveau.
+		
 		protected NpcController CurrentEnemyTarget;
 		protected PickableController CurrentMedicalKitTarget;
 		protected PickableController CurrentShotgunTarget;
@@ -54,6 +62,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 		
 		private State currentState;
 
+		//BEN_CORRECTION : Nommage.
 		public bool SetIsOutsideOfZone
 		{
 			set { IsOutsideOfZone = value; }
@@ -73,6 +82,7 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 
 		public void Act()
 		{
+			//BEN_CORRECTION : Étrange de devoir gérer le son ici. Sensor devrait se mettre à jour tout seul.
 			NpcSensorSound.UpdateSoundSensor(Mover.transform.root.position, Mover.transform.up);
 			UpdateTargetInformation();
 			UpdatNpcState();
@@ -133,6 +143,14 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			}
 		}
 		
+		//BEN_CORRECTION : Nommez vos fonction en considération de ce qu'elle font.
+		//				   Ici, cette fonction identifie les "Targets", s'il y en a.
+		//
+		//				   Donc : "FindTargetsFromSensors" ?
+		//				   Autre suggestion : "IdentifyTargets" ?
+		//				   Autre suggestion : "FindTargets" ?
+		//
+		//				   Les noms ne devrait jamais être abstraits.
 		private void UpdateTargetInformation()
 		{
 			if (!NpcSensorSight.NpcsInSight.Any())
@@ -140,6 +158,12 @@ namespace Playmode.Npc.Strategies.BaseStrategyClasses
 			else if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
+			//BEN_REVIEW : Aurait pu être séparé en 3 sous méthodes :
+			//			   "FindTargetMedkit"
+			//			   "FindTargetShotgun"
+			//			   "FindTargetUzi"
+			//
+			//			   Vous l'avez pourtant fait pour l'enemy...pourquoi pas les autres ?
 			if (NpcSensorSight.PickablesInSight.Any() && CurrentMedicalKitTarget == null)
 			{
 				CurrentMedicalKitTarget = NpcSensorSight.GetClosestPickable(TypePickable.Medicalkit);

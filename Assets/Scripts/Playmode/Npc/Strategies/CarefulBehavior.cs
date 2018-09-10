@@ -8,6 +8,8 @@ using Playmode.Npc.Strategies.Routines.SightRoutines;
 
 namespace Playmode.Npc.Strategies
 {
+	//BEN_REVIEW : Soudainement, un commentaire....
+	//			   Faites en ou faites en pas.
 	/// <summary>
 	/// Prudent. Dès qu’il trouve un ennemi, il tire dessus en gardant ses distances.
 	/// Si sa vie est trop basse, il tente immédiatement de trouver un « MedicalKit ».
@@ -59,8 +61,16 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
-			if (Health.HealthPoints < HealthRetreatTolerance &&
-			    CurrentMedicalKitTarget != null)
+			//BEN_REVIEW : Beaucoup de conditions la dedans qui mériteraient d'être sorties en méthodes afin
+			//			   de simplifier la lecture du code.
+			//
+			//			   J'ai sortir cette condition dans une fonction en guise de démonstration.
+			//
+			//			   Avant
+			//		          if (Health.HealthPoints < HealthRetreatTolerance && CurrentMedicalKitTarget != null)
+			//			   Après
+			//				  if (ShouldRetreatToSafety())
+			if (ShouldRetreatToSafety())
 			{
 				Mover.RotateTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
 				Mover.MoveTowardsPosition(CurrentMedicalKitTarget.transform.root.position);
@@ -76,6 +86,11 @@ namespace Playmode.Npc.Strategies
 				Mover.RotateTowardsPosition(CurrentUziTarget.transform.root.position);
 				Mover.MoveTowardsPosition(CurrentUziTarget.transform.root.position);
 			}
+		}
+
+		private bool ShouldRetreatToSafety()
+		{
+			return Health.HealthPoints < HealthRetreatTolerance && CurrentMedicalKitTarget != null;
 		}
 
 		protected override void DoAttacking()

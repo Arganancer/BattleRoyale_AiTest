@@ -30,6 +30,9 @@ namespace Playmode.Npc.Strategies
 		protected override void DoRoaming()
 		{
 			if (IsOutsideOfZone)
+				//BEN_REVIEW : Vous exploitez le fait qu'une position soit un vecteur, en plus du fait que le mode est
+				//			   toujours centré au point (0,0). Vous pourriez avoir un méchant bogue éventuellement si
+			    //			   vous faites des changements sur la structure de vos scènes.
 				MovementDirection = -Mover.transform.parent.root.position;
 			
 			Mover.MoveTowardsDirection(MovementDirection);
@@ -38,6 +41,10 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoEngaging()
 		{
+			//BEN_REVIEW : Ce que je trouve étrange parfois dans votre code, c'est que l'information est parfois complète
+			//			   dès l'entrée dans un état, et d'autres fois non. C'est comme si votre behavior entrait dans un état
+			//			   invalide pour se corriger par la suite. Règle générale, un objet devrait toujours rester dans
+			//			   un état valide, sauf s'il considère qu'il peut être détruit.
 			if (CurrentEnemyTarget == null)
 				CurrentEnemyTarget = NpcSensorSight.GetClosestNpc();
 
@@ -67,6 +74,7 @@ namespace Playmode.Npc.Strategies
 
 		protected override void DoRetreating()
 		{
+			//BEN_CORRECTION : Exactement ce que je disais dans BaseNpcBehavior.
 			// Too dumb to retreat
 		}
 

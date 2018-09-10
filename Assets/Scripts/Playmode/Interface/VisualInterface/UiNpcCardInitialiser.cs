@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace Playmode.Interface.VisualInterface
 {
+	//BEN_REVIEW : Une meilleure solution aurait été de publier sur un "EventChannel" quand un ennemi est créé, de sorte
+	//			   à ce que le UINPCCardController puisse savoir qu'un NPC vient d'être créé et ainsi s'abonner à ses
+	//			   événements.
+	
 	public class UiNpcCardInitialiser : MonoBehaviour
 	{
 		[SerializeField] private GameObject detailedNpcCard;
